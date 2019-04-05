@@ -6,5 +6,7 @@
     <color name="colorItemText">#0d131c</color>
     <color name="line">#f0f0f0</color>
     <color name="grayText">#C0C0C0</color>
+    <color name="alpha">#00000000</color>
+
 
 </resources>

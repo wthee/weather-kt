@@ -6,16 +6,18 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true"
             android:layout_gravity="bottom"
             android:gravity="center"
+            android:textSize="@dimen/item_text_size"
+            android:text="隐约雷鸣 阴霾天空 但盼风雨来 能留你在此"
             android:textColor="@color/colorPrimary"
-            android:text="隐约雷鸣 阴霾天空 但盼风雨来 能留你在此"/>
+            android:textIsSelectable="true" />
 
 
         <LinearLayout
@@ -27,30 +29,30 @@
                 android:id="@+id/setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
                 android:layout_marginLeft="@dimen/margin_small"
-                android:text="@string/app_name"
+                android:clickable="true"
                 android:textColor="@drawable/title_text_click"
                 android:textSize="@dimen/title_text_size" />
 
             <LinearLayout
                 android:id="@+id/settingView"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:layout_width="match_parent"
-                android:layout_height="215dp"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                tools:visibility="visible">
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/lineHeight"
-                    android:background="@color/line"/>
+                    android:background="@color/line" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:paddingLeft="@dimen/padding_small"
-                    android:paddingTop="@dimen/padding_small"
-                    android:orientation="vertical">
+                    android:paddingTop="@dimen/padding_small">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -69,60 +71,62 @@
 
                         <RadioButton
                             android:id="@+id/city1"
+                            style="@style/radioStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/radioStyle"
                             android:layout_marginLeft="@dimen/margin_small"
                             android:text="ip"
                             android:textSize="@dimen/setting_title_size" />
 
                         <RadioButton
                             android:id="@+id/city2"
+                            style="@style/radioStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/radioStyle"
                             android:layout_marginLeft="@dimen/setting_title_size"
                             android:text="北京"
                             android:textSize="@dimen/setting_title_size" />
 
                         <RadioButton
                             android:id="@+id/city3"
+                            style="@style/radioStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/radioStyle"
                             android:layout_marginLeft="@dimen/setting_title_size"
                             android:text="上海"
                             android:textSize="@dimen/setting_title_size" />
 
 
                     </RadioGroup>
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/modifyLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:visibility="gone"
                         android:layout_marginBottom="@dimen/margin_small"
+                        android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:focusable="true">
+                        android:visibility="gone">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/modify"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@color/colorPrimary"
-                            android:textSize="@dimen/item_text_size"
                             android:hint="输入城市名"
                             android:inputType="text"
-                            android:singleLine="true"/>
+                            android:singleLine="true"
+                            android:textSize="@dimen/item_text_size" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/padding_small">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -135,22 +139,22 @@
                         android:id="@+id/groupBJ"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:checkedButton="@+id/rb1">
+                        android:checkedButton="@+id/rb1"
+                        android:orientation="horizontal">
 
                         <RadioButton
                             android:id="@+id/rb1"
+                            style="@style/radioStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/radioStyle"
                             android:layout_margin="@dimen/margin_small"
-                            android:text="默认"/>
+                            android:text="默认" />
 
                         <RadioButton
                             android:id="@+id/rb2"
+                            style="@style/radioStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/radioStyle"
                             android:layout_margin="@dimen/margin_small"
                             android:text="测试" />
 
@@ -158,11 +162,12 @@
 
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/padding_small">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -180,26 +185,66 @@
 
                         <RadioButton
                             android:id="@+id/rb3"
+                            style="@style/radioStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/radioStyle"
                             android:layout_margin="@dimen/margin_small"
                             android:text="隐藏" />
 
                         <RadioButton
                             android:id="@+id/rb4"
+                            style="@style/radioStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/radioStyle"
                             android:layout_margin="@dimen/margin_small"
                             android:text="显示" />
 
                     </RadioGroup>
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/padding_small">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="夜间模式"
+                        android:textColor="@color/colorItemText"
+                        android:textSize="@dimen/setting_title_size" />
+
+                    <RadioGroup
+                            android:id="@+id/groupDN"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkedButton="@+id/rb5"
+                            android:orientation="horizontal">
+
+                        <RadioButton
+                                android:id="@+id/rb5"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                android:text="关闭"/>
+
+                        <RadioButton
+                                android:id="@+id/rb6"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                android:text="开启"/>
+
+                    </RadioGroup>
+                </LinearLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/lineHeight"
-                    android:background="@color/line"/>
+                    android:background="@color/line" />
 
             </LinearLayout>
 
@@ -207,26 +252,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_small"
-                android:focusableInTouchMode="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:focusableInTouchMode="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/colorPrimary"
-                    android:textSize="@dimen/item_text_size"
                     android:inputType="text"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:textSize="@dimen/item_text_size" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/item_text_size"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                android:layout_marginTop="@dimen/item_text_size"
+                android:layout_marginBottom="@dimen/item_text_size"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_weather2"/>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         </LinearLayout>
 

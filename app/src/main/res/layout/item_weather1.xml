@@ -6,7 +6,7 @@
     <data>
         <variable
             name="data"
-            type="cn.wthee.withoutyou.data.Data"/>
+            type="com.weather.data.Data"/>
         <variable
             name="isGone"
             type="int"/>

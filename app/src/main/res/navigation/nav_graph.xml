@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="cn.wthee.withoutyou.ui.main.WeatherFragment">
+        android:name="com.weather.ui.main.WeatherFragment">
 
     </fragment>
 

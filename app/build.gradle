@@ -7,11 +7,11 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "cn.wthee.withoutyou"
+        applicationId "com.weather"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 1
-        versionName "2.0"
+        versionCode 16
+        versionName "1.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     dataBinding {
