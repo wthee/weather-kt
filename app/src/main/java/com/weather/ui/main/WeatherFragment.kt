@@ -1,5 +1,7 @@
 package com.weather.ui.main
 
+import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProviderInfo
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +19,7 @@ import com.weather.util.OCAnim
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.view.inputmethod.InputMethodManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -27,6 +30,7 @@ import java.util.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.weather.MainActivity
 import com.weather.util.InjectorUtil
+import java.lang.Exception
 
 
 class WeatherFragment : Fragment() {
@@ -34,11 +38,13 @@ class WeatherFragment : Fragment() {
     companion object {
         var nlIsGone = false
         var bjType = 0
+        lateinit var adapter1: WeatherAdapter1
+        var lastCity = "ip"
     }
 
     private lateinit var viewModel: WeatherViewModel
     private lateinit var binding: WeatherFragmentBinding
-    private lateinit var adapter1: WeatherAdapter1
+    //private lateinit var adapter1: WeatherAdapter1
     private lateinit var adapter2: WeatherAdapter2
     private lateinit var progressBar: ProgressBar
     private lateinit var swipe: SwipeRefreshLayout
@@ -62,13 +68,12 @@ class WeatherFragment : Fragment() {
     private lateinit var radioGroup3: RadioGroup
     private lateinit var mainLayout: CoordinatorLayout
     private lateinit var imm: InputMethodManager
-
     private lateinit var curDate: Date
     private lateinit var endDate: Date
     private var density: Float = 0f
     private var settingViewHight: Int = 0
     private var back = 0
-    private var lastCity = "ip"
+
     private var saveC1 = "ip"
     private var saveC2 = "北京"
     private var saveC3 = "上海"
@@ -167,6 +172,7 @@ class WeatherFragment : Fragment() {
         binding.recycler.adapter = adapter1
         adapter2 = WeatherAdapter2()
         binding.recycler.adapter = adapter2
+
         viewModel.weather.observe(viewLifecycleOwner, Observer { weather ->
             if (weather != null) {
                 setting.text = weather.city
@@ -177,13 +183,11 @@ class WeatherFragment : Fragment() {
                 editor.putString("city", weather.city)
                 editor.apply()
                 if (bjType == 0) {
-                    adapter1 = WeatherAdapter1()
                     binding.recycler.adapter = adapter1
                     adapter1.submitList(weather.data)
                     adapter1.notifyDataSetChanged()
                 }
                 if (bjType == 1) {
-                    adapter2 = WeatherAdapter2()
                     binding.recycler.adapter = adapter2
                     adapter2.submitList(weather.data)
                     adapter2.notifyDataSetChanged()
@@ -228,15 +232,17 @@ class WeatherFragment : Fragment() {
         mainLayout = binding.mainLayout
 
         initOnPreDrawListener()
-
         resumeAllView()
 
         setting.setOnClickListener {
             if (settingView.visibility == View.GONE) {
                 OCAnim.animateOpen(settingView, settingViewHight)
+                editor.putBoolean("settingViewisClose",false)
             } else {
                 OCAnim.animateClose(settingView, settingViewHight)
+                editor.putBoolean("settingViewisClose",true)
             }
+            editor.apply()
             hideAndClear()
         }
 
@@ -272,6 +278,7 @@ class WeatherFragment : Fragment() {
             groupCity.visibility = if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
             return@setOnLongClickListener false
         }
+
         city2.setOnLongClickListener {
             modifyLayout.visibility = if (modifyLayout.visibility == View.GONE) {
                 modify.text = null
@@ -286,6 +293,7 @@ class WeatherFragment : Fragment() {
             groupCity.visibility = if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
             return@setOnLongClickListener false
         }
+
         city3.setOnLongClickListener {
             modifyLayout.visibility = if (modifyLayout.visibility == View.GONE) {
                 modify.text = null
@@ -302,7 +310,12 @@ class WeatherFragment : Fragment() {
         }
 
         radioGroup1.setOnCheckedChangeListener { group, checkedId ->
-            bjType = if (checkedId == R.id.rb1) 0 else 1
+            bjType = if (checkedId == R.id.rb1) {
+                0
+            } else {
+                1
+            }
+
             editor.putInt("type", bjType)
             editor.apply()
             viewModel.changeType()
@@ -356,6 +369,7 @@ class WeatherFragment : Fragment() {
                         modifyLayout.visibility = View.GONE
                     }
                     groupCity.visibility = View.VISIBLE
+                    modify.text = null
                     editor.apply()
                     viewModel.changeCity(s.toString())
                 }

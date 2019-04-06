@@ -1,5 +1,9 @@
 package com.weather.data
 
+import android.appwidget.AppWidgetManager
+import android.content.Intent
+import android.os.Build
+import android.os.Handler
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +15,8 @@ import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 class WeatherNetWork {
 
@@ -35,10 +41,12 @@ class WeatherNetWork {
     private var url = "https://www.tianqiapi.com/api/?version=v2&appid=1001&appsecret=1002&"
     private var cityNames: List<CityName>
     var newUrl = url
+
     init {
         var iS = ActivityUtil.instance.currentActivity!!.resources.assets.open("city.json")
         val listType = object : TypeToken<List<CityName>>() {}.type
         cityNames = Gson().fromJson(readStreamToString(iS),listType)
+
     }
 
     @Throws(IOException::class)
@@ -83,10 +91,45 @@ class WeatherNetWork {
 
     fun getCity(city: String): LiveData<Weather> {
         if(checkCity(city)){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                var okHttpClient = OkHttpClient()
+                var request = Request.Builder()
+                    .url(newUrl)
+                    .build()
+
+                okHttpClient.newCall(request).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        getDataFromJson(response.body()!!.string())
+                        var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                        MyApplication.context.sendBroadcast(intent)
+                    }
+                })
+            }else{
+                Thread{
+                    var url = URL(newUrl)
+                    var conn = url.openConnection() as HttpsURLConnection
+                    var inStream = conn.inputStream;
+                    // 得到html的二进制数据
+                    getDataFromJson(readStreamToString(inStream))
+                    var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                    MyApplication.context.sendBroadcast(intent)
+                }.start()
+            }
+
+        }
+        return weather
+    }
+
+    fun updateWidget(set: setWidget){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             var okHttpClient = OkHttpClient()
             var request = Request.Builder()
-                .url(newUrl)
-                .build()
+                    .url(newUrl)
+                    .build()
 
             okHttpClient.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
@@ -94,50 +137,71 @@ class WeatherNetWork {
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    temp = Gson().fromJson(response.body()!!.string(), Weather::class.java)
-                    temp.data.toHashSet().forEach {
-                        if (!it.wea.contains("雨")) {
-                            temp.data.remove(it)
-                        }else{
-                            it.tem = it.tem2 + "-" + it.tem1 + "℃"
-                            var date = it.date.split('-')
-                            it.y = date[0]
-                            it.m = date[1]
-                            it.d = date[2]
-                            it.tip = when (it.wea.length) {
-                                1 -> "下雨天，记得带伞"
-                                2 -> when (it.wea) {
-                                    "小雨" -> "雨虽小，注意保暖别感冒"
-                                    "中雨" -> "记得随身携带雨伞"
-                                    "大雨" -> "出门最好穿雨衣，勿挡视线"
-                                    "阵雨" -> "阵雨来袭，出门记得带伞"
-                                    "暴雨" -> "尽量避免户外活动"
-                                    else -> "error"
-                                }
-                                3 -> {
-                                    if (it.wea.contains("转"))
-                                        "天气多变，照顾好自己"
-                                    else
-                                        when (it.wea) {
-                                            "雷阵雨" -> "尽量减少户外活动"
-                                            "大暴雨" -> "尽量避免户外活动"
-                                            "雨夹雪" -> "道路湿滑，步行开车要谨慎"
-                                            else -> "error"
-                                        }
-                                }
-                                else -> "天气多变，照顾好自己"
-                            }
-                        }
-
-                    }
-                    weather.postValue(temp)
+                    set.callBack(getDataFromJson(response.body()!!.string()))
                 }
             })
+        }else{
+            Thread{
+                var url = URL(newUrl)
+                var conn = url.openConnection() as HttpsURLConnection
+                var inStream = conn.inputStream;
+                // 得到html的二进制数据
+                set.callBack(getDataFromJson(readStreamToString(inStream)))
+            }.start()
         }
-        return weather
     }
 
+    interface setWidget{
+        fun callBack(wea: Weather)
+    }
+
+    private fun getDataFromJson(str: String): Weather{
+        temp = Gson().fromJson(str, Weather::class.java)
+        temp.data.toHashSet().forEach {
+            if (!it.wea.contains("雨")) {
+                temp.data.remove(it)
+            }else{
+                it.tem = it.tem2 + "-" + it.tem1 + "℃"
+                var date = it.date.split('-')
+                it.y = date[0]
+                it.m = date[1]
+                it.d = date[2]
+                it.tip = when (it.wea.length) {
+                    1 -> "下雨天，记得带伞"
+                    2 -> when (it.wea) {
+                        "小雨" -> "雨虽小，注意保暖别感冒"
+                        "中雨" -> "记得随身携带雨伞"
+                        "大雨" -> "出门最好穿雨衣，勿挡视线"
+                        "阵雨" -> "阵雨来袭，出门记得带伞"
+                        "暴雨" -> "尽量避免户外活动"
+                        else -> "error"
+                    }
+                    3 -> {
+                        if (it.wea.contains("转"))
+                            "天气多变，照顾好自己"
+                        else
+                            when (it.wea) {
+                                "雷阵雨" -> "尽量减少户外活动"
+                                "大暴雨" -> "尽量避免户外活动"
+                                "雨夹雪" -> "道路湿滑，步行开车要谨慎"
+                                else -> "error"
+                            }
+                    }
+                    else -> "天气多变，照顾好自己"
+                }
+            }
+
+        }
+        weather.postValue(temp)
+        return temp
+    }
+
+
+
     companion object {
+
+        var mCity: String = "ip"
+
         @Volatile
         private var instant: WeatherNetWork? = null
 

@@ -1,0 +1,114 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/appwidget"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:background="#00000000">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/appwidget_now_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_small"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/widget_text_size"
+            tools:text="17:25:33"
+            tools:textColor="@color/colorItemText" />
+
+        <TextView
+            android:id="@+id/appwidget_now_date"
+            android:layout_below="@id/appwidget_now_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_small"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/item_smalltext_size"
+            tools:text="2019年4月6日"
+            tools:textColor="@color/colorItemText" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/center"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_centerInParent="true"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/widget3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/appwidget_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/widget_text_size"
+                tools:text="杭州"
+                tools:textColor="@color/colorItemText" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/lineHeight"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/appwidget_wea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/item_smalltext_size"
+                    tools:text="小雨"
+                    tools:textColor="@color/colorItemText" />
+
+                <TextView
+                    android:id="@+id/appwidget_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin_small"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/item_smalltext_size"
+                    tools:text="04/04"
+                    tools:textColor="@color/colorItemText" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/appwidget_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_below="@id/widget3"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/item_smalltext_size"
+            tools:text="下雨天，记得带伞"
+            tools:textColor="@color/colorItemText" />
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

@@ -8,7 +8,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import com.weather.databinding.MainActivityBinding
 import com.weather.util.ActivityUtil
-import com.weather.R
+import android.app.Activity
+import android.content.Intent
+import android.view.View
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
         editor = sharedPreferences.edit()
         onNight = sharedPreferences.getBoolean("onNight",false)
+        setAndroidNativeLightStatusBar(this, onNight)
         if(onNight){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }else{
@@ -31,6 +35,16 @@ class MainActivity : AppCompatActivity() {
         }
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
         ActivityUtil.instance.currentActivity = this
+        startService(Intent(this, UpdateWidgetService::class.java))
+    }
+
+    private fun setAndroidNativeLightStatusBar(activity: Activity, onNight: Boolean) {
+        val decor = activity.window.decorView
+        if (!onNight) {
+            decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        }
     }
 
     override fun finish() {
