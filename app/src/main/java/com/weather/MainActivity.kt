@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         }
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
         ActivityUtil.instance.currentActivity = this
-        startService(Intent(this, UpdateWidgetService::class.java))
     }
 
     private fun setAndroidNativeLightStatusBar(activity: Activity, onNight: Boolean) {

@@ -37,7 +37,6 @@ class WeatherNetWork {
         "我所知道关于你的，只有天气了",
         "没有你的酷安，都是基佬")
     private var weather = MutableLiveData<Weather>()
-    private lateinit var temp : Weather
     private var url = "https://www.tianqiapi.com/api/?version=v2&appid=1001&appsecret=1002&"
     private var cityNames: List<CityName>
     var newUrl = url
@@ -103,7 +102,7 @@ class WeatherNetWork {
                     }
 
                     override fun onResponse(call: Call, response: Response) {
-                        getDataFromJson(response.body()!!.string())
+                        temp = getDataFromJson(response.body()!!.string())
                         var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                         MyApplication.context.sendBroadcast(intent)
                     }
@@ -114,7 +113,7 @@ class WeatherNetWork {
                     var conn = url.openConnection() as HttpsURLConnection
                     var inStream = conn.inputStream;
                     // 得到html的二进制数据
-                    getDataFromJson(readStreamToString(inStream))
+                    temp = getDataFromJson(readStreamToString(inStream))
                     var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
                 }.start()
@@ -122,37 +121,6 @@ class WeatherNetWork {
 
         }
         return weather
-    }
-
-    fun updateWidget(set: setWidget){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            var okHttpClient = OkHttpClient()
-            var request = Request.Builder()
-                    .url(newUrl)
-                    .build()
-
-            okHttpClient.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    set.callBack(getDataFromJson(response.body()!!.string()))
-                }
-            })
-        }else{
-            Thread{
-                var url = URL(newUrl)
-                var conn = url.openConnection() as HttpsURLConnection
-                var inStream = conn.inputStream;
-                // 得到html的二进制数据
-                set.callBack(getDataFromJson(readStreamToString(inStream)))
-            }.start()
-        }
-    }
-
-    interface setWidget{
-        fun callBack(wea: Weather)
     }
 
     private fun getDataFromJson(str: String): Weather{
@@ -200,8 +168,7 @@ class WeatherNetWork {
 
     companion object {
 
-        var mCity: String = "ip"
-
+        lateinit var temp : Weather
         @Volatile
         private var instant: WeatherNetWork? = null
 

@@ -25,7 +25,7 @@ class MyWidget : AppWidgetProvider() {
     }
 
     override fun onEnabled(context: Context) {
-        context.startService(Intent(context, UpdateWidgetService::class.java))
+
     }
 
     override fun onDisabled(context: Context) {
@@ -45,21 +45,21 @@ class MyWidget : AppWidgetProvider() {
                 context: Context, appWidgetManager: AppWidgetManager,
                 appWidgetId: Int
         ) {
-            WeatherNetWork.getInstance().updateWidget(object : WeatherNetWork.setWidget {
-                override fun callBack(wea: Weather) {
-                    // Construct the RemoteViews object
-                    val views = RemoteViews(context.packageName, R.layout.widget)
-                    var intent = Intent(context, MainActivity::class.java)
-                    var pi = PendingIntent.getActivity(context, 0, intent, 0)
-                    views.setOnClickPendingIntent(R.id.appwidget, pi)
-                    views.setTextViewText(R.id.appwidget_city, wea.city)
-                    views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
-                    views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
-                    views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
-                    // Instruct the widget manager to update the widget
-                    appWidgetManager.updateAppWidget(appWidgetId, views)
-                }
-            })
+            try {
+                var wea = WeatherNetWork.temp
+                val views = RemoteViews(context.packageName, R.layout.widget)
+                var intent = Intent(context, MainActivity::class.java)
+                var pi = PendingIntent.getActivity(context, 0, intent, 0)
+                views.setOnClickPendingIntent(R.id.appwidget, pi)
+                views.setTextViewText(R.id.appwidget_city, wea.city)
+                views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
+                views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
+                views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
+                // Instruct the widget manager to update the widget
+                appWidgetManager.updateAppWidget(appWidgetId, views)
+            }catch (e: Exception){
+
+            }
         }
     }
 }

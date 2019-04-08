@@ -12,10 +12,6 @@
         android:roundIcon="@drawable/weather"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service
-            android:name=".UpdateWidgetService"
-            android:enabled="true"
-            android:exported="true"></service>
 
         <receiver android:name=".MyWidget">
             <intent-filter>

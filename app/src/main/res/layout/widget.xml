@@ -13,17 +13,19 @@
         android:gravity="right"
         android:orientation="vertical">
 
-        <TextView
+        <TextClock
             android:id="@+id/appwidget_now_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/margin_small"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/widget_text_size"
+            android:format12Hour="HH:mm:ss"
+            android:format24Hour="HH:mm:ss"
             tools:text="17:25:33"
             tools:textColor="@color/colorItemText" />
 
-        <TextView
+        <TextClock
             android:id="@+id/appwidget_now_date"
             android:layout_below="@id/appwidget_now_time"
             android:layout_width="wrap_content"
@@ -31,6 +33,8 @@
             android:layout_marginRight="@dimen/margin_small"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/item_smalltext_size"
+            android:format12Hour="yyyy年MM月dd日"
+            android:format24Hour="yyyy年MM月dd日"
             tools:text="2019年4月6日"
             tools:textColor="@color/colorItemText" />
 
