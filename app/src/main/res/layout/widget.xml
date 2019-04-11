@@ -43,9 +43,12 @@
 
     <TextView
         android:id="@+id/center"
-        android:layout_width="1dp"
+        android:layout_width="10dp"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:ems="1"
+        android:gravity="center"
+        android:text="┃┃┃"
+        android:lineSpacingMultiplier="0.65"
         android:layout_centerInParent="true"/>
 
 
@@ -55,7 +58,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/widget3"
+            android:id="@+id/rightView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_small"
@@ -105,7 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_small"
-            android:layout_below="@id/widget3"
+            android:layout_below="@id/rightView"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/item_smalltext_size"
             tools:text="下雨天，记得带伞"

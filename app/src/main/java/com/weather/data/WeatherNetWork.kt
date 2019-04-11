@@ -3,7 +3,7 @@ package com.weather.data
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
+import android.text.format.DateUtils
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,12 +11,17 @@ import com.weather.MyApplication
 import com.weather.util.ActivityUtil
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.weather.util.LunarUtil
 import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.net.ssl.HttpsURLConnection
+
+
 
 class WeatherNetWork {
 
@@ -37,9 +42,9 @@ class WeatherNetWork {
         "我所知道关于你的，只有天气了",
         "没有你的酷安，都是基佬")
     private var weather = MutableLiveData<Weather>()
-    private var url = "https://www.tianqiapi.com/api/?version=v2&appid=1001&appsecret=1002&"
+    private var urlv2 = "https://www.tianqiapi.com/api/?version=v1&"
     private var cityNames: List<CityName>
-    var newUrl = url
+    var newUrlv2 = urlv2
 
     init {
         var iS = ActivityUtil.instance.currentActivity!!.resources.assets.open("city.json")
@@ -72,12 +77,12 @@ class WeatherNetWork {
         if (city.length > 1) {
             cityNames.forEach{
                 if (city == it.cityZh){
-                    newUrl= url + "city=$city"
+                    newUrlv2= urlv2 + "city=$city"
                     return true
                 }
             }
             if (city == "ip") {
-                newUrl= url + "ip"
+                newUrlv2= urlv2 + "ip"
                 return true
             }
         }
@@ -85,15 +90,15 @@ class WeatherNetWork {
     }
 
     fun changeType(){
-        weather.postValue(temp)
+        weather.postValue(weatherTemp)
     }
 
-    fun getCity(city: String): LiveData<Weather> {
+    fun getWeather(city: String): LiveData<Weather> {
         if(checkCity(city)){
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                 var okHttpClient = OkHttpClient()
                 var request = Request.Builder()
-                    .url(newUrl)
+                    .url(newUrlv2)
                     .build()
 
                 okHttpClient.newCall(request).enqueue(object : Callback {
@@ -102,18 +107,18 @@ class WeatherNetWork {
                     }
 
                     override fun onResponse(call: Call, response: Response) {
-                        temp = getDataFromJson(response.body()!!.string())
+                        weatherTemp = getWeatherFromJson(response.body()!!.string())
                         var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                         MyApplication.context.sendBroadcast(intent)
                     }
                 })
             }else{
                 Thread{
-                    var url = URL(newUrl)
+                    var url = URL(newUrlv2)
                     var conn = url.openConnection() as HttpsURLConnection
                     var inStream = conn.inputStream;
                     // 得到html的二进制数据
-                    temp = getDataFromJson(readStreamToString(inStream))
+                    weatherTemp = getWeatherFromJson(readStreamToString(inStream))
                     var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
                 }.start()
@@ -123,21 +128,30 @@ class WeatherNetWork {
         return weather
     }
 
-    private fun getDataFromJson(str: String): Weather{
-        temp = Gson().fromJson(str, Weather::class.java)
-        temp.data.toHashSet().forEach {
+
+
+    private fun getWeatherFromJson(str: String): Weather{
+        weatherTemp = Gson().fromJson(str, Weather::class.java)
+        weatherTemp.data.toHashSet().forEach {
             if (!it.wea.contains("雨")) {
-                temp.data.remove(it)
+                weatherTemp.data.remove(it)
             }else{
-                it.tem = it.tem2 + "-" + it.tem1 + "℃"
+                it.tems = it.tem2.substring(0,it.tem2.length - 1) + "-" + it.tem1
                 var date = it.date.split('-')
+
                 it.y = date[0]
                 it.m = date[1]
                 it.d = date[2]
+                var today = Calendar.getInstance()
+                today.time = SimpleDateFormat("yyyy-MM-dd").parse(it.date)
+                var nl = LunarUtil(today).toString()
+                var start = nl.indexOf("月")+1
+                var end = nl.lastIndex+1
+                it.date_nl =  nl.substring(start,end)
                 it.tip = when (it.wea.length) {
                     1 -> "下雨天，记得带伞"
                     2 -> when (it.wea) {
-                        "小雨" -> "雨虽小，注意保暖别感冒"
+                        "小雨" -> "雨虽小，注意别感冒"
                         "中雨" -> "记得随身携带雨伞"
                         "大雨" -> "出门最好穿雨衣，勿挡视线"
                         "阵雨" -> "阵雨来袭，出门记得带伞"
@@ -160,15 +174,14 @@ class WeatherNetWork {
             }
 
         }
-        weather.postValue(temp)
-        return temp
+        weather.postValue(weatherTemp)
+        return weatherTemp
     }
 
 
-
     companion object {
+        lateinit var weatherTemp : Weather
 
-        lateinit var temp : Weather
         @Volatile
         private var instant: WeatherNetWork? = null
 

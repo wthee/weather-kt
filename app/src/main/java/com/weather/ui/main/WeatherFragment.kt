@@ -21,6 +21,7 @@ import com.google.android.material.textfield.TextInputLayout
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import kotlinx.android.synthetic.main.weather_fragment.*
@@ -30,6 +31,7 @@ import java.util.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.weather.MainActivity
 import com.weather.util.InjectorUtil
+import com.weather.widgets.WidgetSetting
 import java.lang.Exception
 
 
@@ -38,24 +40,20 @@ class WeatherFragment : Fragment() {
     companion object {
         var nlIsGone = false
         var bjType = 0
-        lateinit var adapter1: WeatherAdapter1
         var lastCity = "ip"
     }
 
     private lateinit var viewModel: WeatherViewModel
     private lateinit var binding: WeatherFragmentBinding
-    //private lateinit var adapter1: WeatherAdapter1
+    private lateinit var adapter1: WeatherAdapter1
     private lateinit var adapter2: WeatherAdapter2
     private lateinit var progressBar: ProgressBar
     private lateinit var swipe: SwipeRefreshLayout
     private lateinit var setting: TextView
+    private lateinit var widgetsetting: TextView
     private lateinit var city1: RadioButton
     private lateinit var city2: RadioButton
     private lateinit var city3: RadioButton
-    private lateinit var rb1: RadioButton
-    private lateinit var rb2: RadioButton
-    private lateinit var rb3: RadioButton
-    private lateinit var rb4: RadioButton
     private lateinit var rb5: RadioButton
     private lateinit var rb6: RadioButton
     private lateinit var input: TextInputEditText
@@ -68,8 +66,9 @@ class WeatherFragment : Fragment() {
     private lateinit var radioGroup3: RadioGroup
     private lateinit var mainLayout: CoordinatorLayout
     private lateinit var imm: InputMethodManager
-    private lateinit var curDate: Date
-    private lateinit var endDate: Date
+
+    private var firstTime: Long = 0
+
     private var density: Float = 0f
     private var settingViewHight: Int = 0
     private var back = 0
@@ -106,8 +105,6 @@ class WeatherFragment : Fragment() {
         val factory = InjectorUtil.getWeatherViewModelFactory(lastCity)
         viewModel = ViewModelProviders.of(this, factory).get(WeatherViewModel::class.java)
         imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        curDate = Date(System.currentTimeMillis())
-        endDate = Date(System.currentTimeMillis())
         density = ActivityUtil.instance.currentActivity!!.resources.displayMetrics.density
         initView()
         setOb()
@@ -140,26 +137,19 @@ class WeatherFragment : Fragment() {
         view!!.requestFocus()
         view!!.setOnKeyListener(object : View.OnKeyListener {
             override fun onKey(view: View, i: Int, keyEvent: KeyEvent): Boolean {
+                var secondTime = System.currentTimeMillis();
                 if (keyEvent.action === KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK) {
-                    back++
-
-                    if (back == 1) {
-                        curDate = Date(System.currentTimeMillis())
-                    }
-                    if (back == 2) {
-                        endDate = Date(System.currentTimeMillis())
-                        back = 0
-                    }
-                    if (settingView.visibility == View.VISIBLE)
+                    if (settingView.visibility == View.VISIBLE){
                         OCAnim.animateClose(settingView, settingViewHight)
-                    else {
-                        val diff = endDate.time - curDate.time
-                        if (diff in 10..1000) {
-                            return false
-                        }
-                        Toast.makeText(activity, "再按一次退出", Toast.LENGTH_SHORT).show()
+                        editor.putBoolean("settingViewisClose",true)
+                        editor.apply()
                     }
-
+                    else if (secondTime - firstTime < 2000) {
+                        System.exit(0)
+                    } else {
+                        Toast.makeText(activity, "再按一次退出", Toast.LENGTH_SHORT).show()
+                        firstTime = System.currentTimeMillis()
+                    }
                     return true
                 }
                 return false
@@ -194,6 +184,7 @@ class WeatherFragment : Fragment() {
                 }
             }
         })
+
     }
 
     private fun resumeAllView(){
@@ -212,15 +203,12 @@ class WeatherFragment : Fragment() {
         progressBar = binding.pb
         swipe = binding.swipe
         setting = binding.setting
+        widgetsetting = binding.widgetset
         settingView = binding.settingView
         radioGroupCity = binding.groupCity
         city1 = binding.city1
         city2 = binding.city2
         city3 = binding.city3
-        rb1 = binding.rb1
-        rb2 = binding.rb2
-        rb3 = binding.rb3
-        rb4 = binding.rb4
         rb5 = binding.rb5
         rb6 = binding.rb6
         radioGroup1 = binding.groupBJ
@@ -244,6 +232,12 @@ class WeatherFragment : Fragment() {
             }
             editor.apply()
             hideAndClear()
+        }
+
+        widgetsetting.setOnClickListener {
+            var intent = Intent(context, WidgetSetting::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            MyApplication.context.startActivity(intent)
         }
 
         swipe.setColorSchemeColors(activity!!.resources.getColor(R.color.colorAccent))
@@ -310,12 +304,7 @@ class WeatherFragment : Fragment() {
         }
 
         radioGroup1.setOnCheckedChangeListener { group, checkedId ->
-            bjType = if (checkedId == R.id.rb1) {
-                0
-            } else {
-                1
-            }
-
+            bjType = if (checkedId == R.id.rb1) 0 else 1
             editor.putInt("type", bjType)
             editor.apply()
             viewModel.changeType()

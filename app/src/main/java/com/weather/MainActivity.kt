@@ -11,6 +11,7 @@ import com.weather.util.ActivityUtil
 import android.app.Activity
 import android.content.Intent
 import android.view.View
+import com.weather.widgets.WidgetSetting
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
         editor = sharedPreferences.edit()
+        WidgetSetting.wColor = sharedPreferences.getInt("widgetColor", WidgetSetting.wColor)
         onNight = sharedPreferences.getBoolean("onNight",false)
         setAndroidNativeLightStatusBar(this, onNight)
         if(onNight){

@@ -2,4 +2,6 @@
     <string name="app_name">没有你的天气</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="widgetset">小部件设置</string>
+    <string name="widgetcolor">小部件字体颜色</string>
 </resources>

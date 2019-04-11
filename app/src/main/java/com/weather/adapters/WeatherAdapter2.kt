@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.weather.data.Data
 import com.weather.databinding.ItemWeather2Binding
 import com.weather.ui.main.WeatherFragment
+import com.weather.util.WeatherInfoUtil
 
 class WeatherAdapter2 : ListAdapter<Data, WeatherAdapter2.ViewHolder>(WeatherDiffCallback()) {
 
@@ -27,7 +28,7 @@ class WeatherAdapter2 : ListAdapter<Data, WeatherAdapter2.ViewHolder>(WeatherDif
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = getItem(position)
         holder.apply {
-            bind(data)
+            bind(data, WeatherInfoUtil.createOnClickListener(itemView.context,data))
             itemView.tag = data
         }
     }
@@ -35,9 +36,10 @@ class WeatherAdapter2 : ListAdapter<Data, WeatherAdapter2.ViewHolder>(WeatherDif
     class ViewHolder(
         private val binding: ItemWeather2Binding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Data) {
+        fun bind(item: Data, listener: View.OnClickListener) {
             binding.apply {
                 data = item
+                onClick = listener
                 isGone = if(WeatherFragment.nlIsGone){
                     View.GONE
                 }else{

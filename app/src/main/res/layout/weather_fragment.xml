@@ -7,18 +7,18 @@
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:fitsSystemWindows="true">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:gravity="center"
-            android:textSize="@dimen/item_text_size"
             android:text="隐约雷鸣 阴霾天空 但盼风雨来 能留你在此"
             android:textColor="@color/colorPrimary"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            android:textSize="@dimen/item_text_size" />
 
 
         <LinearLayout
@@ -217,29 +217,46 @@
                         android:textSize="@dimen/setting_title_size" />
 
                     <RadioGroup
-                            android:id="@+id/groupDN"
+                        android:id="@+id/groupDN"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkedButton="@+id/rb5"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb5"
+                            style="@style/radioStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checkedButton="@+id/rb5"
-                            android:orientation="horizontal">
+                            android:layout_margin="@dimen/margin_small"
+                            android:text="关闭" />
 
                         <RadioButton
-                                android:id="@+id/rb5"
-                                style="@style/radioStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_small"
-                                android:text="关闭"/>
-
-                        <RadioButton
-                                android:id="@+id/rb6"
-                                style="@style/radioStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_small"
-                                android:text="开启"/>
+                            android:id="@+id/rb6"
+                            style="@style/radioStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_small"
+                            android:text="开启" />
 
                     </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/padding_small">
+
+                    <TextView
+                        android:id="@+id/widgetset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_small"
+                        android:text="@string/widgetset"
+                        android:textColor="@color/colorItemText"
+                        android:textSize="@dimen/setting_title_size" />
+
                 </LinearLayout>
 
                 <View
@@ -267,7 +284,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/swipe"
                 android:layout_width="match_parent"
@@ -281,7 +297,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_weather2"/>
+                    tools:listitem="@layout/item_weather2" />
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

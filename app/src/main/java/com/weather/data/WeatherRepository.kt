@@ -3,7 +3,7 @@ package com.weather.data
 class WeatherRepository(
         private val netWork: WeatherNetWork
 ) {
-    fun getCity(city: String) = netWork.getCity(city)
+    fun getWeather(city: String) = netWork.getWeather(city)
     fun changeType() = netWork.changeType()
     fun checkCity(city: String) = netWork.checkCity(city)
 

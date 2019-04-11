@@ -1,4 +1,4 @@
-package com.weather
+package com.weather.widgets
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -6,15 +6,12 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.weather.data.Weather
 import com.weather.data.WeatherNetWork
-import java.util.*
 import android.content.ComponentName
+import android.util.Log
+import com.weather.MainActivity
+import com.weather.R
 
-
-/**
- * Implementation of App Widget functionality.
- */
 class MyWidget : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -46,19 +43,31 @@ class MyWidget : AppWidgetProvider() {
                 appWidgetId: Int
         ) {
             try {
-                var wea = WeatherNetWork.temp
-                val views = RemoteViews(context.packageName, R.layout.widget)
+
+                var wea = WeatherNetWork.weatherTemp
+                var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget)
                 var intent = Intent(context, MainActivity::class.java)
                 var pi = PendingIntent.getActivity(context, 0, intent, 0)
+
                 views.setOnClickPendingIntent(R.id.appwidget, pi)
                 views.setTextViewText(R.id.appwidget_city, wea.city)
                 views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
                 views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
                 views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
+
+
+                views.setTextColor(R.id.appwidget_now_time, WidgetSetting.wColor)
+                views.setTextColor(R.id.appwidget_now_date, WidgetSetting.wColor)
+                views.setTextColor(R.id.center, WidgetSetting.wColor)
+                views.setTextColor(R.id.appwidget_city, WidgetSetting.wColor)
+                views.setTextColor(R.id.appwidget_date, WidgetSetting.wColor)
+                views.setTextColor(R.id.appwidget_wea, WidgetSetting.wColor)
+                views.setTextColor(R.id.appwidget_tip, WidgetSetting.wColor)
+
                 // Instruct the widget manager to update the widget
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }catch (e: Exception){
-
+                Log.e("exception","")
             }
         }
     }
