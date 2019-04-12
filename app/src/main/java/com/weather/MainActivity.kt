@@ -9,15 +9,17 @@ import androidx.databinding.DataBindingUtil
 import com.weather.databinding.MainActivityBinding
 import com.weather.util.ActivityUtil
 import android.app.Activity
-import android.content.Intent
 import android.view.View
-import com.weather.widgets.WidgetSetting
 
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         var onNight = true
+        var wColor: Int = -16777216
+        var widgetTips = true
+        var isDiyTips = false
+        var diyTips = ""
         lateinit var sharedPreferences: SharedPreferences
         lateinit var editor: SharedPreferences.Editor
     }
@@ -27,7 +29,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
         editor = sharedPreferences.edit()
-        WidgetSetting.wColor = sharedPreferences.getInt("widgetColor", WidgetSetting.wColor)
+        wColor = sharedPreferences.getInt("widgetColor", wColor)
+        widgetTips = sharedPreferences.getBoolean("widgetTips", widgetTips)
+        isDiyTips = sharedPreferences.getBoolean("isDiyTips", isDiyTips)
+        diyTips = sharedPreferences.getString("diyTips", diyTips)
         onNight = sharedPreferences.getBoolean("onNight",false)
         setAndroidNativeLightStatusBar(this, onNight)
         if(onNight){

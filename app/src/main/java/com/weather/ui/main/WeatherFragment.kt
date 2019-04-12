@@ -1,12 +1,9 @@
 package com.weather.ui.main
 
-import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProviderInfo
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.ProgressBar
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -19,21 +16,17 @@ import com.weather.util.OCAnim
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import kotlinx.android.synthetic.main.weather_fragment.*
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.weather.*
-import java.util.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.weather.MainActivity
+import com.weather.util.AlertDialogUtil
 import com.weather.util.InjectorUtil
-import com.weather.widgets.WidgetSetting
-import java.lang.Exception
-
 
 class WeatherFragment : Fragment() {
 
@@ -41,6 +34,7 @@ class WeatherFragment : Fragment() {
         var nlIsGone = false
         var bjType = 0
         var lastCity = "ip"
+        lateinit var imm: InputMethodManager
     }
 
     private lateinit var viewModel: WeatherViewModel
@@ -50,6 +44,7 @@ class WeatherFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var swipe: SwipeRefreshLayout
     private lateinit var setting: TextView
+    private lateinit var noWea: TextView
     private lateinit var widgetsetting: TextView
     private lateinit var city1: RadioButton
     private lateinit var city2: RadioButton
@@ -65,13 +60,15 @@ class WeatherFragment : Fragment() {
     private lateinit var radioGroup2: RadioGroup
     private lateinit var radioGroup3: RadioGroup
     private lateinit var mainLayout: CoordinatorLayout
-    private lateinit var imm: InputMethodManager
+
+    //now weather
+    private lateinit var nowUpdate: TextView
+    private lateinit var nowWea: TextView
+    private lateinit var nowTem: TextView
 
     private var firstTime: Long = 0
-
     private var density: Float = 0f
     private var settingViewHight: Int = 0
-    private var back = 0
 
     private var saveC1 = "ip"
     private var saveC2 = "北京"
@@ -111,9 +108,7 @@ class WeatherFragment : Fragment() {
         return binding.root
     }
 
-    /**
-     * 初始化viewTreeObserver事件监听,重写OnPreDrawListener获取组件高度
-     */
+
     private fun initOnPreDrawListener() {
         var viewTreeObserver = activity!!.window.decorView.viewTreeObserver;
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
@@ -129,6 +124,7 @@ class WeatherFragment : Fragment() {
                 return true
             }
         })
+
     }
 
     override fun onResume() {
@@ -165,6 +161,7 @@ class WeatherFragment : Fragment() {
 
         viewModel.weather.observe(viewLifecycleOwner, Observer { weather ->
             if (weather != null) {
+                noWea.visibility = if(weather.data.size==0) View.VISIBLE else View.GONE
                 setting.text = weather.city
                 input.text = null
                 input.hint = "更新于 " + weather.update_time
@@ -182,6 +179,15 @@ class WeatherFragment : Fragment() {
                     adapter2.submitList(weather.data)
                     adapter2.notifyDataSetChanged()
                 }
+            }
+
+        })
+
+        viewModel.nowWeather.observe(viewLifecycleOwner, Observer { now ->
+            if(now!=null){
+                nowUpdate.text = now.update_time
+                nowWea.text = now.wea
+                nowTem.text = now.tem
             }
         })
 
@@ -203,6 +209,7 @@ class WeatherFragment : Fragment() {
         progressBar = binding.pb
         swipe = binding.swipe
         setting = binding.setting
+        noWea = binding.noWea
         widgetsetting = binding.widgetset
         settingView = binding.settingView
         radioGroupCity = binding.groupCity
@@ -218,6 +225,10 @@ class WeatherFragment : Fragment() {
         modify = binding.modify
         modifyLayout = binding.modifyLayout
         mainLayout = binding.mainLayout
+
+        nowUpdate = binding.nowUpdate
+        nowWea = binding.nowWea
+        nowTem = binding.nowTem
 
         initOnPreDrawListener()
         resumeAllView()
@@ -235,9 +246,7 @@ class WeatherFragment : Fragment() {
         }
 
         widgetsetting.setOnClickListener {
-            var intent = Intent(context, WidgetSetting::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            MyApplication.context.startActivity(intent)
+            AlertDialogUtil().showWidgetSettingDialog(binding.root.context,activity!!.fragmentManager)
         }
 
         swipe.setColorSchemeColors(activity!!.resources.getColor(R.color.colorAccent))
@@ -409,10 +418,8 @@ class WeatherFragment : Fragment() {
             hideAndClear()
             return@OnTouchListener true
         })
+
     }
-
-
-
 
     private fun hideAndClear() {
         input.clearFocus()

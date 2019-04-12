@@ -1,6 +1,6 @@
 package com.weather
 
-import android.util.Log
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.weather.data.Data
 import com.weather.databinding.ItemWeather1Binding
 import com.weather.ui.main.WeatherFragment
-import com.weather.util.WeatherInfoUtil
+import com.weather.util.AlertDialogUtil
 
 class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDiffCallback()) {
 
@@ -27,10 +27,16 @@ class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDif
         )
     }
 
+    fun createOnClickListener(context: Context, item: Data): View.OnClickListener {
+        return View.OnClickListener {
+            AlertDialogUtil().showWeatherInfoDialog(context, item)
+        }
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = getItem(position)
         holder.apply {
-            bind(data, WeatherInfoUtil.createOnClickListener(itemView.context,data))
+            bind(data, createOnClickListener(itemView.context,data))
             itemView.tag = data
         }
     }

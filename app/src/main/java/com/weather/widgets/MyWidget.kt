@@ -9,7 +9,12 @@ import android.widget.RemoteViews
 import com.weather.data.WeatherNetWork
 import android.content.ComponentName
 import android.util.Log
+import android.view.View
 import com.weather.MainActivity
+import com.weather.MainActivity.Companion.diyTips
+import com.weather.MainActivity.Companion.isDiyTips
+import com.weather.MainActivity.Companion.wColor
+import com.weather.MainActivity.Companion.widgetTips
 import com.weather.R
 
 class MyWidget : AppWidgetProvider() {
@@ -48,21 +53,40 @@ class MyWidget : AppWidgetProvider() {
                 var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget)
                 var intent = Intent(context, MainActivity::class.java)
                 var pi = PendingIntent.getActivity(context, 0, intent, 0)
-
                 views.setOnClickPendingIntent(R.id.appwidget, pi)
-                views.setTextViewText(R.id.appwidget_city, wea.city)
-                views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
-                views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
-                views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
 
+                if(wea.data.size>0){
+                    views.setTextViewText(R.id.appwidget_city, wea.city)
+                    views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
+                    views.setTextViewText(R.id.center, "┃┃┃")
+                    views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
+                    views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
+                }else{
+                    views.setTextViewText(R.id.appwidget_city,"")
+                    views.setTextViewText(R.id.appwidget_date, "")
+                    views.setTextViewText(R.id.center, "")
+                    views.setTextViewText(R.id.appwidget_wea, "")
+                    views.setTextViewText(R.id.appwidget_tip, "")
+                }
 
-                views.setTextColor(R.id.appwidget_now_time, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget_now_date, WidgetSetting.wColor)
-                views.setTextColor(R.id.center, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget_city, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget_date, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget_wea, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget_tip, WidgetSetting.wColor)
+                if(isDiyTips){
+                    views.setTextViewText(R.id.appwidget_tip, diyTips)
+                }
+
+                if(widgetTips) {
+                    views.setViewVisibility(R.id.appwidget_tip, View.VISIBLE)
+                } else{
+                    views.setViewVisibility(R.id.appwidget_tip, View.GONE)
+
+                }
+
+                views.setTextColor(R.id.appwidget_now_time, wColor)
+                views.setTextColor(R.id.appwidget_now_date, wColor)
+                views.setTextColor(R.id.center, wColor)
+                views.setTextColor(R.id.appwidget_city, wColor)
+                views.setTextColor(R.id.appwidget_date, wColor)
+                views.setTextColor(R.id.appwidget_wea, wColor)
+                views.setTextColor(R.id.appwidget_tip, wColor)
 
                 // Instruct the widget manager to update the widget
                 appWidgetManager.updateAppWidget(appWidgetId, views)

@@ -9,7 +9,12 @@ import android.widget.RemoteViews
 import com.weather.data.WeatherNetWork
 import android.content.ComponentName
 import android.util.Log
+import android.view.View
 import com.weather.MainActivity
+import com.weather.MainActivity.Companion.diyTips
+import com.weather.MainActivity.Companion.isDiyTips
+import com.weather.MainActivity.Companion.wColor
+import com.weather.MainActivity.Companion.widgetTips
 import com.weather.R
 
 class MyWidget2 : AppWidgetProvider() {
@@ -47,21 +52,64 @@ class MyWidget2 : AppWidgetProvider() {
             try {
 
                 var wea = WeatherNetWork.weatherTemp
+
                 var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget2)
                 var intent = Intent(context, MainActivity::class.java)
                 var pi = PendingIntent.getActivity(context, 0, intent, 0)
                 views.setOnClickPendingIntent(R.id.appwidget2, pi)
 
-                views.setTextViewText(R.id.appwidget2_city, wea.city)
-                views.setTextViewText(R.id.appwidget2_date, wea.data[0].m + wea.data[0].d)
-                views.setTextViewText(R.id.appwidget2_wea, wea.data[0].wea)
+                if(wea.data.size>0){
+                    views.setTextViewText(R.id.appwidget2_date, wea.data[0].m + wea.data[0].d)
+                    views.setTextViewText(R.id.center, "┃┃┃┃┃┃┃┃┃")
+                    views.setTextViewText(R.id.appwidget2_city, wea.city)
+                    views.setTextViewText(R.id.appwidget2_wea, wea.data[0].wea)
+                    var tips = wea.data[0].tip.split("，")
+                    if(tips.size>1){
+                        views.setTextViewText(R.id.appwidget2_tip, tips[0])
+                        views.setTextViewText(R.id.appwidget2_tip2, tips[1])
+                    }
+                    else{
+                        views.setTextViewText(R.id.appwidget2_tip, wea.data[0].tip)
+                    }
 
-                views.setTextColor(R.id.appwidget2_now_time, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget2_now_date, WidgetSetting.wColor)
-                views.setTextColor(R.id.center, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget2_city, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget2_date, WidgetSetting.wColor)
-                views.setTextColor(R.id.appwidget2_wea, WidgetSetting.wColor)
+                }else{
+                    views.setTextViewText(R.id.appwidget2_date, "")
+                    views.setTextViewText(R.id.center, "")
+                    views.setTextViewText(R.id.appwidget2_city, "")
+                    views.setTextViewText(R.id.appwidget2_wea, "")
+                    views.setTextViewText(R.id.appwidget2_tip, "")
+                    views.setTextViewText(R.id.appwidget2_tip2, "")
+                }
+
+                if(isDiyTips){
+                    var tips = diyTips.split("，")
+                    if(tips.size>1){
+                        views.setTextViewText(R.id.appwidget2_tip, tips[0])
+                        views.setTextViewText(R.id.appwidget2_tip2, tips[1])
+                    }
+                    else{
+                        views.setTextViewText(R.id.appwidget2_tip, diyTips)
+                        views.setTextViewText(R.id.appwidget2_tip2, "")
+                    }
+                }
+
+                if(widgetTips) {
+                    views.setViewVisibility(R.id.appwidget2_tip, View.VISIBLE)
+                    views.setViewVisibility(R.id.appwidget2_tip2, View.VISIBLE)
+                } else{
+                    views.setViewVisibility(R.id.appwidget2_tip, View.GONE)
+                    views.setViewVisibility(R.id.appwidget2_tip2, View.GONE)
+
+                }
+
+                views.setTextColor(R.id.appwidget2_now_time, wColor)
+                views.setTextColor(R.id.appwidget2_now_date, wColor)
+                views.setTextColor(R.id.center, wColor)
+                views.setTextColor(R.id.appwidget2_city, wColor)
+                views.setTextColor(R.id.appwidget2_date, wColor)
+                views.setTextColor(R.id.appwidget2_wea, wColor)
+                views.setTextColor(R.id.appwidget2_tip, wColor)
+                views.setTextColor(R.id.appwidget2_tip2, wColor)
                 // Instruct the widget manager to update the widget
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }catch (e: Exception){

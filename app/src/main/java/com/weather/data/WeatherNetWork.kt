@@ -3,7 +3,6 @@ package com.weather.data
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Build
-import android.text.format.DateUtils
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -42,9 +41,12 @@ class WeatherNetWork {
         "我所知道关于你的，只有天气了",
         "没有你的酷安，都是基佬")
     private var weather = MutableLiveData<Weather>()
-    private var urlv2 = "https://www.tianqiapi.com/api/?version=v1&"
+    private var nowWeather = MutableLiveData<NowWeather>()
+    private var urlv1 = "https://www.tianqiapi.com/api/?version=v1&"
+    private var urlv6 = "https://www.tianqiapi.com/api/?version=v6&"
     private var cityNames: List<CityName>
-    var newUrlv2 = urlv2
+    var newUrlv1 = urlv1
+    var newUrlv6 = urlv6
 
     init {
         var iS = ActivityUtil.instance.currentActivity!!.resources.assets.open("city.json")
@@ -77,12 +79,14 @@ class WeatherNetWork {
         if (city.length > 1) {
             cityNames.forEach{
                 if (city == it.cityZh){
-                    newUrlv2= urlv2 + "city=$city"
+                    newUrlv1= urlv1 + "city=$city"
+                    newUrlv6= urlv6 + "city=$city"
                     return true
                 }
             }
             if (city == "ip") {
-                newUrlv2= urlv2 + "ip"
+                newUrlv1= urlv1 + "ip"
+                newUrlv6= urlv6 + "ip"
                 return true
             }
         }
@@ -93,42 +97,72 @@ class WeatherNetWork {
         weather.postValue(weatherTemp)
     }
 
-    fun getWeather(city: String): LiveData<Weather> {
+    fun changeCity(city: String){
         if(checkCity(city)){
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                var okHttpClient = OkHttpClient()
-                var request = Request.Builder()
-                    .url(newUrlv2)
-                    .build()
+            getWeather(city)
+            getNowWeather(city)
+        }
+    }
 
-                okHttpClient.newCall(request).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
+    fun getWeather(city: String): LiveData<Weather> {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            var okHttpClient = OkHttpClient()
+            var request = Request.Builder()
+                .url(newUrlv1)
+                .build()
 
-                    override fun onResponse(call: Call, response: Response) {
-                        weatherTemp = getWeatherFromJson(response.body()!!.string())
-                        var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-                        MyApplication.context.sendBroadcast(intent)
-                    }
-                })
-            }else{
-                Thread{
-                    var url = URL(newUrlv2)
-                    var conn = url.openConnection() as HttpsURLConnection
-                    var inStream = conn.inputStream;
-                    // 得到html的二进制数据
-                    weatherTemp = getWeatherFromJson(readStreamToString(inStream))
+            okHttpClient.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    weatherTemp = getWeatherFromJson(response.body()!!.string())
                     var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
-                }.start()
-            }
-
+                }
+            })
+        }else{
+            Thread{
+                var url = URL(newUrlv1)
+                var conn = url.openConnection() as HttpsURLConnection
+                var inStream = conn.inputStream;
+                // 得到html的二进制数据
+                weatherTemp = getWeatherFromJson(readStreamToString(inStream))
+                var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                MyApplication.context.sendBroadcast(intent)
+            }.start()
         }
         return weather
     }
 
+    fun getNowWeather(city: String): LiveData<NowWeather> {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            var okHttpClient = OkHttpClient()
+            var request = Request.Builder()
+                .url(newUrlv6)
+                .build()
 
+            okHttpClient.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    nowWeatherTemp = getNowWeatherFromJson(response.body()!!.string())
+                }
+            })
+        }else{
+            Thread{
+                var url = URL(newUrlv6)
+                var conn = url.openConnection() as HttpsURLConnection
+                var inStream = conn.inputStream;
+                // 得到html的二进制数据
+                nowWeatherTemp = getNowWeatherFromJson(readStreamToString(inStream))
+            }.start()
+        }
+        return nowWeather
+    }
 
     private fun getWeatherFromJson(str: String): Weather{
         weatherTemp = Gson().fromJson(str, Weather::class.java)
@@ -178,16 +212,21 @@ class WeatherNetWork {
         return weatherTemp
     }
 
-
+    private fun getNowWeatherFromJson(str: String): NowWeather{
+        nowWeatherTemp = Gson().fromJson(str, NowWeather::class.java)
+        nowWeatherTemp.tem = nowWeatherTemp.tem + "℃"
+        nowWeather.postValue(nowWeatherTemp)
+        return nowWeatherTemp
+    }
     companion object {
         lateinit var weatherTemp : Weather
+        lateinit var nowWeatherTemp : NowWeather
 
         @Volatile
         private var instant: WeatherNetWork? = null
 
         fun getInstance() = instant ?: synchronized(this) {
-            instant
-                ?: WeatherNetWork().also { instant = it }
+            instant ?: WeatherNetWork().also { instant = it }
         }
     }
 }
