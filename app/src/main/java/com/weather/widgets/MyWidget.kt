@@ -8,6 +8,7 @@ import android.content.Intent
 import android.widget.RemoteViews
 import com.weather.data.WeatherNetWork
 import android.content.ComponentName
+import android.net.Uri
 import android.util.Log
 import android.view.View
 import com.weather.MainActivity
@@ -55,18 +56,13 @@ class MyWidget : AppWidgetProvider() {
                 var pi = PendingIntent.getActivity(context, 0, intent, 0)
                 views.setOnClickPendingIntent(R.id.appwidget, pi)
 
+
                 if(wea.data.size>0){
                     views.setTextViewText(R.id.appwidget_city, wea.city)
                     views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
                     views.setTextViewText(R.id.center, "┃┃┃")
                     views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
                     views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
-                }else{
-                    views.setTextViewText(R.id.appwidget_city,"")
-                    views.setTextViewText(R.id.appwidget_date, "")
-                    views.setTextViewText(R.id.center, "")
-                    views.setTextViewText(R.id.appwidget_wea, "")
-                    views.setTextViewText(R.id.appwidget_tip, "")
                 }
 
                 if(isDiyTips){
@@ -77,8 +73,14 @@ class MyWidget : AppWidgetProvider() {
                     views.setViewVisibility(R.id.appwidget_tip, View.VISIBLE)
                 } else{
                     views.setViewVisibility(R.id.appwidget_tip, View.GONE)
-
                 }
+
+
+                views.setViewVisibility(R.id.appwidget_city,if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.center, if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget_tip, if(wea.data.size>0) View.VISIBLE else View.GONE)
 
                 views.setTextColor(R.id.appwidget_now_time, wColor)
                 views.setTextColor(R.id.appwidget_now_date, wColor)

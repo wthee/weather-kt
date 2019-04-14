@@ -11,7 +11,12 @@ import com.weather.util.ActivityUtil
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.weather.util.LunarUtil
-import okhttp3.*
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.http.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -19,7 +24,6 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
-
 
 
 class WeatherNetWork {
@@ -42,9 +46,12 @@ class WeatherNetWork {
         "没有你的酷安，都是基佬")
     private var weather = MutableLiveData<Weather>()
     private var nowWeather = MutableLiveData<NowWeather>()
+
     private var urlv1 = "https://www.tianqiapi.com/api/?version=v1&"
     private var urlv6 = "https://www.tianqiapi.com/api/?version=v6&"
     private var cityNames: List<CityName>
+    private lateinit var map1: Map<String,String>
+    private lateinit var map6: Map<String,String>
     var newUrlv1 = urlv1
     var newUrlv6 = urlv6
 
@@ -52,7 +59,6 @@ class WeatherNetWork {
         var iS = ActivityUtil.instance.currentActivity!!.resources.assets.open("city.json")
         val listType = object : TypeToken<List<CityName>>() {}.type
         cityNames = Gson().fromJson(readStreamToString(iS),listType)
-
     }
 
     @Throws(IOException::class)
@@ -81,12 +87,16 @@ class WeatherNetWork {
                 if (city == it.cityZh){
                     newUrlv1= urlv1 + "city=$city"
                     newUrlv6= urlv6 + "city=$city"
+                    map1 = mapOf("version" to "v1", "city" to city)
+                    map6 = mapOf("version" to "v6", "city" to city)
                     return true
                 }
             }
             if (city == "ip") {
                 newUrlv1= urlv1 + "ip"
                 newUrlv6= urlv6 + "ip"
+                map1 = mapOf("version" to "v1", "ip" to "")
+                map6 = mapOf("version" to "v6", "ip" to "")
                 return true
             }
         }
@@ -98,73 +108,76 @@ class WeatherNetWork {
     }
 
     fun changeCity(city: String){
-        if(checkCity(city)){
-            getWeather(city)
-            getNowWeather(city)
-        }
+        getWeather(city)
+        getNowWeather(city)
     }
 
     fun getWeather(city: String): LiveData<Weather> {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            var okHttpClient = OkHttpClient()
-            var request = Request.Builder()
-                .url(newUrlv1)
-                .build()
+        if(checkCity(city)){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                val retrofit: Retrofit =  Retrofit.Builder()
+                    .baseUrl("https://www.tianqiapi.com/api/")
+                    .build()
+                val igService = retrofit.create(IGetRequest::class.java)
+                igService.reqGetWea(map1).enqueue(object : Callback<ResponseBody> {
 
-            okHttpClient.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
+                    override fun onFailure(call: retrofit2.Call<ResponseBody>, t: Throwable) {
+                        var c = call
+                        Toast.makeText(MyApplication.context,"网络出错~",Toast.LENGTH_SHORT).show()
+                    }
 
-                override fun onResponse(call: Call, response: Response) {
-                    weatherTemp = getWeatherFromJson(response.body()!!.string())
+                    override fun onResponse(call: retrofit2.Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
+                        getWeatherFromJson(response.body()!!.string())
+                        var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                        MyApplication.context.sendBroadcast(intent)
+                    }
+                })
+            }else{
+                Thread{
+                    //余杭
+                    var url = URL(newUrlv1)
+                    var conn = url.openConnection() as HttpsURLConnection
+                    var inStream = conn.inputStream
+                    getWeatherFromJson(readStreamToString(inStream))
                     var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
-                }
-            })
-        }else{
-            Thread{
-                var url = URL(newUrlv1)
-                var conn = url.openConnection() as HttpsURLConnection
-                var inStream = conn.inputStream;
-                // 得到html的二进制数据
-                weatherTemp = getWeatherFromJson(readStreamToString(inStream))
-                var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-                MyApplication.context.sendBroadcast(intent)
-            }.start()
+                }.start()
+            }
         }
+
         return weather
     }
 
     fun getNowWeather(city: String): LiveData<NowWeather> {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            var okHttpClient = OkHttpClient()
-            var request = Request.Builder()
-                .url(newUrlv6)
-                .build()
+        if(checkCity(city)){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                val retrofit: Retrofit =  Retrofit.Builder()
+                    .baseUrl("https://www.tianqiapi.com/api/")
+                    .build()
+                val igService = retrofit.create(IGetRequest::class.java)
+                igService.reqGetWea(map6).enqueue(object : Callback<ResponseBody> {
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        Toast.makeText(MyApplication.context,"网络出错~",Toast.LENGTH_SHORT).show()
+                    }
 
-            okHttpClient.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    nowWeatherTemp = getNowWeatherFromJson(response.body()!!.string())
-                }
-            })
-        }else{
-            Thread{
-                var url = URL(newUrlv6)
-                var conn = url.openConnection() as HttpsURLConnection
-                var inStream = conn.inputStream;
-                // 得到html的二进制数据
-                nowWeatherTemp = getNowWeatherFromJson(readStreamToString(inStream))
-            }.start()
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        getNowWeatherFromJson(response.body()!!.string())
+                    }
+                })
+            }else{
+                Thread{
+                    var url = URL(newUrlv6)
+                    var conn = url.openConnection() as HttpsURLConnection
+                    var inStream = conn.inputStream;
+                    getNowWeatherFromJson(readStreamToString(inStream))
+                }.start()
+            }
         }
+
         return nowWeather
     }
 
-    private fun getWeatherFromJson(str: String): Weather{
+    private fun getWeatherFromJson(str: String){
         weatherTemp = Gson().fromJson(str, Weather::class.java)
         weatherTemp.data.toHashSet().forEach {
             if (!it.wea.contains("雨")) {
@@ -209,15 +222,19 @@ class WeatherNetWork {
 
         }
         weather.postValue(weatherTemp)
-        return weatherTemp
     }
 
-    private fun getNowWeatherFromJson(str: String): NowWeather{
+    private fun getNowWeatherFromJson(str: String){
         nowWeatherTemp = Gson().fromJson(str, NowWeather::class.java)
         nowWeatherTemp.tem = nowWeatherTemp.tem + "℃"
         nowWeather.postValue(nowWeatherTemp)
-        return nowWeatherTemp
     }
+
+    interface IGetRequest{
+        @GET(".")
+        fun reqGetWea(@QueryMap map:Map<String ,String>): Call<ResponseBody>
+    }
+
     companion object {
         lateinit var weatherTemp : Weather
         lateinit var nowWeatherTemp : NowWeather

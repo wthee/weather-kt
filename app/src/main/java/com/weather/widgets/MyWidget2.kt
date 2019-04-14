@@ -58,9 +58,9 @@ class MyWidget2 : AppWidgetProvider() {
                 var pi = PendingIntent.getActivity(context, 0, intent, 0)
                 views.setOnClickPendingIntent(R.id.appwidget2, pi)
 
+
                 if(wea.data.size>0){
                     views.setTextViewText(R.id.appwidget2_date, wea.data[0].m + wea.data[0].d)
-                    views.setTextViewText(R.id.center, "┃┃┃┃┃┃┃┃┃")
                     views.setTextViewText(R.id.appwidget2_city, wea.city)
                     views.setTextViewText(R.id.appwidget2_wea, wea.data[0].wea)
                     var tips = wea.data[0].tip.split("，")
@@ -71,14 +71,6 @@ class MyWidget2 : AppWidgetProvider() {
                     else{
                         views.setTextViewText(R.id.appwidget2_tip, wea.data[0].tip)
                     }
-
-                }else{
-                    views.setTextViewText(R.id.appwidget2_date, "")
-                    views.setTextViewText(R.id.center, "")
-                    views.setTextViewText(R.id.appwidget2_city, "")
-                    views.setTextViewText(R.id.appwidget2_wea, "")
-                    views.setTextViewText(R.id.appwidget2_tip, "")
-                    views.setTextViewText(R.id.appwidget2_tip2, "")
                 }
 
                 if(isDiyTips){
@@ -99,8 +91,14 @@ class MyWidget2 : AppWidgetProvider() {
                 } else{
                     views.setViewVisibility(R.id.appwidget2_tip, View.GONE)
                     views.setViewVisibility(R.id.appwidget2_tip2, View.GONE)
-
                 }
+
+                views.setViewVisibility(R.id.appwidget2_city,if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget2_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.center, if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget2_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget2_tip, if(wea.data.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget2_tip2, if(wea.data.size>0) View.VISIBLE else View.GONE)
 
                 views.setTextColor(R.id.appwidget2_now_time, wColor)
                 views.setTextColor(R.id.appwidget2_now_date, wColor)

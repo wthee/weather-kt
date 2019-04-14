@@ -65,237 +65,254 @@
             </LinearLayout>
 
 
-
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/settingView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="invisible"
-                tools:visibility="visible">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/lineHeight"
-                    android:background="@color/line" />
+                <TextView
+                    android:layout_gravity="right"
+                    android:gravity="right"
+                    android:textSize="@dimen/setting_title_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/item_text_size"
+                    android:textColor="@color/colorPrimary"
+                    android:textIsSelectable="true"
+                    android:ems="1"
+                    android:text="这里太空了，不知道加什么"/>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingTop="@dimen/padding_small">
+                    tools:visibility="visible">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="切换城市"
-                        android:textColor="@color/colorItemText"
-                        android:textSize="@dimen/setting_title_size" />
-
-                    <RadioGroup
-                        android:id="@+id/groupCity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:orientation="horizontal">
-
-                        <RadioButton
-                            android:id="@+id/city1"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_small"
-                            android:text="ip"
-                            android:textSize="@dimen/setting_title_size" />
-
-                        <RadioButton
-                            android:id="@+id/city2"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/setting_title_size"
-                            android:text="北京"
-                            android:textSize="@dimen/setting_title_size" />
-
-                        <RadioButton
-                            android:id="@+id/city3"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/setting_title_size"
-                            android:text="上海"
-                            android:textSize="@dimen/setting_title_size" />
-
-
-                    </RadioGroup>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/modifyLayout"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:visibility="gone">
+                        android:layout_height="@dimen/lineHeight"
+                        android:background="@color/line" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/modify"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/padding_small"
+                        android:paddingTop="@dimen/padding_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="切换城市"
+                            android:textColor="@color/colorItemText"
+                            android:textSize="@dimen/setting_title_size" />
+
+                        <RadioGroup
+                            android:id="@+id/groupCity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_small"
+                            android:layout_marginBottom="@dimen/margin_small"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/city1"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/margin_small"
+                                android:text="ip"
+                                android:textSize="@dimen/setting_title_size" />
+
+                            <RadioButton
+                                android:id="@+id/city2"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/setting_title_size"
+                                android:text="北京"
+                                android:textSize="@dimen/setting_title_size" />
+
+                            <RadioButton
+                                android:id="@+id/city3"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/setting_title_size"
+                                android:text="上海"
+                                android:textSize="@dimen/setting_title_size" />
+
+
+                        </RadioGroup>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/modifyLayout"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@color/colorPrimary"
-                            android:hint="输入城市名"
-                            android:inputType="text"
-                            android:singleLine="true"
-                            android:textSize="@dimen/item_text_size" />
+                            android:layout_marginBottom="@dimen/margin_small"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:visibility="gone">
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/modify"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/colorPrimary"
+                                android:hint="输入城市名"
+                                android:inputType="text"
+                                android:singleLine="true"
+                                android:textSize="@dimen/item_text_size" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/padding_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="切换布局"
+                            android:textColor="@color/colorItemText"
+                            android:textSize="@dimen/setting_title_size" />
+
+                        <RadioGroup
+                            android:id="@+id/groupBJ"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkedButton="@+id/rb1"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/rb1"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                android:text="默认" />
+
+                            <RadioButton
+                                android:id="@+id/rb2"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                android:text="测试" />
+
+                        </RadioGroup>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/padding_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="显示农历"
+                            android:textColor="@color/colorItemText"
+                            android:textSize="@dimen/setting_title_size" />
+
+                        <RadioGroup
+                            android:id="@+id/groupNL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkedButton="@+id/rb3"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/rb3"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                android:text="隐藏" />
+
+                            <RadioButton
+                                android:id="@+id/rb4"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                android:text="显示" />
+
+                        </RadioGroup>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/padding_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="夜间模式"
+                            android:textColor="@color/colorItemText"
+                            android:textSize="@dimen/setting_title_size" />
+
+                        <RadioGroup
+                            android:id="@+id/groupDN"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkedButton="@+id/rb5"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/rb5"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                android:text="关闭" />
+
+                            <RadioButton
+                                android:id="@+id/rb6"
+                                style="@style/radioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                android:text="开启" />
+
+                        </RadioGroup>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/padding_small">
+
+                        <TextView
+                            android:id="@+id/widgetset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/margin_small"
+                            android:text="@string/widgetset"
+                            android:textColor="@color/colorItemText"
+                            android:textSize="@dimen/setting_title_size" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/lineHeight"
+                        android:background="@color/line" />
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_small">
+            </FrameLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="切换布局"
-                        android:textColor="@color/colorItemText"
-                        android:textSize="@dimen/setting_title_size" />
-
-                    <RadioGroup
-                        android:id="@+id/groupBJ"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkedButton="@+id/rb1"
-                        android:orientation="horizontal">
-
-                        <RadioButton
-                            android:id="@+id/rb1"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_small"
-                            android:text="默认" />
-
-                        <RadioButton
-                            android:id="@+id/rb2"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_small"
-                            android:text="测试" />
-
-                    </RadioGroup>
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_small">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="显示农历"
-                        android:textColor="@color/colorItemText"
-                        android:textSize="@dimen/setting_title_size" />
-
-                    <RadioGroup
-                        android:id="@+id/groupNL"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkedButton="@+id/rb3"
-                        android:orientation="horizontal">
-
-                        <RadioButton
-                            android:id="@+id/rb3"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_small"
-                            android:text="隐藏" />
-
-                        <RadioButton
-                            android:id="@+id/rb4"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_small"
-                            android:text="显示" />
-
-                    </RadioGroup>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_small">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="夜间模式"
-                        android:textColor="@color/colorItemText"
-                        android:textSize="@dimen/setting_title_size" />
-
-                    <RadioGroup
-                        android:id="@+id/groupDN"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkedButton="@+id/rb5"
-                        android:orientation="horizontal">
-
-                        <RadioButton
-                            android:id="@+id/rb5"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_small"
-                            android:text="关闭" />
-
-                        <RadioButton
-                            android:id="@+id/rb6"
-                            style="@style/radioStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_small"
-                            android:text="开启" />
-
-                    </RadioGroup>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_small">
-
-                    <TextView
-                        android:id="@+id/widgetset"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:text="@string/widgetset"
-                        android:textColor="@color/colorItemText"
-                        android:textSize="@dimen/setting_title_size" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/lineHeight"
-                    android:background="@color/line" />
-
-            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -321,7 +338,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:visibility="gone"
-                    android:text="最近7天，无雨"
+                    android:text="未来7天，无雨"
                     android:layout_marginTop="@dimen/item_text_size"
                     tools:visibility="visible"
                     android:textColor="@color/colorAccent"/>

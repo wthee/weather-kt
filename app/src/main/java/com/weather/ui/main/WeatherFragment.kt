@@ -4,10 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
-import android.widget.ProgressBar
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.weather.databinding.WeatherFragmentBinding
@@ -18,9 +14,9 @@ import com.google.android.material.textfield.TextInputLayout
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.inputmethod.InputMethodManager
+import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import kotlinx.android.synthetic.main.weather_fragment.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.weather.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -54,7 +50,7 @@ class WeatherFragment : Fragment() {
     private lateinit var input: TextInputEditText
     private lateinit var modify: TextInputEditText
     private lateinit var modifyLayout: TextInputLayout
-    private lateinit var settingView: View
+    private lateinit var settingView: FrameLayout
     private lateinit var radioGroupCity: RadioGroup
     private lateinit var radioGroup1: RadioGroup
     private lateinit var radioGroup2: RadioGroup
@@ -113,7 +109,7 @@ class WeatherFragment : Fragment() {
         var viewTreeObserver = activity!!.window.decorView.viewTreeObserver;
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
-                settingViewHight = settingView.getMeasuredHeight();
+                settingViewHight = settingView.measuredHeight;
                 // 移除OnPreDrawListener事件监听
                 activity!!.window.decorView.viewTreeObserver.removeOnPreDrawListener(this);
                 if(settingViewisClose){
