@@ -27,4 +27,5 @@ class ActivityUtil private constructor() {
         val instance = ActivityUtil()
     }
 
+
 }

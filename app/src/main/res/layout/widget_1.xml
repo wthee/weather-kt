@@ -9,8 +9,8 @@
         android:id="@+id/leftView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/center"
         android:layout_centerInParent="true"
+        android:layout_toLeftOf="@id/center"
         android:gravity="right"
         android:orientation="vertical">
 
@@ -18,22 +18,22 @@
             android:id="@+id/appwidget_now_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/widget_text_size"
             android:format12Hour="HH:mm:ss"
             android:format24Hour="HH:mm:ss"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/widget_text_size"
             tools:text="17:25:33"
             tools:textColor="@color/colorItemText" />
 
         <TextClock
             android:id="@+id/appwidget_now_date"
-            android:layout_below="@id/appwidget_now_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/item_smalltext_size"
+            android:layout_below="@id/appwidget_now_time"
             android:format12Hour="yyyy年MM月dd日"
             android:format24Hour="yyyy年MM月dd日"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/item_smalltext_size"
             tools:text="2019年4月6日"
             tools:textColor="@color/colorItemText" />
 
@@ -44,19 +44,20 @@
         android:id="@+id/center"
         android:layout_width="10dp"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_marginRight="@dimen/margin_small"
         android:ems="1"
         android:gravity="center"
-        android:text="┃┃┃"
         android:lineSpacingMultiplier="0.755"
-        android:layout_centerInParent="true"/>
+        android:text="┃┃┃" />
 
 
     <RelativeLayout
         android:id="@+id/rightView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@id/center"
         android:orientation="vertical">
 

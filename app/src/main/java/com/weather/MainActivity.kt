@@ -53,8 +53,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun finish() {
-        super.finish()
-        overridePendingTransition(R.anim.activity_out,0)
-    }
 }

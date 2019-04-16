@@ -240,10 +240,10 @@ class WeatherNetWork {
         lateinit var nowWeatherTemp : NowWeather
 
         @Volatile
-        private var instant: WeatherNetWork? = null
+        private var instance: WeatherNetWork? = null
 
-        fun getInstance() = instant ?: synchronized(this) {
-            instant ?: WeatherNetWork().also { instant = it }
+        fun getInstance() = instance ?: synchronized(this) {
+            instance ?: WeatherNetWork().also { instance = it }
         }
     }
 }

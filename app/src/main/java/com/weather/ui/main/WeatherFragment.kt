@@ -7,22 +7,25 @@ import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.weather.databinding.WeatherFragmentBinding
-import com.weather.util.ActivityUtil
-import com.weather.util.OCAnim
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import android.content.Context
-import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import kotlinx.android.synthetic.main.weather_fragment.*
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.weather.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.weather.MainActivity
-import com.weather.util.AlertDialogUtil
-import com.weather.util.InjectorUtil
+import com.nineoldandroids.view.ViewHelper
+import com.weather.MainActivity.Companion.editor
+import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.ui.setting.SettingDialogFragment
+import com.weather.util.*
 
 class WeatherFragment : Fragment() {
 
@@ -31,30 +34,25 @@ class WeatherFragment : Fragment() {
         var bjType = 0
         var lastCity = "ip"
         lateinit var imm: InputMethodManager
+        lateinit var adapter1: WeatherAdapter1
+        lateinit var adapter2: WeatherAdapter2
+        lateinit var viewModel: WeatherViewModel
+
+        var saveC1 = "ip"
+        var saveC2 = "北京"
+        var saveC3 = "上海"
+
+        var title = ""
     }
 
-    private lateinit var viewModel: WeatherViewModel
     private lateinit var binding: WeatherFragmentBinding
-    private lateinit var adapter1: WeatherAdapter1
-    private lateinit var adapter2: WeatherAdapter2
     private lateinit var progressBar: ProgressBar
     private lateinit var swipe: SwipeRefreshLayout
+    private lateinit var recyclerView: RecyclerView
     private lateinit var setting: TextView
+    private lateinit var settingToolbar: LinearLayout
     private lateinit var noWea: TextView
-    private lateinit var widgetsetting: TextView
-    private lateinit var city1: RadioButton
-    private lateinit var city2: RadioButton
-    private lateinit var city3: RadioButton
-    private lateinit var rb5: RadioButton
-    private lateinit var rb6: RadioButton
     private lateinit var input: TextInputEditText
-    private lateinit var modify: TextInputEditText
-    private lateinit var modifyLayout: TextInputLayout
-    private lateinit var settingView: FrameLayout
-    private lateinit var radioGroupCity: RadioGroup
-    private lateinit var radioGroup1: RadioGroup
-    private lateinit var radioGroup2: RadioGroup
-    private lateinit var radioGroup3: RadioGroup
     private lateinit var mainLayout: CoordinatorLayout
 
     //now weather
@@ -64,30 +62,19 @@ class WeatherFragment : Fragment() {
 
     private var firstTime: Long = 0
     private var density: Float = 0f
-    private var settingViewHight: Int = 0
 
-    private var saveC1 = "ip"
-    private var saveC2 = "北京"
-    private var saveC3 = "上海"
+
     private var settingViewisClose = true
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
+
 
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        sharedPreferences = MainActivity.sharedPreferences
-        editor = MainActivity.editor
-
-        nlIsGone = sharedPreferences.getBoolean("nl",
-            nlIsGone
-        )
-        bjType = sharedPreferences.getInt("type",
-            bjType
-        )
+        nlIsGone = sharedPreferences.getBoolean("nl", nlIsGone)
+        bjType = sharedPreferences.getInt("type", bjType)
         lastCity = sharedPreferences.getString("city", lastCity)
         saveC1 = sharedPreferences.getString("city1", saveC1)
         saveC2 = sharedPreferences.getString("city2", saveC2)
@@ -105,23 +92,7 @@ class WeatherFragment : Fragment() {
     }
 
 
-    private fun initOnPreDrawListener() {
-        var viewTreeObserver = activity!!.window.decorView.viewTreeObserver;
-        viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                settingViewHight = settingView.measuredHeight;
-                // 移除OnPreDrawListener事件监听
-                activity!!.window.decorView.viewTreeObserver.removeOnPreDrawListener(this);
-                if(settingViewisClose){
-                    settingView.visibility = View.GONE
-                }else{
-                    settingView.visibility = View.VISIBLE
-                }
-                return true
-            }
-        })
 
-    }
 
     override fun onResume() {
         super.onResume()
@@ -131,12 +102,7 @@ class WeatherFragment : Fragment() {
             override fun onKey(view: View, i: Int, keyEvent: KeyEvent): Boolean {
                 var secondTime = System.currentTimeMillis();
                 if (keyEvent.action === KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK) {
-                    if (settingView.visibility == View.VISIBLE){
-                        OCAnim.animateClose(settingView, settingViewHight)
-                        editor.putBoolean("settingViewisClose",true)
-                        editor.apply()
-                    }
-                    else if (secondTime - firstTime < 2000) {
+                    if (secondTime - firstTime < 2000) {
                         System.exit(0)
                     } else {
                         Toast.makeText(activity, "再按一次退出", Toast.LENGTH_SHORT).show()
@@ -159,6 +125,7 @@ class WeatherFragment : Fragment() {
             if (weather != null) {
                 noWea.visibility = if(weather.data.size==0) View.VISIBLE else View.GONE
                 setting.text = weather.city
+                title = weather.city
                 input.text = null
                 input.hint = "更新于 " + weather.update_time
                 progressBar.visibility = View.GONE
@@ -189,60 +156,25 @@ class WeatherFragment : Fragment() {
 
     }
 
-    private fun resumeAllView(){
-        city1.text = saveC1
-        city2.text = saveC2
-        city3.text = saveC3
-        if (lastCity == city1.text) city1.isChecked = true
-        if (lastCity == city2.text) city2.isChecked = true
-        if (lastCity == city3.text) city3.isChecked = true
-        if (bjType == 0) radioGroup1.check(R.id.rb1) else radioGroup1.check(R.id.rb2)
-        if (nlIsGone) radioGroup2.check(R.id.rb3) else radioGroup2.check(R.id.rb4)
-        if (MainActivity.onNight) radioGroup3.check(R.id.rb6) else radioGroup3.check(R.id.rb5)
-    }
-
     private fun initView() {
         progressBar = binding.pb
         swipe = binding.swipe
+        recyclerView = binding.recycler
         setting = binding.setting
         noWea = binding.noWea
-        widgetsetting = binding.widgetset
-        settingView = binding.settingView
-        radioGroupCity = binding.groupCity
-        city1 = binding.city1
-        city2 = binding.city2
-        city3 = binding.city3
-        rb5 = binding.rb5
-        rb6 = binding.rb6
-        radioGroup1 = binding.groupBJ
-        radioGroup2 = binding.groupNL
-        radioGroup3 = binding.groupDN
         input = binding.input
-        modify = binding.modify
-        modifyLayout = binding.modifyLayout
         mainLayout = binding.mainLayout
-
+        settingToolbar = binding.settingToolbar
         nowUpdate = binding.nowUpdate
         nowWea = binding.nowWea
         nowTem = binding.nowTem
 
-        initOnPreDrawListener()
-        resumeAllView()
 
-        setting.setOnClickListener {
-            if (settingView.visibility == View.GONE) {
-                OCAnim.animateOpen(settingView, settingViewHight)
-                editor.putBoolean("settingViewisClose",false)
-            } else {
-                OCAnim.animateClose(settingView, settingViewHight)
-                editor.putBoolean("settingViewisClose",true)
-            }
-            editor.apply()
-            hideAndClear()
+        settingToolbar.setOnClickListener {
+            setting.callOnClick()
         }
-
-        widgetsetting.setOnClickListener {
-            AlertDialogUtil().showWidgetSettingDialog(binding.root.context,activity!!.fragmentManager)
+        setting.setOnClickListener {
+            SettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
         }
 
         swipe.setColorSchemeColors(activity!!.resources.getColor(R.color.colorAccent))
@@ -252,148 +184,10 @@ class WeatherFragment : Fragment() {
             viewModel.changeCity(setting.text.toString())
         }
 
-        city1.setOnClickListener {
-            viewModel.changeCity(city1.text.toString())
-        }
-        city2.setOnClickListener {
-            viewModel.changeCity(city2.text.toString())
-        }
-        city3.setOnClickListener {
-            viewModel.changeCity(city3.text.toString())
-        }
-
-
-        city1.setOnLongClickListener {
-            modifyLayout.visibility = if (modifyLayout.visibility == View.GONE) {
-                modify.text = null
-                modify.requestFocus()
-                imm.showSoftInput(modify, 0)
-                View.VISIBLE
-            } else {
-                modify.clearFocus()
-                imm.hideSoftInputFromWindow(modify.windowToken, 0)
-                View.GONE
-            }
-            groupCity.visibility = if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
-            return@setOnLongClickListener false
-        }
-
-        city2.setOnLongClickListener {
-            modifyLayout.visibility = if (modifyLayout.visibility == View.GONE) {
-                modify.text = null
-                modify.requestFocus()
-                imm.showSoftInput(modify, 0)
-                View.VISIBLE
-            } else {
-                modify.clearFocus()
-                imm.hideSoftInputFromWindow(modify.windowToken, 0)
-                View.GONE
-            }
-            groupCity.visibility = if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
-            return@setOnLongClickListener false
-        }
-
-        city3.setOnLongClickListener {
-            modifyLayout.visibility = if (modifyLayout.visibility == View.GONE) {
-                modify.text = null
-                modify.requestFocus()
-                imm.showSoftInput(modify, 0)
-                View.VISIBLE
-            } else {
-                modify.clearFocus()
-                imm.hideSoftInputFromWindow(modify.windowToken, 0)
-                View.GONE
-            }
-            groupCity.visibility = if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
-            return@setOnLongClickListener false
-        }
-
-        radioGroup1.setOnCheckedChangeListener { group, checkedId ->
-            bjType = if (checkedId == R.id.rb1) 0 else 1
-            editor.putInt("type", bjType)
-            editor.apply()
-            viewModel.changeType()
-        }
-
-        radioGroup2.setOnCheckedChangeListener { group, checkedId ->
-            nlIsGone = checkedId == R.id.rb3
-            editor.putBoolean("nl", nlIsGone)
-            editor.apply()
-            adapter1.notifyDataSetChanged()
-            adapter2.notifyDataSetChanged()
-        }
-
-        rb5.setOnClickListener {
-            if (MainActivity.onNight) {
-                MainActivity.onNight = false
-                editor.putBoolean("onNight", MainActivity.onNight)
-                editor.putBoolean("settingViewisClose", false)
-                editor.apply()
-                activity!!.recreate()
-            }
-        }
-
-        rb6.setOnClickListener {
-            if (!MainActivity.onNight) {
-                MainActivity.onNight = true
-                editor.putBoolean("onNight", MainActivity.onNight)
-                editor.putBoolean("settingViewisClose", false)
-                editor.apply()
-                activity!!.recreate()
-            }
-        }
-
-
-        modify.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (viewModel.checkCity(s.toString())) {
-                    if (city1.isChecked) {
-                        city1.text = s
-                        editor.putString("city1",s.toString())
-                        modifyLayout.visibility = View.GONE
-                    }
-                    if (city2.isChecked) {
-                        city2.text = s
-                        editor.putString("city2",s.toString())
-                        modifyLayout.visibility = View.GONE
-                    }
-                    if (city3.isChecked) {
-                        city3.text = s
-                        editor.putString("city3",s.toString())
-                        modifyLayout.visibility = View.GONE
-                    }
-                    groupCity.visibility = View.VISIBLE
-                    modify.text = null
-                    editor.apply()
-                    viewModel.changeCity(s.toString())
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                return
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                return
-            }
-
-        })
 
         input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 viewModel.changeCity(s.toString())
-                if (s.toString() != "") {
-                    when (s.toString()) {
-                        city1.text.toString() -> city1.isChecked = true
-                        city2.text.toString() -> city2.isChecked = true
-                        city3.text.toString() -> city3.isChecked = true
-                        else -> {
-                            city1.isChecked = false
-                            city2.isChecked = false
-                            city3.isChecked = false
-                        }
-                    }
-                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -406,7 +200,8 @@ class WeatherFragment : Fragment() {
 
         })
 
-        binding.recycler.setOnTouchListener(View.OnTouchListener { v, event ->
+
+        recyclerView.setOnTouchListener(View.OnTouchListener { v, event ->
             hideAndClear()
             return@OnTouchListener false
         })
@@ -417,12 +212,10 @@ class WeatherFragment : Fragment() {
 
     }
 
+
+
     private fun hideAndClear() {
         input.clearFocus()
-        modify.clearFocus()
-        groupCity.visibility = View.VISIBLE
-        modifyLayout.visibility = View.GONE
         imm.hideSoftInputFromWindow(input.windowToken, 0)
-        imm.hideSoftInputFromWindow(modify.windowToken, 0)
     }
 }

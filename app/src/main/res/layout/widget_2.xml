@@ -10,8 +10,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="right|top"
         android:layout_marginRight="@dimen/margin_small"
+        android:gravity="right|top"
         android:orientation="vertical">
 
         <TextClock
@@ -41,14 +41,14 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/center"
+        android:id="@+id/center2"
         android:layout_width="10dp"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
         android:ems="1"
         android:gravity="center"
-        android:text="┃┃┃┃┃┃┃┃┃"
         android:lineSpacingMultiplier="0.755"
-        android:layout_centerInParent="true"/>
+        android:text="┃┃┃┃┃┃┃┃┃" />
 
     <RelativeLayout
         android:id="@+id/rightView"
@@ -78,8 +78,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/rightCity"
             android:layout_marginLeft="@dimen/lineHeight"
+            android:layout_toRightOf="@id/rightCity"
             android:orientation="vertical">
 
             <TextView
@@ -122,8 +122,8 @@
         android:id="@+id/appwidget2_tip2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/lineHeight"
         android:layout_below="@id/rightView"
+        android:layout_marginLeft="@dimen/lineHeight"
         android:ems="1"
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/item_smalltext_size"

@@ -1,76 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
-
-    <lecho.lib.hellocharts.view.LineChartView
-        android:id="@+id/chart"
-        android:padding="@dimen/padding_small"
-        android:layout_width="match_parent"
-        android:layout_height="250dp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/lineHeight"
-        android:layout_marginBottom="@dimen/padding_small"
-        android:background="@color/line"/>
+    app:cardCornerRadius="@dimen/lineHeight">
 
     <LinearLayout
-        android:id="@+id/air"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/padding_small"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/air_lv"
+            android:id="@+id/weaDay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/app_name"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_small"
+            android:textColor="@color/colorItemText"
             android:textSize="@dimen/setting_title_size"
-            android:textColor="@color/colorAccent"
-            tools:text="空气质量："/>
+            tools:text="@string/app_name" />
 
-        <TextView
-            android:id="@+id/air_tips"
+
+
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/padding_small"
-            android:paddingBottom="@dimen/padding_small"
-            android:text="@string/app_name"
-            android:textSize="@dimen/item_text_size"
-            tools:text="空气质量asfdagsas："/>
+            android:layout_height="250dp"
+            android:padding="@dimen/padding_small" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/lineHeight"
+            android:layout_marginBottom="@dimen/padding_small"
+            android:background="@color/line" />
+
+        <LinearLayout
+            android:id="@+id/air"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small">
+
+            <TextView
+                android:id="@+id/air_lv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/setting_title_size"
+                tools:text="空气质量：" />
+
+            <TextView
+                android:id="@+id/air_tips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding_small"
+                android:paddingBottom="@dimen/padding_small"
+                android:text="@string/app_name"
+                android:textSize="@dimen/item_text_size"
+                tools:text="空气质量asfdagsas：" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/chuanyi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingBottom="@dimen/padding_small">
+
+            <TextView
+                android:id="@+id/chuanyi_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/setting_title_size"
+                tools:text="穿衣指数：" />
+
+            <TextView
+                android:id="@+id/chuanyi_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding_small"
+                android:text="@string/app_name"
+                android:textSize="@dimen/item_text_size"
+                tools:text="空气质量asfdagsas：" />
+
+        </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/chuanyi"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/padding_small"
-        android:paddingBottom="@dimen/padding_small"
-        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/chuanyi_title"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/app_name"
-            android:textSize="@dimen/setting_title_size"
-            android:textColor="@color/colorAccent"
-            tools:text="穿衣指数："/>
-
-        <TextView
-            android:id="@+id/chuanyi_tip"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/padding_small"
-            android:text="@string/app_name"
-            android:textSize="@dimen/item_text_size"
-            tools:text="空气质量asfdagsas："/>
-
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

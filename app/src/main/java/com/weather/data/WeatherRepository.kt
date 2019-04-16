@@ -1,7 +1,7 @@
 package com.weather.data
 
 class WeatherRepository(
-        private val netWork: WeatherNetWork
+    private val netWork: WeatherNetWork
 ) {
     fun getWeather(city: String) = netWork.getWeather(city)
     fun getNowWeather(city: String) = netWork.getNowWeather(city)
@@ -10,12 +10,12 @@ class WeatherRepository(
     fun checkCity(city: String) = netWork.checkCity(city)
 
     companion object {
-        @Volatile private var instant: WeatherRepository? = null
+        @Volatile
+        private var instance: WeatherRepository? = null
 
-        fun getInstance(netWork: WeatherNetWork) = instant
-            ?: synchronized(this){
-            instant
-                ?: WeatherRepository(netWork).also { instant = it }
-        }
+        fun getInstance(netWork: WeatherNetWork) = instance
+            ?: synchronized(this) {
+                instance ?: WeatherRepository(netWork).also { instance = it }
+            }
     }
 }

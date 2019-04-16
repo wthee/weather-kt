@@ -1,10 +1,12 @@
 package com.weather.data
 
+import java.io.Serializable
+
 class CityName(
     val cityZh: String
 )
 
-data class NowWeather(
+class NowWeather(
         val air: String,
         val date: String,
         val air_level: String,
@@ -45,7 +47,7 @@ class Data(
     var y: String,
     var m: String,
     var d: String
-)
+): Serializable
 
 class Alarm(
     val alarm_content: String,

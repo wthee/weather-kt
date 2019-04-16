@@ -8,7 +8,6 @@ import android.content.Intent
 import android.widget.RemoteViews
 import com.weather.data.WeatherNetWork
 import android.content.ComponentName
-import android.net.Uri
 import android.util.Log
 import android.view.View
 import com.weather.MainActivity
@@ -51,7 +50,7 @@ class MyWidget : AppWidgetProvider() {
             try {
 
                 var wea = WeatherNetWork.weatherTemp
-                var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget)
+                var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget_1)
                 var intent = Intent(context, MainActivity::class.java)
                 var pi = PendingIntent.getActivity(context, 0, intent, 0)
                 views.setOnClickPendingIntent(R.id.appwidget, pi)
@@ -69,18 +68,18 @@ class MyWidget : AppWidgetProvider() {
                     views.setTextViewText(R.id.appwidget_tip, diyTips)
                 }
 
-                if(widgetTips) {
+                if(widgetTips&&wea.data.size>0) {
                     views.setViewVisibility(R.id.appwidget_tip, View.VISIBLE)
                 } else{
                     views.setViewVisibility(R.id.appwidget_tip, View.GONE)
                 }
 
-
                 views.setViewVisibility(R.id.appwidget_city,if(wea.data.size>0) View.VISIBLE else View.GONE)
                 views.setViewVisibility(R.id.appwidget_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
                 views.setViewVisibility(R.id.center, if(wea.data.size>0) View.VISIBLE else View.GONE)
                 views.setViewVisibility(R.id.appwidget_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget_tip, if(wea.data.size>0) View.VISIBLE else View.GONE)
+
+
 
                 views.setTextColor(R.id.appwidget_now_time, wColor)
                 views.setTextColor(R.id.appwidget_now_date, wColor)

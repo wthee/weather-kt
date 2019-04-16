@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardCornerRadius="@dimen/lineHeight">
+
+    <FrameLayout
+        android:id="@+id/settingView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/item_text_size"
+            android:ems="1"
+            android:gravity="right"
+            android:text="这里太空了，不知道加什么"
+            android:textColor="@color/colorPrimary"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/setting_title_size"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/padding_small"
+                android:paddingTop="@dimen/padding_small">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="切换城市"
+                    android:textColor="@color/colorItemText"
+                    android:textSize="@dimen/setting_title_size" />
+
+                <RadioGroup
+                    android:id="@+id/groupCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/city1"
+                        style="@style/radioStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_small"
+                        android:text="ip"
+                        android:textSize="@dimen/setting_title_size" />
+
+                    <RadioButton
+                        android:id="@+id/city2"
+                        style="@style/radioStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/setting_title_size"
+                        android:text="北京"
+                        android:textSize="@dimen/setting_title_size" />
+
+                    <RadioButton
+                        android:id="@+id/city3"
+                        style="@style/radioStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/setting_title_size"
+                        android:text="上海"
+                        android:textSize="@dimen/setting_title_size" />
+
+
+                </RadioGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/modifyLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:visibility="gone">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/modify"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorPrimary"
+                        android:hint="输入城市名"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textSize="@dimen/item_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/padding_small">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="夜间模式"
+                    android:textColor="@color/colorItemText"
+                    android:textSize="@dimen/setting_title_size" />
+
+                <RadioGroup
+                    android:id="@+id/groupDN"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkedButton="@+id/rb5"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb5"
+                        style="@style/radioStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_small"
+                        android:text="关闭" />
+
+                    <RadioButton
+                        android:id="@+id/rb6"
+                        style="@style/radioStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_small"
+                        android:text="开启" />
+
+                </RadioGroup>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:paddingLeft="@dimen/padding_small">
+
+                <TextView
+                    android:id="@+id/othersetting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/othersetting"
+                    android:textColor="@drawable/other_text_click"
+                    android:textSize="@dimen/setting_title_size" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/padding_small"
+                android:layout_marginBottom="@dimen/margin_small">
+
+                <TextView
+                    android:id="@+id/widgetset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/widgetset"
+                    android:textColor="@drawable/other_text_click"
+                    android:textSize="@dimen/setting_title_size" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.cardview.widget.CardView>

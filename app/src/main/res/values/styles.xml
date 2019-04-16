@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowAnimationStyle">@style/AnimationActivity</item>
     </style>
 
     <style name="radioStyle">
@@ -15,11 +14,10 @@
         <item name="android:textColor">@drawable/radio_text_click</item>
     </style>
 
-    <style name="AnimationActivity" parent="@android:style/Animation.Activity">
-        <item name="android:activityOpenEnterAnimation">@anim/activity_in</item>
-        <item name="android:activityOpenExitAnimation">@anim/activity_out</item>
-        <item name="android:activityCloseEnterAnimation">@anim/activity_in</item>
-        <item name="android:activityCloseExitAnimation">@anim/activity_out</item>
+
+    <style name="BottomDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/dialog_slide_down</item>
     </style>
 
 </resources>
