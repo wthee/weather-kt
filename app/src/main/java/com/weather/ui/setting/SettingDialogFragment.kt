@@ -1,15 +1,12 @@
 package com.weather.ui.setting
 
 import android.graphics.Color
-import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -31,9 +28,6 @@ import com.weather.ui.main.WeatherFragment.Companion.viewModel
 class SettingDialogFragment : DialogFragment() {
 
     companion object {
-//        @Volatile
-//        private var instance: SettingDialogFragment? = null
-
         fun getInstance() : SettingDialogFragment{
             return SettingDialogFragment()
         }
@@ -88,7 +82,7 @@ class SettingDialogFragment : DialogFragment() {
                 }
                 MotionEvent.ACTION_UP ->{
                     if(offsetY>0){
-                        if(offsetY<view.height / 3){
+                        if(offsetY<view.height / 4){
                             ViewHelper.setTranslationY(view,0.toFloat())
                         }else{
                             this.dismiss()
@@ -122,13 +116,13 @@ class SettingDialogFragment : DialogFragment() {
     private fun initView() {
 
         widgetsetting.setOnClickListener {
-            this.dismiss()
             WidgetSettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(), "widget")
+            this.dismiss()
         }
 
         othersetting.setOnClickListener {
-            this.dismiss()
             OtherSettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(), "other")
+            this.dismiss()
         }
 
         groupCity.setOnCheckedChangeListener { group, checkedId ->
@@ -251,6 +245,10 @@ class SettingDialogFragment : DialogFragment() {
     }
 
     private fun resumeAllView() {
+
+        saveC1 = MainActivity.sharedPreferences.getString("city1", saveC1)
+        saveC2 = MainActivity.sharedPreferences.getString("city2", saveC2)
+        saveC3 = MainActivity.sharedPreferences.getString("city3", saveC3)
         city1.text = saveC1
         city2.text = saveC2
         city3.text = saveC3

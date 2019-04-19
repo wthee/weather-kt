@@ -49,7 +49,7 @@ class WeatherNetWork {
 
     private var urlv1 = "https://www.tianqiapi.com/api/?version=v1&"
     private var urlv6 = "https://www.tianqiapi.com/api/?version=v6&"
-    private var cityNames: List<CityName>
+    private var citys: List<City>
     private lateinit var map1: Map<String,String>
     private lateinit var map6: Map<String,String>
     var newUrlv1 = urlv1
@@ -57,8 +57,8 @@ class WeatherNetWork {
 
     init {
         var iS = ActivityUtil.instance.currentActivity!!.resources.assets.open("city.json")
-        val listType = object : TypeToken<List<CityName>>() {}.type
-        cityNames = Gson().fromJson(readStreamToString(iS),listType)
+        val listType = object : TypeToken<List<City>>() {}.type
+        citys = Gson().fromJson(readStreamToString(iS),listType)
     }
 
     @Throws(IOException::class)
@@ -76,32 +76,7 @@ class WeatherNetWork {
         return result
     }
 
-    fun checkCity(city: String):Boolean{
-        myUser.forEachIndexed{index,it ->
-            if (city == it) {
-                Toast.makeText(MyApplication.context,showResult[index],Toast.LENGTH_LONG).show()
-            }
-        }
-        if (city.length > 1) {
-            cityNames.forEach{
-                if (city == it.cityZh){
-                    newUrlv1= urlv1 + "city=$city"
-                    newUrlv6= urlv6 + "city=$city"
-                    map1 = mapOf("version" to "v1", "city" to city)
-                    map6 = mapOf("version" to "v6", "city" to city)
-                    return true
-                }
-            }
-            if (city == "ip") {
-                newUrlv1= urlv1 + "ip"
-                newUrlv6= urlv6 + "ip"
-                map1 = mapOf("version" to "v1", "ip" to "")
-                map6 = mapOf("version" to "v6", "ip" to "")
-                return true
-            }
-        }
-        return false
-    }
+
 
     fun changeType(){
         weather.postValue(weatherTemp)
@@ -120,13 +95,10 @@ class WeatherNetWork {
                     .build()
                 val igService = retrofit.create(IGetRequest::class.java)
                 igService.reqGetWea(map1).enqueue(object : Callback<ResponseBody> {
-
-                    override fun onFailure(call: retrofit2.Call<ResponseBody>, t: Throwable) {
-                        var c = call
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         Toast.makeText(MyApplication.context,"网络出错~",Toast.LENGTH_SHORT).show()
                     }
-
-                    override fun onResponse(call: retrofit2.Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         getWeatherFromJson(response.body()!!.string())
                         var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                         MyApplication.context.sendBroadcast(intent)
@@ -134,7 +106,6 @@ class WeatherNetWork {
                 })
             }else{
                 Thread{
-                    //余杭
                     var url = URL(newUrlv1)
                     var conn = url.openConnection() as HttpsURLConnection
                     var inStream = conn.inputStream
@@ -177,8 +148,46 @@ class WeatherNetWork {
         return nowWeather
     }
 
+    fun checkCity(city: String):Boolean{
+        myUser.forEachIndexed{index,it ->
+            if (city == it) {
+                Toast.makeText(MyApplication.context,showResult[index],Toast.LENGTH_LONG).show()
+            }
+        }
+        if (city.length > 1) {
+            citys.forEach{
+                if (city == it.cityZh){
+                    newUrlv1= urlv1 + "city=$city"
+                    newUrlv6= urlv6 + "city=$city"
+                    map1 = mapOf("version" to "v1", "city" to city)
+                    map6 = mapOf("version" to "v6", "city" to city)
+                    return true
+                }
+            }
+            if (city == "ip") {
+                newUrlv1= urlv1 + "ip"
+                newUrlv6= urlv6 + "ip"
+                map1 = mapOf("version" to "v1", "ip" to "")
+                map6 = mapOf("version" to "v6", "ip" to "")
+                return true
+            }
+        }
+        return false
+    }
+
     private fun getWeatherFromJson(str: String){
         weatherTemp = Gson().fromJson(str, Weather::class.java)
+        today = weatherTemp.data[0]
+        if(today.air==0){
+            getLeaderWeather(weatherTemp.city,object :IGetLw{
+                override fun setLeader(wea: Weather) {
+                    today.air = wea.data[0].air
+                    today.air_level = wea.data[0].air_level
+                    today.air_tips = wea.data[0].air_tips
+                }
+
+            })
+        }
         weatherTemp.data.toHashSet().forEach {
             if (!it.wea.contains("雨")) {
                 weatherTemp.data.remove(it)
@@ -200,8 +209,8 @@ class WeatherNetWork {
                     2 -> when (it.wea) {
                         "小雨" -> "雨虽小，注意别感冒"
                         "中雨" -> "记得随身携带雨伞"
-                        "大雨" -> "出门最好穿雨衣，勿挡视线"
-                        "阵雨" -> "阵雨来袭，出门记得带伞"
+                        "大雨" -> "出门最好穿雨衣"
+                        "阵雨" -> "阵雨来袭，记得带伞"
                         "暴雨" -> "尽量避免户外活动"
                         else -> "error"
                     }
@@ -212,7 +221,7 @@ class WeatherNetWork {
                             when (it.wea) {
                                 "雷阵雨" -> "尽量减少户外活动"
                                 "大暴雨" -> "尽量避免户外活动"
-                                "雨夹雪" -> "道路湿滑，步行开车要谨慎"
+                                "雨夹雪" -> "道路湿滑，出行要谨慎"
                                 else -> "error"
                             }
                     }
@@ -230,15 +239,53 @@ class WeatherNetWork {
         nowWeather.postValue(nowWeatherTemp)
     }
 
+    private fun getLeaderWeather(city: String,setLw:IGetLw){
+        var leader = " "
+        citys.forEach {
+            if(city == it.cityZh){
+                leader =  it.leaderZh
+                return@forEach
+            }
+        }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            val retrofit: Retrofit =  Retrofit.Builder()
+                .baseUrl("https://www.tianqiapi.com/api/")
+                .build()
+            val igService = retrofit.create(IGetRequest::class.java)
+            igService.reqGetWea(mapOf("version" to "v1", "city" to leader)).enqueue(object : Callback<ResponseBody> {
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(MyApplication.context,"网络出错~",Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    setLw.setLeader(Gson().fromJson(response.body()!!.string(), Weather::class.java)!!)
+                }
+            })
+
+        }else{
+            Thread{
+                var url = URL("https://www.tianqiapi.com/api/?version=v1&city=$leader")
+                var conn = url.openConnection() as HttpsURLConnection
+                var inStream = conn.inputStream
+                setLw.setLeader(Gson().fromJson(readStreamToString(inStream), Weather::class.java)!!)
+            }.start()
+        }
+    }
+
     interface IGetRequest{
         @GET(".")
         fun reqGetWea(@QueryMap map:Map<String ,String>): Call<ResponseBody>
     }
 
+    interface IGetLw{
+        fun setLeader(wea:Weather)
+    }
+
     companion object {
         lateinit var weatherTemp : Weather
         lateinit var nowWeatherTemp : NowWeather
-
+        lateinit var today :Data
         @Volatile
         private var instance: WeatherNetWork? = null
 

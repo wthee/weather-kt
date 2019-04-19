@@ -72,7 +72,7 @@ class OtherSettingDialogFragment : DialogFragment() {
                 }
                 MotionEvent.ACTION_UP ->{
                     if(offsetY>0){
-                        if(offsetY<view.height / 3){
+                        if(offsetY<view.height / 4){
                             ViewHelper.setTranslationY(view,0.toFloat())
                         }else{
                             this.dismiss()

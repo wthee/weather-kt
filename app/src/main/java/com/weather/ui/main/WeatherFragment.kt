@@ -24,7 +24,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.nineoldandroids.view.ViewHelper
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.data.WeatherNetWork
 import com.weather.ui.setting.SettingDialogFragment
+import com.weather.ui.setting.WeatherInfoDialogFragment
 import com.weather.util.*
 
 class WeatherFragment : Fragment() {
@@ -56,17 +58,13 @@ class WeatherFragment : Fragment() {
     private lateinit var mainLayout: CoordinatorLayout
 
     //now weather
-    private lateinit var nowUpdate: TextView
     private lateinit var nowWea: TextView
     private lateinit var nowTem: TextView
 
     private var firstTime: Long = 0
     private var density: Float = 0f
 
-
     private var settingViewisClose = true
-
-
 
 
     override fun onCreateView(
@@ -76,9 +74,7 @@ class WeatherFragment : Fragment() {
         nlIsGone = sharedPreferences.getBoolean("nl", nlIsGone)
         bjType = sharedPreferences.getInt("type", bjType)
         lastCity = sharedPreferences.getString("city", lastCity)
-        saveC1 = sharedPreferences.getString("city1", saveC1)
-        saveC2 = sharedPreferences.getString("city2", saveC2)
-        saveC3 = sharedPreferences.getString("city3", saveC3)
+
         settingViewisClose = sharedPreferences.getBoolean("settingViewisClose", true)
 
         binding = WeatherFragmentBinding.inflate(inflater, container, false)
@@ -148,7 +144,6 @@ class WeatherFragment : Fragment() {
 
         viewModel.nowWeather.observe(viewLifecycleOwner, Observer { now ->
             if(now!=null){
-                nowUpdate.text = now.update_time
                 nowWea.text = now.wea
                 nowTem.text = now.tem
             }
@@ -165,16 +160,23 @@ class WeatherFragment : Fragment() {
         input = binding.input
         mainLayout = binding.mainLayout
         settingToolbar = binding.settingToolbar
-        nowUpdate = binding.nowUpdate
         nowWea = binding.nowWea
         nowTem = binding.nowTem
 
 
         settingToolbar.setOnClickListener {
-            setting.callOnClick()
+            //setting.callOnClick()
         }
         setting.setOnClickListener {
             SettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
+        }
+        nowWea.setOnClickListener {
+            WeatherInfoDialogFragment.getInstance(WeatherNetWork.today).show(activity!!
+                    .supportFragmentManager
+                    .beginTransaction(),"setting")
+        }
+        nowTem.setOnClickListener {
+            nowWea.callOnClick()
         }
 
         swipe.setColorSchemeColors(activity!!.resources.getColor(R.color.colorAccent))

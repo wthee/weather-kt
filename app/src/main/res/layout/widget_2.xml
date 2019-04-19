@@ -47,7 +47,7 @@
         android:layout_centerInParent="true"
         android:ems="1"
         android:gravity="center"
-        android:lineSpacingMultiplier="0.755"
+        android:lineSpacingMultiplier="0.72"
         android:text="┃┃┃┃┃┃┃┃┃" />
 
     <RelativeLayout

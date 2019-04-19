@@ -97,8 +97,6 @@ class MyWidget2 : AppWidgetProvider() {
                 views.setViewVisibility(R.id.appwidget2_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
                 views.setViewVisibility(R.id.center2, if(wea.data.size>0) View.VISIBLE else View.GONE)
                 views.setViewVisibility(R.id.appwidget2_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget2_tip, if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget2_tip2, if(wea.data.size>0) View.VISIBLE else View.GONE)
 
                 views.setTextColor(R.id.appwidget2_now_time, wColor)
                 views.setTextColor(R.id.appwidget2_now_date, wColor)
