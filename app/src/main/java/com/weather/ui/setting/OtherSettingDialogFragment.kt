@@ -15,6 +15,7 @@ import com.weather.MainActivity.Companion.editor
 import com.weather.ui.main.WeatherFragment.Companion.adapter1
 import com.weather.ui.main.WeatherFragment.Companion.adapter2
 import com.weather.ui.main.WeatherFragment.Companion.viewModel
+import com.weather.util.TranslateWithTouchUtil
 
 
 class OtherSettingDialogFragment : DialogFragment() {
@@ -32,8 +33,6 @@ class OtherSettingDialogFragment : DialogFragment() {
     private lateinit var radioGroup2: RadioGroup
     private lateinit var dm: DisplayMetrics
     private lateinit var params: WindowManager.LayoutParams
-    private var offsetY = 0
-    private  var lastY :Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.setting_other, container,false)
@@ -58,30 +57,8 @@ class OtherSettingDialogFragment : DialogFragment() {
         if (WeatherFragment.bjType == 0) radioGroup1.check(R.id.rb1) else radioGroup1.check(R.id.rb2)
         if (WeatherFragment.nlIsGone) radioGroup2.check(R.id.rb3) else radioGroup2.check(R.id.rb4)
 
-        view.setOnTouchListener { v, event ->
-            var y = event.rawY.toInt()
-            when(event.action){
-                MotionEvent.ACTION_DOWN ->{
-                    lastY = event.rawY.toInt()
-                }
-                MotionEvent.ACTION_MOVE ->{
-                    offsetY = y - lastY
-                    if(offsetY>0){
-                        ViewHelper.setTranslationY(view, offsetY.toFloat())
-                    }
-                }
-                MotionEvent.ACTION_UP ->{
-                    if(offsetY>0){
-                        if(offsetY<view.height / 4){
-                            ViewHelper.setTranslationY(view,0.toFloat())
-                        }else{
-                            this.dismiss()
-                        }
-                    }
-                }
-            }
-            return@setOnTouchListener true
-        }
+        view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
+
         return view
     }
 

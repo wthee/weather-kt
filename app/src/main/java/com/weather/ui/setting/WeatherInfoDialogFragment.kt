@@ -1,10 +1,15 @@
 package com.weather.ui.setting
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -21,8 +26,8 @@ import com.github.mikephil.charting.utils.MPPointF
 import com.nineoldandroids.view.ViewHelper
 import com.weather.R
 import com.weather.data.Data
+import com.weather.util.TranslateWithTouchUtil
 import com.weather.util.WeaColorUtil
-import kotlin.collections.ArrayList
 import java.text.DecimalFormat
 
 
@@ -30,7 +35,7 @@ class WeatherInfoDialogFragment : DialogFragment() {
 
     companion object {
 
-        fun getInstance(item: Data) : WeatherInfoDialogFragment {
+        fun getInstance(item: Data): WeatherInfoDialogFragment {
             var instance = WeatherInfoDialogFragment()
             val args = Bundle()
             args.putSerializable("item", item)
@@ -51,11 +56,9 @@ class WeatherInfoDialogFragment : DialogFragment() {
 
     private lateinit var dm: DisplayMetrics
     private lateinit var params: WindowManager.LayoutParams
-    private var offsetY = 0
-    private  var lastY :Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.weather_info, container,false)
+        var view = inflater.inflate(R.layout.weather_info, container, false)
         lineChart = view.findViewById(R.id.lineChart)
         item = arguments!!.get("item") as Data
 
@@ -75,54 +78,31 @@ class WeatherInfoDialogFragment : DialogFragment() {
 
         day.text = item.day
 
-        if (item.alarm!=null&&item.alarm.alarm_type!="") {
+        if (item.alarm != null && item.alarm.alarm_type != "") {
             alarm.visibility = View.VISIBLE
-            alarm_type.text = item.alarm.alarm_type+"预警："
+            alarm_type.text = item.alarm.alarm_type + "预警："
             alarm_lv.text = item.alarm.alarm_level
             alarm_lv.setTextColor(WeaColorUtil.formColor(item.alarm.alarm_level))
-            alarm_tip.text = "\t\t\t\t"+item.alarm.alarm_content
-        }else{
+            alarm_tip.text = "\t\t\t\t" + item.alarm.alarm_content
+        } else {
             alarm.visibility = View.GONE
         }
 
-        if (item.air_tips!=null) {
+        if (item.air_tips != null) {
             air.visibility = View.VISIBLE
-            air_lv.text = item.air.toString() +" "+ item.air_level
+            air_lv.text = item.air.toString() + " " + item.air_level
             air_lv.setTextColor(WeaColorUtil.formColor(item.air_level))
-            air_tip.text = "\t\t\t\t"+item.air_tips
-        }else{
+            air_tip.text = "\t\t\t\t" + item.air_tips
+        } else {
             air.visibility = View.GONE
         }
 
         cyLv.text = item.index[3].level
         cyLv.setTextColor(WeaColorUtil.formColor(item.index[3].level))
-        cyTips.text = "\t\t\t\t"+item.index[3].desc
+        cyTips.text = "\t\t\t\t" + item.index[3].desc
 
 
-        view.setOnTouchListener { v, event ->
-            var y = event.rawY.toInt()
-            when(event.action){
-                MotionEvent.ACTION_DOWN ->{
-                    lastY = event.rawY.toInt()
-                }
-                MotionEvent.ACTION_MOVE ->{
-                    offsetY = y - lastY
-                    if(offsetY>0){
-                        ViewHelper.setTranslationY(view, offsetY.toFloat())
-                    }
-                }
-                MotionEvent.ACTION_UP ->{
-                    if(offsetY>0){
-                        if(offsetY<view.height / 4){
-                            ViewHelper.setTranslationY(view,0.toFloat())
-                        }else{
-                            this.dismiss()
-                        }
-                    }
-                }
-            }
-            return@setOnTouchListener true
-        }
+        view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
 
         return view
     }
@@ -190,7 +170,7 @@ class WeatherInfoDialogFragment : DialogFragment() {
 
     }
 
-    private fun setDataStyle(datasets: List<LineDataSet>){
+    private fun setDataStyle(datasets: List<LineDataSet>) {
         datasets.forEach {
             it.mode = LineDataSet.Mode.CUBIC_BEZIER
             it.lineWidth = 4f
@@ -206,7 +186,7 @@ class WeatherInfoDialogFragment : DialogFragment() {
         var df = DecimalFormat("##0")
         dataSets[0].valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
-                return df.format(value)+"℃"
+                return df.format(value) + "℃"
             }
         }
         datasets[1].setDrawCircles(false)
@@ -218,12 +198,12 @@ class WeatherInfoDialogFragment : DialogFragment() {
         dataSets[1].valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
                 index++
-                return item.hours[index%item.hours.size].wea
+                return item.hours[index % item.hours.size].wea
             }
         }
     }
 
-    private fun initLineChart(){
+    private fun initLineChart() {
 
         mPointValues = arrayListOf()
         mPointValues1 = arrayListOf()
@@ -232,18 +212,26 @@ class WeatherInfoDialogFragment : DialogFragment() {
         item.hours.forEachIndexed { index, hour ->
             mLables.add(hour.day.substring(3, 5) + ":00")
             var y: Float = hour.tem.substring(0, hour.tem.lastIndex).toFloat()
-            mPointValues.add(Entry(index.toFloat(),y))
+            mPointValues.add(Entry(index.toFloat(), y))
         }
-        var dataSet = LineDataSet(mPointValues,null)
+        var dataSet = LineDataSet(mPointValues, null)
 
         item.hours.forEachIndexed { index, hour ->
             var y: Float = hour.tem.substring(0, hour.tem.lastIndex).toFloat()
-            mPointValues1.add(Entry(index.toFloat(),y+(dataSet.yMax-dataSet.yMin)/8))
+            var dif = dataSet.yMax - dataSet.yMin  //差值
+            var offsetY = if (dif <= 1f) {  //偏移量
+                lineChart.axisLeft.axisMaximum = dataSet.yMax + 1
+                lineChart.axisLeft.axisMinimum = dataSet.yMin - 1
+                2.0f / 8
+            } else {
+                dif / 8
+            }
+            mPointValues1.add(Entry(index.toFloat(), y + offsetY))
         }
 
-        var dataSet1 = LineDataSet(mPointValues1,null)
+        var dataSet1 = LineDataSet(mPointValues1, null)
 
-        dataSets = listOf(dataSet,dataSet1)
+        dataSets = listOf(dataSet, dataSet1)
         lineData = LineData(dataSets)
         setStyle()
         setmarkView()
@@ -256,8 +244,6 @@ class WeatherInfoDialogFragment : DialogFragment() {
         var mv = XYMarkerView()
         lineChart.marker = mv
     }
-
-
 
     inner class XYMarkerView : MarkerView(context, R.layout.chart_marker_view) {
         private val tvContent: TextView = rootView.findViewById(R.id.test)
@@ -372,8 +358,6 @@ class WeatherInfoDialogFragment : DialogFragment() {
             draw(canvas)
             canvas.restoreToCount(saveId)
         }
-
-
 
 
     }
