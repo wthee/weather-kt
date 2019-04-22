@@ -1,13 +1,23 @@
 package com.weather.data
 
+import com.weather.data.network.WeatherNetWork
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+
 class WeatherRepository(
     private val netWork: WeatherNetWork
 ) {
-    fun getWeather(city: String) = netWork.getWeather(city)
-    fun getNowWeather(city: String) = netWork.getNowWeather(city)
-    fun changeCity(city: String) = netWork.changeCity(city)
-    fun changeType() = netWork.changeType()
-    fun checkCity(city: String) = netWork.checkCity(city)
+
+    suspend fun getWeather(map:Map<String,String>) = withContext(Dispatchers.IO) {
+        netWork.fetchWeather(map)
+    }
+
+    suspend fun getNowWeather(map:Map<String,String>) = withContext(Dispatchers.IO) {
+        netWork.fetchNowWeather(map)
+    }
+
+
 
     companion object {
         @Volatile

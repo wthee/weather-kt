@@ -17,9 +17,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.sharedPreferences
-import com.weather.data.WeatherNetWork
+import com.weather.data.network.WeatherNetWork
 import com.weather.viewmodels.WeatherViewModel
 import com.weather.util.*
+import com.weather.viewmodels.WeatherViewModel.Companion.today
 
 class WeatherFragment : Fragment() {
 
@@ -76,16 +77,16 @@ class WeatherFragment : Fragment() {
         settingViewisClose = sharedPreferences.getBoolean("settingViewisClose", true)
 
         binding = WeatherFragmentBinding.inflate(inflater, container, false)
-        val factory = InjectorUtil.getWeatherViewModelFactory(lastCity)
+        val factory = InjectorUtil.getWeatherViewModelFactory()
         viewModel = ViewModelProviders.of(this, factory).get(WeatherViewModel::class.java)
         imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         density = ActivityUtil.instance.currentActivity!!.resources.displayMetrics.density
         initView()
         setOb()
+        viewModel.getWeather("ip")
+        viewModel.getNowWeather("ip")
         return binding.root
     }
-
-
 
 
     override fun onResume() {
@@ -169,7 +170,7 @@ class WeatherFragment : Fragment() {
             SettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
         }
         nowWea.setOnClickListener {
-            WeatherInfoDialogFragment.getInstance(WeatherNetWork.today).show(activity!!
+            WeatherInfoDialogFragment.getInstance(today).show(activity!!
                     .supportFragmentManager
                     .beginTransaction(),"setting")
         }

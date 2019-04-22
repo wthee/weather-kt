@@ -161,7 +161,6 @@ class SettingDialogFragment : DialogFragment() {
         }
 
 
-
         rb5.setOnClickListener {
             if (MainActivity.onNight) {
                 MainActivity.onNight = false
@@ -185,7 +184,7 @@ class SettingDialogFragment : DialogFragment() {
 
         modify.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (viewModel.checkCity(s.toString())) {
+                if (viewModel.checkCity(s.toString()) != -1) {
                     if (city1.isChecked) {
                         city1.text = s
                         editor.putString("city1", s.toString())

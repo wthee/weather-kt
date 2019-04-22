@@ -2,24 +2,6 @@ package com.weather.data
 
 import java.io.Serializable
 
-data class City(
-    val cityZh: String,
-    val id: String,
-    val leaderZh: String
-)
-
-class NowWeather(
-        val air: String,
-        val date: String,
-        val air_level: String,
-        val air_pm25: String,
-        val air_tips: String,
-        val alarm: Alarm,
-        var tem: String,
-        val update_time: String,
-        val wea: String
-)
-
 
 class Weather(
     val city: String,
@@ -51,11 +33,6 @@ class Data(
     var d: String
 ): Serializable
 
-class Alarm(
-    val alarm_content: String,
-    val alarm_level: String,
-    val alarm_type: String
-)
 
 class Hour(
     val day: String,

@@ -30,7 +30,6 @@ import java.text.DecimalFormat
 class WeatherInfoDialogFragment : DialogFragment() {
 
     companion object {
-
         fun getInstance(item: Data): WeatherInfoDialogFragment {
             var instance = WeatherInfoDialogFragment()
             val args = Bundle()

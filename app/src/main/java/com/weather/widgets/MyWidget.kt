@@ -6,7 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.weather.data.WeatherNetWork
+import com.weather.data.network.WeatherNetWork
 import android.content.ComponentName
 import android.util.Log
 import android.view.View
@@ -16,6 +16,7 @@ import com.weather.MainActivity.Companion.isDiyTips
 import com.weather.MainActivity.Companion.wColor
 import com.weather.MainActivity.Companion.widgetTips
 import com.weather.R
+import com.weather.viewmodels.WeatherViewModel
 
 class MyWidget : AppWidgetProvider() {
 
@@ -49,7 +50,7 @@ class MyWidget : AppWidgetProvider() {
         ) {
             try {
 
-                var wea = WeatherNetWork.weatherTemp
+                var wea = WeatherViewModel.weatherTemp
                 var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget_1)
                 var intent = Intent(context, MainActivity::class.java)
                 var pi = PendingIntent.getActivity(context, 0, intent, 0)
