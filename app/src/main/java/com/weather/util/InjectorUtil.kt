@@ -3,7 +3,7 @@ package com.weather.util
 
 import com.weather.data.WeatherNetWork
 import com.weather.data.WeatherRepository
-import com.weather.ui.main.WeatherFactory
+import com.weather.viewmodels.WeatherFactory
 
 
 object InjectorUtil {

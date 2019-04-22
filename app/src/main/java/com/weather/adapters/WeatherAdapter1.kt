@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.weather.data.Data
 import com.weather.databinding.ItemWeather1Binding
-import com.weather.ui.main.WeatherFragment
 import com.weather.util.ActivityUtil
-import com.weather.ui.setting.WeatherInfoDialogFragment
 
 class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDiffCallback()) {
 
@@ -66,10 +64,10 @@ class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDif
 public class WeatherDiffCallback : DiffUtil.ItemCallback<Data>() {
 
     override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
-        return oldItem.date == newItem.date
+        return oldItem == newItem
     }
 
     override fun areContentsTheSame(oldItem: Data, newItem: Data): Boolean {
-        return oldItem == newItem
+        return oldItem.date == newItem.date
     }
 }

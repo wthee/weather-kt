@@ -1,4 +1,4 @@
-package com.weather.ui.setting
+package com.weather
 
 import android.graphics.Canvas
 import android.graphics.Color
@@ -8,8 +8,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -23,8 +21,6 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
-import com.nineoldandroids.view.ViewHelper
-import com.weather.R
 import com.weather.data.Data
 import com.weather.util.TranslateWithTouchUtil
 import com.weather.util.WeaColorUtil

@@ -1,4 +1,4 @@
-package com.weather.ui.setting
+package com.weather
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -13,23 +13,19 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.nineoldandroids.view.ViewHelper
-import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
-import com.weather.R
-import com.weather.ui.main.WeatherFragment
-import com.weather.ui.main.WeatherFragment.Companion.saveC1
-import com.weather.ui.main.WeatherFragment.Companion.saveC2
-import com.weather.ui.main.WeatherFragment.Companion.saveC3
-import com.weather.ui.main.WeatherFragment.Companion.title
-import com.weather.ui.main.WeatherFragment.Companion.viewModel
+import com.weather.WeatherFragment.Companion.saveC1
+import com.weather.WeatherFragment.Companion.saveC2
+import com.weather.WeatherFragment.Companion.saveC3
+import com.weather.WeatherFragment.Companion.title
+import com.weather.WeatherFragment.Companion.viewModel
 import com.weather.util.TranslateWithTouchUtil
 
 
 class SettingDialogFragment : DialogFragment() {
 
     companion object {
-        fun getInstance() : SettingDialogFragment{
+        fun getInstance() : SettingDialogFragment {
             return SettingDialogFragment()
         }
     }
@@ -93,12 +89,14 @@ class SettingDialogFragment : DialogFragment() {
     private fun initView() {
 
         widgetsetting.setOnClickListener {
-            WidgetSettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(), "widget")
+            WidgetSettingDialogFragment.getInstance()
+                .show(activity!!.supportFragmentManager.beginTransaction(), "widget")
             this.dismiss()
         }
 
         othersetting.setOnClickListener {
-            OtherSettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(), "other")
+            OtherSettingDialogFragment.getInstance()
+                .show(activity!!.supportFragmentManager.beginTransaction(), "other")
             this.dismiss()
         }
 

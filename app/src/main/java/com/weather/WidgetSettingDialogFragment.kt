@@ -1,4 +1,4 @@
-package com.weather.ui.setting
+package com.weather
 
 import android.appwidget.AppWidgetManager
 import android.content.DialogInterface
@@ -15,15 +15,10 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.jrummyapps.android.colorpicker.ColorPickerDialog
 import com.jrummyapps.android.colorpicker.ColorPickerDialogListener
-import com.weather.MainActivity
-import com.weather.MyApplication
-import com.weather.R
-import com.weather.ui.main.WeatherFragment
 import android.util.DisplayMetrics
 import android.graphics.drawable.ColorDrawable
 import android.view.*
 import androidx.fragment.app.DialogFragment
-import com.nineoldandroids.view.ViewHelper
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isDiyTips
 import com.weather.util.TranslateWithTouchUtil
@@ -36,7 +31,8 @@ class WidgetSettingDialogFragment : DialogFragment() {
         private var instance: WidgetSettingDialogFragment? = null
 
         fun getInstance() = instance ?: synchronized(this) {
-            instance ?: WidgetSettingDialogFragment().also { instance = it }
+            instance
+                ?: WidgetSettingDialogFragment().also { instance = it }
         }
     }
 

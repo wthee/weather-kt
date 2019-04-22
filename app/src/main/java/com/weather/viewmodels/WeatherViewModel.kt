@@ -1,4 +1,4 @@
-package com.weather.ui.main
+package com.weather.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +8,7 @@ import com.weather.data.WeatherRepository
 
 class WeatherViewModel(
     private val repository: WeatherRepository,
-    private val city: String
+    city: String
 ) : ViewModel() {
     var weather: LiveData<Weather> = repository.getWeather(city)
     var nowWeather: LiveData<NowWeather> = repository.getNowWeather(city)

@@ -1,4 +1,4 @@
-package com.weather.ui.main
+package com.weather
 
 import android.os.Bundle
 import android.text.Editable
@@ -9,24 +9,16 @@ import androidx.lifecycle.ViewModelProviders
 import com.weather.databinding.WeatherFragmentBinding
 import com.google.android.material.textfield.TextInputEditText
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import com.weather.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.nineoldandroids.view.ViewHelper
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.sharedPreferences
 import com.weather.data.WeatherNetWork
-import com.weather.ui.setting.SettingDialogFragment
-import com.weather.ui.setting.WeatherInfoDialogFragment
+import com.weather.viewmodels.WeatherViewModel
 import com.weather.util.*
 
 class WeatherFragment : Fragment() {
@@ -71,9 +63,15 @@ class WeatherFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        nlIsGone = sharedPreferences.getBoolean("nl", nlIsGone)
-        bjType = sharedPreferences.getInt("type", bjType)
-        lastCity = sharedPreferences.getString("city", lastCity)
+        nlIsGone = sharedPreferences.getBoolean("nl",
+            nlIsGone
+        )
+        bjType = sharedPreferences.getInt("type",
+            bjType
+        )
+        lastCity = sharedPreferences.getString("city",
+            lastCity
+        )
 
         settingViewisClose = sharedPreferences.getBoolean("settingViewisClose", true)
 

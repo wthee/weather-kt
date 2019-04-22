@@ -1,20 +1,17 @@
-package com.weather.ui.setting
+package com.weather
 
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.RadioGroup
-import com.weather.R
-import com.weather.ui.main.WeatherFragment
 import android.util.DisplayMetrics
 import android.graphics.drawable.ColorDrawable
 import android.view.*
 import androidx.fragment.app.DialogFragment
-import com.nineoldandroids.view.ViewHelper
 import com.weather.MainActivity.Companion.editor
-import com.weather.ui.main.WeatherFragment.Companion.adapter1
-import com.weather.ui.main.WeatherFragment.Companion.adapter2
-import com.weather.ui.main.WeatherFragment.Companion.viewModel
+import com.weather.WeatherFragment.Companion.adapter1
+import com.weather.WeatherFragment.Companion.adapter2
+import com.weather.WeatherFragment.Companion.viewModel
 import com.weather.util.TranslateWithTouchUtil
 
 
@@ -25,7 +22,8 @@ class OtherSettingDialogFragment : DialogFragment() {
         private var instance: OtherSettingDialogFragment? = null
 
         fun getInstance() = instance ?: synchronized(this) {
-            instance ?: OtherSettingDialogFragment().also { instance = it }
+            instance
+                ?: OtherSettingDialogFragment().also { instance = it }
         }
     }
 
@@ -83,6 +81,7 @@ class OtherSettingDialogFragment : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
-        SettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(), "setting")
+        SettingDialogFragment.getInstance()
+            .show(activity!!.supportFragmentManager.beginTransaction(), "setting")
     }
 }
