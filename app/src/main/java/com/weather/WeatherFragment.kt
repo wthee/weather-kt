@@ -1,5 +1,6 @@
 package com.weather
 
+import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,12 +10,15 @@ import androidx.lifecycle.ViewModelProviders
 import com.weather.databinding.WeatherFragmentBinding
 import com.google.android.material.textfield.TextInputEditText
 import android.content.Context
+import android.content.Intent
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.app.hubert.guide.NewbieGuide
+import com.app.hubert.guide.model.GuidePage
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.sharedPreferences
 import com.weather.data.network.WeatherNetWork
@@ -46,7 +50,6 @@ class WeatherFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var setting: TextView
     private lateinit var settingToolbar: LinearLayout
-    private lateinit var noWea: TextView
     private lateinit var input: TextInputEditText
     private lateinit var mainLayout: CoordinatorLayout
 
@@ -83,11 +86,12 @@ class WeatherFragment : Fragment() {
         density = ActivityUtil.instance.currentActivity!!.resources.displayMetrics.density
         initView()
         setOb()
-        viewModel.getWeather("ip")
-        viewModel.getNowWeather("ip")
+        if(viewModel.weather.value == null){
+            viewModel.getWeather(lastCity)
+            viewModel.getNowWeather(lastCity)
+        }
         return binding.root
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -118,11 +122,13 @@ class WeatherFragment : Fragment() {
 
         viewModel.weather.observe(viewLifecycleOwner, Observer { weather ->
             if (weather != null) {
-                noWea.visibility = if(weather.data.size==0) View.VISIBLE else View.GONE
-                setting.text = weather.city
+                binding.apply {
+                    this.weather = weather
+                    hint = "更新于 " + weather.update_time
+                }
+
                 title = weather.city
                 input.text = null
-                input.hint = "更新于 " + weather.update_time
                 progressBar.visibility = View.GONE
                 swipe.isRefreshing = false
                 editor.putString("city", weather.city)
@@ -137,14 +143,25 @@ class WeatherFragment : Fragment() {
                     adapter2.submitList(weather.data)
                     adapter2.notifyDataSetChanged()
                 }
+
+                NewbieGuide.with(activity)
+                    .setLabel("123")
+                    .addGuidePage(GuidePage.newInstance()
+                        .addHighLight(setting)
+                        .setLayoutRes(R.layout.guide1))
+                    .show()
+
+                var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                MyApplication.context.sendBroadcast(intent)
             }
 
         })
 
         viewModel.nowWeather.observe(viewLifecycleOwner, Observer { now ->
             if(now!=null){
-                nowWea.text = now.wea
-                nowTem.text = now.tem
+                binding.apply {
+                    this.now = now
+                }
             }
         })
 
@@ -155,12 +172,12 @@ class WeatherFragment : Fragment() {
         swipe = binding.swipe
         recyclerView = binding.recycler
         setting = binding.setting
-        noWea = binding.noWea
         input = binding.input
         mainLayout = binding.mainLayout
         settingToolbar = binding.settingToolbar
         nowWea = binding.nowWea
         nowTem = binding.nowTem
+
 
 
         settingToolbar.setOnClickListener {
@@ -212,7 +229,6 @@ class WeatherFragment : Fragment() {
         })
 
     }
-
 
 
     private fun hideAndClear() {

@@ -10,6 +10,7 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
@@ -22,6 +23,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import com.weather.data.Data
+import com.weather.databinding.WeatherInfoBinding
 import com.weather.util.TranslateWithTouchUtil
 import com.weather.util.WeaColorUtil
 import java.text.DecimalFormat
@@ -39,6 +41,7 @@ class WeatherInfoDialogFragment : DialogFragment() {
         }
     }
 
+    private lateinit var binding: WeatherInfoBinding
     private lateinit var lineChart: LineChart
     private lateinit var mPointValues: ArrayList<Entry>
     private lateinit var mPointValues1: ArrayList<Entry>
@@ -53,53 +56,36 @@ class WeatherInfoDialogFragment : DialogFragment() {
     private lateinit var params: WindowManager.LayoutParams
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.weather_info, container, false)
-        lineChart = view.findViewById(R.id.lineChart)
+        binding = DataBindingUtil.inflate(inflater,R.layout.weather_info,container,false)
+
         item = arguments!!.get("item") as Data
+
+        binding.apply{
+            data = item
+        }
+
+        lineChart = binding.lineChart
 
         initLineChart()//初始化
 
-        var day = view.findViewById(R.id.weaDay) as TextView
-        var air = view.findViewById(R.id.air) as LinearLayout
-        var air_lv = view.findViewById(R.id.air_lv) as TextView
-        var air_tip = view.findViewById(R.id.air_tips) as TextView
-        var alarm = view.findViewById(R.id.alarm) as LinearLayout
-        var alarm_type = view.findViewById(R.id.alarm_type) as TextView
-        var alarm_lv = view.findViewById(R.id.alarm_lv) as TextView
-        var alarm_tip = view.findViewById(R.id.alarm_content) as TextView
-
-        var cyLv = view.findViewById(R.id.chuanyi_title) as TextView
-        var cyTips = view.findViewById(R.id.chuanyi_tip) as TextView
-
-        day.text = item.day
+        var air = binding.air
+        var alarm = binding.alarm
 
         if (item.alarm != null && item.alarm.alarm_type != "") {
             alarm.visibility = View.VISIBLE
-            alarm_type.text = item.alarm.alarm_type + "预警："
-            alarm_lv.text = item.alarm.alarm_level
-            alarm_lv.setTextColor(WeaColorUtil.formColor(item.alarm.alarm_level))
-            alarm_tip.text = "\t\t\t\t" + item.alarm.alarm_content
         } else {
             alarm.visibility = View.GONE
         }
 
         if (item.air_tips != null) {
             air.visibility = View.VISIBLE
-            air_lv.text = item.air.toString() + " " + item.air_level
-            air_lv.setTextColor(WeaColorUtil.formColor(item.air_level))
-            air_tip.text = "\t\t\t\t" + item.air_tips
         } else {
             air.visibility = View.GONE
         }
 
-        cyLv.text = item.index[3].level
-        cyLv.setTextColor(WeaColorUtil.formColor(item.index[3].level))
-        cyTips.text = "\t\t\t\t" + item.index[3].desc
+        binding.root.setOnTouchListener(TranslateWithTouchUtil.onTouch(binding.root,this))
 
-
-        view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
-
-        return view
+        return binding.root
     }
 
     override fun onStart() {

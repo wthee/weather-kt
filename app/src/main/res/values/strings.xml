@@ -5,4 +5,7 @@
     <string name="widgetset">小部件</string>
     <string name="widgetcolor">小部件字体颜色</string>
     <string name="othersetting">显示风格</string>
+    <string name="alarm">预警：</string>
+    <string name="tab">\t\t\t\t</string>
+    <string name="space">\t</string>
 </resources>

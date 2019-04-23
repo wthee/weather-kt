@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable name="weather" type="com.weather.data.Weather"/>
+        <variable name="now" type="com.weather.data.NowWeather"/>
+        <variable name="hint" type="String"/>
+    </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
@@ -40,6 +46,7 @@
                     android:clickable="true"
                     android:textColor="@drawable/title_text_click"
                     android:textSize="@dimen/title_text_size"
+                    android:text="@{weather.city}"
                     tools:text="杭州" />
 
                 <TextView
@@ -47,6 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_small"
+                    android:text="@{now.wea}"
                     tools:text="小雨" />
 
                 <TextView
@@ -54,6 +62,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_small"
+                    android:text="@{now.tem}"
                     tools:text="15℃" />
 
             </LinearLayout>
@@ -71,6 +80,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/colorPrimary"
                     android:inputType="text"
+                    android:hint="@{hint}"
                     android:singleLine="true"
                     android:textSize="@dimen/item_text_size" />
 
@@ -84,7 +94,7 @@
                 android:gravity="center"
                 android:text="未来7天，无雨"
                 android:textColor="@color/colorAccent"
-                android:visibility="gone"
+                app:IsGone="@{weather!=null? weather.data.size>0 : true}"
                 tools:visibility="visible" />
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

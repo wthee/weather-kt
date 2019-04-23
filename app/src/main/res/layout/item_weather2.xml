@@ -59,7 +59,7 @@
                         android:text="@{data.m}"
                         android:textColor="@color/colorItemText"
                         android:textSize="@dimen/title_text_size"
-                        tools:text="04" />
+                        tools:text="11" />
 
                 </LinearLayout>
 
