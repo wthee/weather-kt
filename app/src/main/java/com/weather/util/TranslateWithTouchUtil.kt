@@ -32,13 +32,9 @@ object TranslateWithTouchUtil {
                             var anim = TranslateAnimation(0f, 0f, 0f, -offsetY.toFloat());
                             anim.duration = 150
                             anim.setAnimationListener(object : Animation.AnimationListener {
-                                override fun onAnimationRepeat(animation: Animation?) {
-                                    null
-                                }
+                                override fun onAnimationRepeat(animation: Animation?) {}
 
-                                override fun onAnimationStart(animation: Animation?) {
-                                    null
-                                }
+                                override fun onAnimationStart(animation: Animation?) {}
 
                                 override fun onAnimationEnd(animation: Animation?) {
                                     view.clearAnimation()

@@ -17,11 +17,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.app.hubert.guide.NewbieGuide
-import com.app.hubert.guide.model.GuidePage
 import com.weather.MainActivity.Companion.editor
+import com.weather.MainActivity.Companion.isFirstOpen
 import com.weather.MainActivity.Companion.sharedPreferences
-import com.weather.data.network.WeatherNetWork
 import com.weather.viewmodels.WeatherViewModel
 import com.weather.util.*
 import com.weather.viewmodels.WeatherViewModel.Companion.today
@@ -49,11 +47,10 @@ class WeatherFragment : Fragment() {
     private lateinit var swipe: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var setting: TextView
-    private lateinit var settingToolbar: LinearLayout
     private lateinit var input: TextInputEditText
     private lateinit var mainLayout: CoordinatorLayout
 
-    //now weather
+    //now
     private lateinit var nowWea: TextView
     private lateinit var nowTem: TextView
 
@@ -90,6 +87,7 @@ class WeatherFragment : Fragment() {
             viewModel.getWeather(lastCity)
             viewModel.getNowWeather(lastCity)
         }
+
         return binding.root
     }
 
@@ -114,6 +112,7 @@ class WeatherFragment : Fragment() {
         })
     }
 
+
     private fun setOb() {
         adapter1 = WeatherAdapter1()
         binding.recycler.adapter = adapter1
@@ -122,6 +121,7 @@ class WeatherFragment : Fragment() {
 
         viewModel.weather.observe(viewLifecycleOwner, Observer { weather ->
             if (weather != null) {
+
                 binding.apply {
                     this.weather = weather
                     hint = "更新于 " + weather.update_time
@@ -144,12 +144,12 @@ class WeatherFragment : Fragment() {
                     adapter2.notifyDataSetChanged()
                 }
 
-                NewbieGuide.with(activity)
-                    .setLabel("123")
-                    .addGuidePage(GuidePage.newInstance()
-                        .addHighLight(setting)
-                        .setLayoutRes(R.layout.guide1))
-                    .show()
+                if(isFirstOpen){
+                    GuideView(setting,2).show(activity!!.supportFragmentManager.beginTransaction(),"test")
+                    GuideView(setting,1).show(activity!!.supportFragmentManager.beginTransaction(),"test")
+                    editor.putBoolean("isFirstOpen",false)
+                    editor.apply()
+                }
 
                 var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                 MyApplication.context.sendBroadcast(intent)
@@ -172,17 +172,12 @@ class WeatherFragment : Fragment() {
         swipe = binding.swipe
         recyclerView = binding.recycler
         setting = binding.setting
-        input = binding.input
-        mainLayout = binding.mainLayout
-        settingToolbar = binding.settingToolbar
         nowWea = binding.nowWea
         nowTem = binding.nowTem
+        input = binding.input
+        mainLayout = binding.mainLayout
 
 
-
-        settingToolbar.setOnClickListener {
-            //setting.callOnClick()
-        }
         setting.setOnClickListener {
             SettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
         }
@@ -191,6 +186,7 @@ class WeatherFragment : Fragment() {
                     .supportFragmentManager
                     .beginTransaction(),"setting")
         }
+
         nowTem.setOnClickListener {
             nowWea.callOnClick()
         }

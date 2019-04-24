@@ -8,4 +8,9 @@
     <string name="alarm">预警：</string>
     <string name="tab">\t\t\t\t</string>
     <string name="space">\t</string>
+    <string name="nextStep">OK</string>
+    <string name="guide1">点击城市，打开设置界面</string>
+    <string name="guide2">点击右侧，查看今日天气</string>
+    <string name="guide3">点击可切换城市</string>
+    <string name="guide4">长按可修改城市</string>
 </resources>

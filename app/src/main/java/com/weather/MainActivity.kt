@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         var widgetTips = true
         var isDiyTips = false
         var diyTips = ""
+        var isFirstOpen = true
+        var isFirstOpenSetting = true
         lateinit var sharedPreferences: SharedPreferences
         lateinit var editor: SharedPreferences.Editor
     }
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         isDiyTips = sharedPreferences.getBoolean("isDiyTips", isDiyTips)
         diyTips = sharedPreferences.getString("diyTips", diyTips)
         onNight = sharedPreferences.getBoolean("onNight",false)
+        isFirstOpen = sharedPreferences.getBoolean("isFirstOpen",true)
+        isFirstOpenSetting = sharedPreferences.getBoolean("isFirstOpenSetting",true)
         setAndroidNativeLightStatusBar(this, onNight)
         if(onNight){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

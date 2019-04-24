@@ -1,8 +1,10 @@
 package com.weather
 
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
@@ -11,6 +13,8 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.weather.MainActivity.Companion.editor
@@ -20,7 +24,6 @@ import com.weather.WeatherFragment.Companion.saveC3
 import com.weather.WeatherFragment.Companion.title
 import com.weather.WeatherFragment.Companion.viewModel
 import com.weather.util.TranslateWithTouchUtil
-
 
 class SettingDialogFragment : DialogFragment() {
 
@@ -65,6 +68,14 @@ class SettingDialogFragment : DialogFragment() {
 
         view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
 
+        if(MainActivity.isFirstOpenSetting){
+            Handler().postDelayed({
+                GuideView(city3,4).show(activity!!.supportFragmentManager.beginTransaction(),"test")
+                GuideView(city3,3).show(activity!!.supportFragmentManager.beginTransaction(),"test")
+                editor.putBoolean("isFirstOpenSetting",false)
+                editor.apply()
+            },200)
+        }
         return view
     }
 
@@ -84,6 +95,9 @@ class SettingDialogFragment : DialogFragment() {
 
         params.windowAnimations = R.style.BottomDialogAnimation
         dw.attributes = params
+
+
+
     }
 
     private fun initView() {

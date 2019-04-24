@@ -35,7 +35,7 @@
             <LinearLayout
                 android:id="@+id/setting_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
@@ -64,6 +64,7 @@
                     android:layout_marginLeft="@dimen/margin_small"
                     android:text="@{now.tem}"
                     tools:text="15℃" />
+
 
             </LinearLayout>
 
