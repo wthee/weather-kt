@@ -33,13 +33,7 @@
                         android:textColor="@color/colorItemText"
                         android:text="@{data.day}"
                         tools:text="18日（今天）"/>
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/setting_title_size"
-                        android:textColor="@color/colorItemText"
-                        android:text="@{data.week}"
-                        tools:text="星期三"/>
+
             </LinearLayout>
 
 
@@ -58,142 +52,155 @@
                     android:layout_height="@dimen/lineHeight"
                     android:layout_marginBottom="@dimen/padding_small"
                     android:background="@color/line"/>
-
-            <LinearLayout
-                    android:id="@+id/alarm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small"
-                    android:orientation="vertical">
+            <androidx.core.widget.NestedScrollView
+                android:layout_width = "match_parent"
+                android:layout_height = "wrap_content">
 
                 <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                    android:layout_width = "match_parent"
+                    android:layout_height = "wrap_content"
+                    android:orientation="vertical">
 
-                    <TextView
-                            android:id="@+id/alarm_type"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/setting_title_size"
-                            android:textColor="@color/colorAccent"
-                            android:text='@{data.alarm.alarm_type+@string/alarm}'
-                            tools:text="大风预警："/>
-
-                    <TextView
-                            android:id="@+id/alarm_lv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/setting_title_size"
-                            app:AutoColor='@{(data.alarm != null) ? data.alarm.alarm_level : @string/space}'
-                            android:textColor="@color/colorAccent"
-                            android:text="@{data.alarm.alarm_level}"
-                            tools:text="黄色"/>
-
-                </LinearLayout>
-
-                <TextView
-                        android:id="@+id/alarm_content"
+                    <LinearLayout
+                        android:id="@+id/alarm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/padding_small"
+                        android:paddingLeft="@dimen/padding_small"
+                        android:paddingRight="@dimen/padding_small"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/alarm_type"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/setting_title_size"
+                                android:textColor="@color/colorAccent"
+                                android:text='@{data.alarm.alarm_type+@string/alarm}'
+                                tools:text="大风预警："/>
+
+                            <TextView
+                                android:id="@+id/alarm_lv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/setting_title_size"
+                                app:AutoColor='@{(data.alarm != null) ? data.alarm.alarm_level : @string/space}'
+                                android:textColor="@color/colorAccent"
+                                android:text="@{data.alarm.alarm_level}"
+                                tools:text="黄色"/>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/alarm_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/padding_small"
+                            android:paddingBottom="@dimen/padding_small"
+                            android:textSize="@dimen/item_text_size"
+                            android:text="@{@string/tab+data.alarm.alarm_content}"
+                            tools:text="空气质量asfdagsas："/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/air"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/padding_small"
+                        android:paddingRight="@dimen/padding_small"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/setting_title_size"
+                                android:textColor="@color/colorAccent"
+                                android:text="空气质量："
+                                tools:text="空气质量："/>
+
+                            <TextView
+                                android:id="@+id/air_lv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:AutoColor="@{data.air_tips != null ? data.air_level : @string/space}"
+                                android:textSize="@dimen/setting_title_size"
+                                android:text="@{data.air+@string/space+data.air_level}"
+                                tools:text="45 优"/>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/air_tips"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/padding_small"
+                            android:paddingBottom="@dimen/padding_small"
+                            android:textSize="@dimen/item_text_size"
+                            android:text="@{@string/tab+data.air_tips}"
+                            tools:text="空气质量asfdagsas："/>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/chuanyi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/padding_small"
+                        android:paddingRight="@dimen/padding_small"
                         android:paddingBottom="@dimen/padding_small"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="@{@string/tab+data.alarm.alarm_content}"
-                        tools:text="空气质量asfdagsas："/>
+                        android:orientation="vertical">
 
-            </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
-            <LinearLayout
-                    android:id="@+id/air"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small"
-                    android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/setting_title_size"
+                                android:textColor="@color/colorAccent"
+                                android:text="穿衣指数："
+                                tools:text="穿衣指数："/>
 
-                <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/chuanyi_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/setting_title_size"
+                                app:AutoColor="@{data.index[3].level}"
+                                android:text="@{data.index[3].level}"
+                                tools:text="热"/>
 
-                    <TextView
+                        </LinearLayout>
+
+
+                        <TextView
+                            android:id="@+id/chuanyi_tip"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/setting_title_size"
-                            android:textColor="@color/colorAccent"
-                            android:text="空气质量："
-                            tools:text="空气质量："/>
+                            android:paddingTop="@dimen/padding_small"
+                            android:textSize="@dimen/item_text_size"
+                            android:text="@{@string/tab+data.index[3].desc}"
+                            tools:text="空气质量asfdagsas："/>
 
-                    <TextView
-                            android:id="@+id/air_lv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:AutoColor="@{data.air_tips != null ? data.air_level : @string/space}"
-                            android:textSize="@dimen/setting_title_size"
-                            android:text="@{data.air+@string/space+data.air_level}"
-                            tools:text="45 优"/>
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <TextView
-                        android:id="@+id/air_tips"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/padding_small"
-                        android:paddingBottom="@dimen/padding_small"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="@{@string/tab+data.air_tips}"
-                        tools:text="空气质量asfdagsas："/>
+            </androidx.core.widget.NestedScrollView>
 
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:id="@+id/chuanyi"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small"
-                    android:paddingBottom="@dimen/padding_small"
-                    android:orientation="vertical">
-
-                <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                    <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/setting_title_size"
-                            android:textColor="@color/colorAccent"
-                            android:text="穿衣指数："
-                            tools:text="穿衣指数："/>
-
-                    <TextView
-                            android:id="@+id/chuanyi_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/setting_title_size"
-                            app:AutoColor="@{data.index[3].level}"
-                            android:text="@{data.index[3].level}"
-                            tools:text="热"/>
-
-                </LinearLayout>
-
-
-                <TextView
-                        android:id="@+id/chuanyi_tip"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/padding_small"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="@{@string/tab+data.index[3].desc}"
-                        tools:text="空气质量asfdagsas："/>
-
-            </LinearLayout>
         </LinearLayout>
 
 

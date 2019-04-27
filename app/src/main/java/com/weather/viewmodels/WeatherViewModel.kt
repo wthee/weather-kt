@@ -110,6 +110,7 @@ class WeatherViewModel(
                 }
 
             })
+        }else{
         }
         RainUtil.getRainInfo(weatherTemp)
         return weatherTemp

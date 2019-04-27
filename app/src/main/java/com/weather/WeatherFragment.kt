@@ -149,6 +149,7 @@ class WeatherFragment : Fragment() {
                     GuideView(setting,1).show(activity!!.supportFragmentManager.beginTransaction(),"test")
                     editor.putBoolean("isFirstOpen",false)
                     editor.apply()
+                    isFirstOpen = sharedPreferences.getBoolean("isFirstOpen",false)
                 }
 
                 var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)

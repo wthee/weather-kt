@@ -174,7 +174,11 @@ class WeatherInfoDialogFragment : DialogFragment() {
         datasets[1].setDrawCircleHole(false)
         datasets[1].lineWidth = -1f
         datasets[1].isHighlightEnabled = false
-        datasets[1].color = Color.parseColor("#ffffff")
+        if(MainActivity.onNight){
+            datasets[1].color = Color.parseColor("#434343")
+        }else{
+            datasets[1].color = Color.parseColor("#ffffff")
+        }
         var index = -1
         dataSets[1].valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {

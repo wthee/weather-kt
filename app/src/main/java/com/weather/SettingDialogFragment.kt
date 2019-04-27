@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.weather.MainActivity.Companion.editor
+import com.weather.MainActivity.Companion.isFirstOpenSetting
 import com.weather.WeatherFragment.Companion.saveC1
 import com.weather.WeatherFragment.Companion.saveC2
 import com.weather.WeatherFragment.Companion.saveC3
@@ -68,12 +69,14 @@ class SettingDialogFragment : DialogFragment() {
 
         view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
 
-        if(MainActivity.isFirstOpenSetting){
+        if(isFirstOpenSetting){
             Handler().postDelayed({
                 GuideView(city3,4).show(activity!!.supportFragmentManager.beginTransaction(),"test")
                 GuideView(city3,3).show(activity!!.supportFragmentManager.beginTransaction(),"test")
                 editor.putBoolean("isFirstOpenSetting",false)
                 editor.apply()
+                isFirstOpenSetting = MainActivity.sharedPreferences.getBoolean("isFirstOpen",false)
+
             },200)
         }
         return view
