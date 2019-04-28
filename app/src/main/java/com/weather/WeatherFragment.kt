@@ -20,6 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isFirstOpen
 import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.setting.SettingFragment
 import com.weather.viewmodels.WeatherViewModel
 import com.weather.util.*
 import com.weather.viewmodels.WeatherViewModel.Companion.today
@@ -180,10 +181,10 @@ class WeatherFragment : Fragment() {
 
 
         setting.setOnClickListener {
-            SettingDialogFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
+            SettingFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
         }
         nowWea.setOnClickListener {
-            WeatherInfoDialogFragment.getInstance(today).show(activity!!
+            WeatherInfoFragment.getInstance(today).show(activity!!
                     .supportFragmentManager
                     .beginTransaction(),"setting")
         }

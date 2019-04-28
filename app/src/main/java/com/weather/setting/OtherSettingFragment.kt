@@ -1,4 +1,4 @@
-package com.weather
+package com.weather.setting
 
 import android.content.DialogInterface
 import android.graphics.Color
@@ -9,21 +9,23 @@ import android.graphics.drawable.ColorDrawable
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.weather.MainActivity.Companion.editor
+import com.weather.R
+import com.weather.WeatherFragment
 import com.weather.WeatherFragment.Companion.adapter1
 import com.weather.WeatherFragment.Companion.adapter2
 import com.weather.WeatherFragment.Companion.viewModel
 import com.weather.util.TranslateWithTouchUtil
 
 
-class OtherSettingDialogFragment : DialogFragment() {
+class OtherSettingFragment : DialogFragment() {
 
     companion object {
         @Volatile
-        private var instance: OtherSettingDialogFragment? = null
+        private var instance: OtherSettingFragment? = null
 
         fun getInstance() = instance ?: synchronized(this) {
             instance
-                ?: OtherSettingDialogFragment().also { instance = it }
+                ?: OtherSettingFragment().also { instance = it }
         }
     }
 
@@ -52,8 +54,12 @@ class OtherSettingDialogFragment : DialogFragment() {
             adapter2.notifyDataSetChanged()
         }
 
-        if (WeatherFragment.bjType == 0) radioGroup1.check(R.id.rb1) else radioGroup1.check(R.id.rb2)
-        if (WeatherFragment.nlIsGone) radioGroup2.check(R.id.rb3) else radioGroup2.check(R.id.rb4)
+        if (WeatherFragment.bjType == 0) radioGroup1.check(R.id.rb1) else radioGroup1.check(
+            R.id.rb2
+        )
+        if (WeatherFragment.nlIsGone) radioGroup2.check(R.id.rb3) else radioGroup2.check(
+            R.id.rb4
+        )
 
         view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
 
@@ -81,7 +87,7 @@ class OtherSettingDialogFragment : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
-        SettingDialogFragment.getInstance()
+        SettingFragment.getInstance()
             .show(activity!!.supportFragmentManager.beginTransaction(), "setting")
     }
 }

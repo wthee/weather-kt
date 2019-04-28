@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -25,15 +24,14 @@ import com.github.mikephil.charting.utils.MPPointF
 import com.weather.data.Data
 import com.weather.databinding.WeatherInfoBinding
 import com.weather.util.TranslateWithTouchUtil
-import com.weather.util.WeaColorUtil
 import java.text.DecimalFormat
 
 
-class WeatherInfoDialogFragment : DialogFragment() {
+class WeatherInfoFragment : DialogFragment() {
 
     companion object {
-        fun getInstance(item: Data): WeatherInfoDialogFragment {
-            var instance = WeatherInfoDialogFragment()
+        fun getInstance(item: Data): WeatherInfoFragment {
+            var instance = WeatherInfoFragment()
             val args = Bundle()
             args.putSerializable("item", item)
             instance!!.arguments = args
@@ -56,7 +54,8 @@ class WeatherInfoDialogFragment : DialogFragment() {
     private lateinit var params: WindowManager.LayoutParams
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.weather_info,container,false)
+        binding = DataBindingUtil.inflate(inflater,
+            R.layout.weather_info,container,false)
 
         item = arguments!!.get("item") as Data
 

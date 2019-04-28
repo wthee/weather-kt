@@ -12,7 +12,6 @@
     <XML>
       <option name="XML_KEEP_LINE_BREAKS" value="false" />
       <option name="XML_ALIGN_ATTRIBUTES" value="false" />
-      <option name="XML_SPACE_AROUND_EQUALITY_IN_ATTRIBUTE" value="true" />
       <option name="XML_SPACE_INSIDE_EMPTY_TAG" value="true" />
     </XML>
     <codeStyleSettings language="XML">

@@ -1,4 +1,4 @@
-package com.weather
+package com.weather.setting
 
 import android.appwidget.AppWidgetManager
 import android.content.DialogInterface
@@ -18,21 +18,29 @@ import com.jrummyapps.android.colorpicker.ColorPickerDialogListener
 import android.util.DisplayMetrics
 import android.graphics.drawable.ColorDrawable
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.nineoldandroids.view.ViewHelper
+import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isDiyTips
+import com.weather.MyApplication
+import com.weather.R
+import com.weather.WeatherFragment
 import com.weather.util.TranslateWithTouchUtil
 
 
-class WidgetSettingDialogFragment : DialogFragment() {
+class WidgetSettingFragment : DialogFragment() {
 
     companion object {
         @Volatile
-        private var instance: WidgetSettingDialogFragment? = null
+        private var instance: WidgetSettingFragment? = null
 
         fun getInstance() = instance ?: synchronized(this) {
             instance
-                ?: WidgetSettingDialogFragment().also { instance = it }
+                ?: WidgetSettingFragment().also { instance = it }
         }
     }
 
@@ -42,6 +50,7 @@ class WidgetSettingDialogFragment : DialogFragment() {
     private lateinit var yourtip : TextInputEditText
     private lateinit var yourtipLayout : TextInputLayout
     private lateinit var editTip : LinearLayout
+    private lateinit var diyClick : TextView
     private val DIALGE_ID = 0
 
     private lateinit var dm: DisplayMetrics
@@ -55,6 +64,7 @@ class WidgetSettingDialogFragment : DialogFragment() {
         groupDiyTips = view.findViewById(R.id.groupDiyTips)
         yourtip = view.findViewById(R.id.yourTip)
         yourtipLayout = view.findViewById(R.id.yourTipLayout)
+        diyClick = view.findViewById(R.id.diyClick)
         editTip = view.findViewById(R.id.editTip)
         colorpicker.setBackgroundColor(MainActivity.wColor)
 
@@ -70,6 +80,12 @@ class WidgetSettingDialogFragment : DialogFragment() {
             yourtip.hint = MainActivity.diyTips
         }else{
             yourtip.hint = "输入内容"
+        }
+
+        diyClick.setOnClickListener {
+            WidgetSettingClickFragment.getInstance()
+                .show(activity!!.supportFragmentManager.beginTransaction(), "settingclick")
+            this.dismiss()
         }
 
         colorpicker.setOnClickListener {
@@ -162,7 +178,9 @@ class WidgetSettingDialogFragment : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
-        SettingDialogFragment.getInstance().show(fragmentManager, "setting")
+        if(!WidgetSettingClickFragment.getInstance().isAdded){
+            SettingFragment.getInstance().show(fragmentManager, "setting")
+        }
     }
 
     private fun opeAdvancenDialog() {

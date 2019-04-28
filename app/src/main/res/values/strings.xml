@@ -13,4 +13,5 @@
     <string name="guide2">点击右侧，查看今日天气</string>
     <string name="guide3">点击可切换城市</string>
     <string name="guide4">长按可修改城市</string>
+    <string name = "clickEvent">点击事件</string>
 </resources>

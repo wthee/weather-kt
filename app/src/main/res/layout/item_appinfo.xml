@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="info"
+            type="com.weather.data.AppInfo" />
+
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:onClick="@{onClick}"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@{info.appIcon}"
+            tools:background="@drawable/weather"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/setting_title_size"
+                android:textColor="@color/colorAccent"
+                android:text="@{info.appName}"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="444343"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/item_text_size"
+                android:text="@{info.packageName}"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="444343"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</layout>

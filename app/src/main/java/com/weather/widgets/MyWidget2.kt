@@ -46,6 +46,7 @@ class MyWidget2 : AppWidgetProvider() {
 
 
     companion object {
+
         internal fun updateAppWidget(
             context: Context, appWidgetManager: AppWidgetManager,
             appWidgetId: Int
@@ -55,9 +56,14 @@ class MyWidget2 : AppWidgetProvider() {
                 var wea = WeatherViewModel.weatherTemp
 
                 var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget_2)
-                var intent = Intent(context, MainActivity::class.java)
-                var pi = PendingIntent.getActivity(context, 0, intent, 0)
-                views.setOnClickPendingIntent(R.id.appwidget2, pi)
+
+                var appInfo1 = MainActivity.sharedPreferences.getString("appInfo1", "com.weather")
+                var appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")
+                var appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")
+
+                views.setOnClickPendingIntent(R.id.appwidget2_now_time, MyWidget.getPI(context, appInfo1))
+                views.setOnClickPendingIntent(R.id.appwidget2_now_date, MyWidget.getPI(context, appInfo2))
+                views.setOnClickPendingIntent(R.id.rightView2, MyWidget.getPI(context, appInfo3))
 
 
                 if(wea.data.size>0){

@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.weather.data.network.WeatherNetWork
 import android.content.ComponentName
 import android.util.Log
 import android.view.View
@@ -28,15 +27,16 @@ class MyWidget : AppWidgetProvider() {
     }
 
     override fun onEnabled(context: Context) {
-
     }
 
     override fun onDisabled(context: Context) {
         // Enter relevant functionality for when the last widget is disabled
     }
 
+
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
+
         val mgr = AppWidgetManager.getInstance(context)
         val cn = ComponentName(context, MyWidget::class.java!!)
         onUpdate(context, mgr, mgr.getAppWidgetIds(cn))
@@ -44,6 +44,13 @@ class MyWidget : AppWidgetProvider() {
 
 
     companion object {
+
+        fun getPI(context: Context,appInfo: String): PendingIntent{
+            val packageManager = context.packageManager
+            var intent = Intent(packageManager.getLaunchIntentForPackage(appInfo))
+            return PendingIntent.getActivity(context, 0,intent,0)
+        }
+
         internal fun updateAppWidget(
                 context: Context, appWidgetManager: AppWidgetManager,
                 appWidgetId: Int
@@ -51,10 +58,16 @@ class MyWidget : AppWidgetProvider() {
             try {
 
                 var wea = WeatherViewModel.weatherTemp
-                var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget_1)
-                var intent = Intent(context, MainActivity::class.java)
-                var pi = PendingIntent.getActivity(context, 0, intent, 0)
-                views.setOnClickPendingIntent(R.id.appwidget, pi)
+                var views = RemoteViews(context.packageName, R.layout.widget_1)
+
+
+                var appInfo1 = MainActivity.sharedPreferences.getString("appInfo1", "com.weather")
+                var appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")
+                var appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")
+
+                views.setOnClickPendingIntent(R.id.appwidget_now_time, getPI(context,appInfo1))
+                views.setOnClickPendingIntent(R.id.appwidget_now_date, getPI(context,appInfo2))
+                views.setOnClickPendingIntent(R.id.rightView1, getPI(context,appInfo3))
 
 
                 if(wea.data.size>0){

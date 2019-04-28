@@ -1,10 +1,8 @@
-package com.weather
+package com.weather.setting
 
-import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
@@ -13,12 +11,14 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.weather.GuideView
+import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isFirstOpenSetting
+import com.weather.R
+import com.weather.WeatherFragment
 import com.weather.WeatherFragment.Companion.saveC1
 import com.weather.WeatherFragment.Companion.saveC2
 import com.weather.WeatherFragment.Companion.saveC3
@@ -26,11 +26,11 @@ import com.weather.WeatherFragment.Companion.title
 import com.weather.WeatherFragment.Companion.viewModel
 import com.weather.util.TranslateWithTouchUtil
 
-class SettingDialogFragment : DialogFragment() {
+class SettingFragment : DialogFragment() {
 
     companion object {
-        fun getInstance() : SettingDialogFragment {
-            return SettingDialogFragment()
+        fun getInstance() : SettingFragment {
+            return SettingFragment()
         }
     }
 
@@ -70,14 +70,15 @@ class SettingDialogFragment : DialogFragment() {
         view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
 
         if(isFirstOpenSetting){
-            Handler().postDelayed({
-                GuideView(city3,4).show(activity!!.supportFragmentManager.beginTransaction(),"test")
-                GuideView(city3,3).show(activity!!.supportFragmentManager.beginTransaction(),"test")
+            view.post {
+                GuideView(city3, 4)
+                    .show(activity!!.supportFragmentManager.beginTransaction(),"test")
+                GuideView(city3, 3)
+                    .show(activity!!.supportFragmentManager.beginTransaction(),"test")
                 editor.putBoolean("isFirstOpenSetting",false)
                 editor.apply()
                 isFirstOpenSetting = MainActivity.sharedPreferences.getBoolean("isFirstOpen",false)
-
-            },200)
+            }
         }
         return view
     }
@@ -106,13 +107,13 @@ class SettingDialogFragment : DialogFragment() {
     private fun initView() {
 
         widgetsetting.setOnClickListener {
-            WidgetSettingDialogFragment.getInstance()
+            WidgetSettingFragment.getInstance()
                 .show(activity!!.supportFragmentManager.beginTransaction(), "widget")
             this.dismiss()
         }
 
         othersetting.setOnClickListener {
-            OtherSettingDialogFragment.getInstance()
+            OtherSettingFragment.getInstance()
                 .show(activity!!.supportFragmentManager.beginTransaction(), "other")
             this.dismiss()
         }
@@ -248,7 +249,9 @@ class SettingDialogFragment : DialogFragment() {
         if (title == city2.text) groupCity.check(R.id.city2)
         if (title == city3.text) groupCity.check(R.id.city3)
 
-        if (MainActivity.onNight) radioGroup3.check(R.id.rb6) else radioGroup3.check(R.id.rb5)
+        if (MainActivity.onNight) radioGroup3.check(R.id.rb6) else radioGroup3.check(
+            R.id.rb5
+        )
     }
 
 }
