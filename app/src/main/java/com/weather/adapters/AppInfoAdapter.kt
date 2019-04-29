@@ -11,21 +11,22 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.weather.MainActivity.Companion.editor
 import com.weather.data.AppInfo
 import com.weather.databinding.ItemAppinfoBinding
 import com.weather.setting.WidgetSettingClickFragment
+import com.weather.setting.WidgetSettingClickFragment.Companion.pn
 
 
 class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDiffCallback()) {
 
-    private var clickIndex  = arrayListOf(0,0,0)
-    private var pn = arrayListOf("com.weather","com.weather","com.weather")
-    private var wc = 0
+    var wc = MainActivity.sharedPreferences.getInt("lastAdapter",WidgetSettingClickFragment.lastAdapter)
 
-    fun getClickIndex() = clickIndex
-    fun getPackageName() = pn
-    fun setWC(which: Int){
-        wc = which
+
+    fun setWC(value: Int) {
+        wc = value
+        MainActivity.editor.putInt("lastAdapter",wc)
+        MainActivity.editor.apply()
     }
 
     override fun onCreateViewHolder(
@@ -42,15 +43,16 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
 
     private fun createOnClickListener(appInfo: AppInfo, p: Int): View.OnClickListener {
         return View.OnClickListener {
-            clickIndex[wc] = p
+
             pn[wc] = appInfo.packageName
-            it.setBackgroundColor(Color.parseColor("#2296eb"))
-            MainActivity.editor.putString("appInfo1",pn[0])
-            MainActivity.editor.putString("appInfo2",pn[1])
-            MainActivity.editor.putString("appInfo3",pn[2])
-            MainActivity.editor.apply()
+
+            editor.putString("appInfo1",pn[0])
+            editor.putString("appInfo2",pn[1])
+            editor.putString("appInfo3",pn[2])
+            editor.apply()
             var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
             MyApplication.context.sendBroadcast(intent)
+
             notifyDataSetChanged()
         }
     }
@@ -61,8 +63,8 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
         holder.apply {
             bind(info, createOnClickListener(info,p))
             itemView.tag = info
-            if(p == clickIndex[wc]){
-                itemView.setBackgroundColor(Color.parseColor("#2296eb"))
+            if(info.packageName == pn[wc]){
+                itemView.setBackgroundColor(Color.parseColor("#C0C0C0"))
             }else{
                 itemView.setBackgroundColor(Color.parseColor("#ffffff"))
             }
@@ -73,7 +75,6 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
     class ViewHolder(
         private val binding: ItemAppinfoBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-
 
         fun bind(appInfo: AppInfo, listener: View.OnClickListener) {
             binding.apply {

@@ -28,9 +28,6 @@ class MyWidget2 : AppWidgetProvider() {
     }
 
     override fun onEnabled(context: Context) {
-//        var intent = Intent(context,WidgetSetting::class.java)
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
-//        context.startActivity(intent)
     }
 
     override fun onDisabled(context: Context) {

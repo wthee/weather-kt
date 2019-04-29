@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:title=""
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/show_sys"
+        android:checkable="true"
+        android:checked="false"
+        android:title="显示系统应用"
+        app:showAsAction="never"/>
+</menu>
