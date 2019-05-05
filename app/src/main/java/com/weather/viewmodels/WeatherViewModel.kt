@@ -98,7 +98,6 @@ class WeatherViewModel(
     }
 
 
-
     private fun formatWeather(weatherTemp: Weather): Weather {
         today = weatherTemp.data[0]
         if (WeatherViewModel.today.air == 0) {

@@ -10,8 +10,6 @@
 
     <item
         android:id="@+id/show_sys"
-        android:checkable="true"
-        android:checked="false"
         android:title="显示系统应用"
         app:showAsAction="never"/>
 </menu>

@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -15,10 +17,51 @@ import com.weather.MainActivity.Companion.editor
 import com.weather.data.AppInfo
 import com.weather.databinding.ItemAppinfoBinding
 import com.weather.setting.WidgetSettingClickFragment
+import com.weather.setting.WidgetSettingClickFragment.Companion.applist
+import com.weather.setting.WidgetSettingClickFragment.Companion.applistNoSys
+import com.weather.setting.WidgetSettingClickFragment.Companion.mSourceList
 import com.weather.setting.WidgetSettingClickFragment.Companion.pn
+import com.weather.setting.WidgetSettingClickFragment.Companion.showSys
 
 
-class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDiffCallback()) {
+class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDiffCallback()), Filterable {
+
+
+    private lateinit var mFilterList : MutableList<AppInfo>
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(charSequence: CharSequence): FilterResults {
+                val charString = charSequence.toString()
+                if (charString.isEmpty()) {
+                    mFilterList = mSourceList
+                } else {
+                    val filteredList = arrayListOf<AppInfo>()
+                    for (str in mSourceList) {
+                        //这里根据需求，添加匹配规则
+                        if (str.appName.contains(charString)) {
+                            filteredList.add(str)
+                        }
+                    }
+                    mFilterList = filteredList
+                }
+
+                val filterResults = FilterResults()
+                filterResults.values = mFilterList
+                return filterResults
+            }
+
+            override fun publishResults(
+                charSequence: CharSequence,
+                filterResults: FilterResults
+            ) {
+                mFilterList = filterResults.values as MutableList<AppInfo>
+                //刷新数据
+                submitList(mFilterList)
+                notifyDataSetChanged()
+            }
+        }
+    }
 
     var wc = MainActivity.sharedPreferences.getInt("lastAdapter",WidgetSettingClickFragment.lastAdapter)
 
@@ -66,7 +109,11 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
             if(info.packageName == pn[wc]){
                 itemView.setBackgroundColor(Color.parseColor("#C0C0C0"))
             }else{
-                itemView.setBackgroundColor(Color.parseColor("#ffffff"))
+                if(MainActivity.onNight){
+                    itemView.setBackgroundColor(Color.parseColor("#434343"))
+                }else{
+                    itemView.setBackgroundColor(Color.parseColor("#ffffff"))
+                }
             }
         }
     }

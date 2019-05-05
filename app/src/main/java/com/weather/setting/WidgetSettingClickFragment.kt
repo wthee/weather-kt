@@ -8,6 +8,7 @@ import android.util.DisplayMetrics
 import android.graphics.drawable.ColorDrawable
 import android.view.*
 import android.widget.CheckBox
+import android.widget.ProgressBar
 import androidx.fragment.app.DialogFragment
 import com.weather.R
 import com.weather.util.TranslateWithTouchUtil
@@ -19,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.weather.AppInfoAdapter
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
-import com.weather.MainActivity.Companion.sharedPreferences
 import com.weather.data.AppInfo
 import com.weather.util.ActivityUtil
 
@@ -29,6 +29,7 @@ class WidgetSettingClickFragment : DialogFragment() {
     companion object {
         @Volatile
         private var instance: WidgetSettingClickFragment? = null
+
 
         fun getInstance() = instance ?: synchronized(this) {
             instance
@@ -43,6 +44,12 @@ class WidgetSettingClickFragment : DialogFragment() {
         var myAppIndex = 0
         var myAppIndexNoSys = 0
         var lastAdapter = 0
+
+        var showSys = false
+
+        var mSourceList = arrayListOf<AppInfo>()
+        var applist =  arrayListOf<AppInfo>()
+        var applistNoSys =  arrayListOf<AppInfo>()
     }
 
     private lateinit var dm: DisplayMetrics
@@ -53,24 +60,32 @@ class WidgetSettingClickFragment : DialogFragment() {
     private lateinit var ce1: RadioButton
     private lateinit var ce2: RadioButton
     private lateinit var ce3: RadioButton
-    private lateinit var sv: SearchView
     private lateinit var toolbar: Toolbar
-    private var applist =  arrayListOf<AppInfo>()
-    private var applistNoSys =  arrayListOf<AppInfo>()
+    private lateinit var loading: ProgressBar
+
     private var i = 0
     private var iNoSys = 0
-    private var showSys = false
+
     private var mark = arrayListOf(0,0,0)
     private var markNoSys = arrayListOf(0,0,0)
 
+    private val TITLE_SHOW_SYS = "显示系统应用"
+    private val TITLE_HID_SYS = "隐藏系统应用"
+    private val TEXT_SELECTAPP = "选择要打开的应用:"
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        showSys = MainActivity.sharedPreferences.getBoolean("showSys", false)
+
         var view = inflater.inflate(R.layout.setting_widget_click, container,false) as View
         toolbar = view.findViewById(R.id.widgetToolbar)
-        toolbar.title = "选择要打开的应用"
+        toolbar.title = TEXT_SELECTAPP
         ActivityUtil.instance.currentActivity!!.setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.app_info_list)
+        loading = view.findViewById(R.id.loadingApp)
+
+        loading.visibility = View.VISIBLE
 
         groupCE = view.findViewById(R.id.groupCE)
         ce1 = view.findViewById(R.id.ce1)
@@ -97,9 +112,19 @@ class WidgetSettingClickFragment : DialogFragment() {
         view.postDelayed({
             getAppList()
             getMark()
+
+            loading.visibility = View.GONE
             adapter = AppInfoAdapter()
             recycler.adapter = adapter
-            adapter.submitList(applistNoSys)
+
+            if(showSys){
+                toolbar.title = TEXT_SELECTAPP + i
+                adapter.submitList(applist)
+            }else{
+                toolbar.title = TEXT_SELECTAPP + iNoSys
+                adapter.submitList(applistNoSys)
+            }
+
             adapter.notifyDataSetChanged()
 
             when(adapter.wc){
@@ -121,20 +146,23 @@ class WidgetSettingClickFragment : DialogFragment() {
         return view
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         activity!!.menuInflater.inflate(R.menu.widget_setting_menu, menu)
 
         val searchItem = menu!!.findItem(R.id.search)
+        val showSysItem = menu!!.findItem(R.id.show_sys)
         val searchView = searchItem.actionView as SearchView
+
+        showSysItem.title = if(showSys) TITLE_HID_SYS else TITLE_SHOW_SYS
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                adapter.filter.filter(newText)
+                return true
             }
 
         })
@@ -143,23 +171,26 @@ class WidgetSettingClickFragment : DialogFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item!!.itemId == R.id.show_sys){
-            if (!item.isChecked){
+            if(!showSys) {
+                item.title = TITLE_HID_SYS
                 adapter.submitList(applist)
-                toolbar.title = "选择要打开的应用($i)"
+                toolbar.title = TEXT_SELECTAPP + i
                 showSys = true
-                item.isChecked = true
-            }else{
+                mSourceList = applist
+            } else {
+                item.title = TITLE_SHOW_SYS
                 adapter.submitList(applistNoSys)
-                toolbar.title = "选择要打开的应用($iNoSys)"
+                toolbar.title = TEXT_SELECTAPP + iNoSys
                 showSys = false
-                item.isChecked = false
+                mSourceList = applistNoSys
             }
+            editor.putBoolean("showSys", showSys)
+            editor.apply()
             getMark()
             adapter.notifyDataSetChanged()
         }
         return true
     }
-
 
     private fun getMark(){
 
@@ -175,7 +206,7 @@ class WidgetSettingClickFragment : DialogFragment() {
                     mark[2] = index
                 }
             }
-
+            mSourceList = applist
         }else{
             applistNoSys.forEachIndexed{ index, appInfo ->
                 if(pn[0] == appInfo.packageName){
@@ -188,6 +219,7 @@ class WidgetSettingClickFragment : DialogFragment() {
                     markNoSys[2] = index
                 }
             }
+            mSourceList = applistNoSys
         }
     }
 
@@ -199,7 +231,6 @@ class WidgetSettingClickFragment : DialogFragment() {
         val packages = pm.getInstalledPackages(0)
         i = 0
         iNoSys = 0
-
 
         for (packageInfo in packages) {
 
@@ -223,7 +254,6 @@ class WidgetSettingClickFragment : DialogFragment() {
             i++
             applist.add(appInfo)
         }
-        toolbar.title = "选择要打开的应用($iNoSys)"
     }
 
     override fun onStart() {
