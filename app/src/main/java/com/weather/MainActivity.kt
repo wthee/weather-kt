@@ -9,7 +9,11 @@ import androidx.databinding.DataBindingUtil
 import com.weather.databinding.MainActivityBinding
 import com.weather.util.ActivityUtil
 import android.app.Activity
+import android.util.Log
 import android.view.View
+import android.content.Intent
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +33,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: MainActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 避免从桌面启动程序后，会重新实例化入口类的activity
+        if (!this.isTaskRoot) { // 当前类不是该Task的根部，那么之前启动
+            val intent = intent
+            if (intent != null) {
+                val action = intent.action
+                if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN == action) { // 当前类是从桌面启动的
+                    finish() // finish掉该类，直接打开该Task中现存的Activity
+                    return
+                }
+            }
+        }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
         editor = sharedPreferences.edit()
         wColor = sharedPreferences.getInt("widgetColor", wColor)

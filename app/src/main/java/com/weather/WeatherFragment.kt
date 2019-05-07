@@ -11,6 +11,7 @@ import com.weather.databinding.WeatherFragmentBinding
 import com.google.android.material.textfield.TextInputEditText
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -94,6 +95,7 @@ class WeatherFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
         view!!.isFocusableInTouchMode = true
         view!!.requestFocus()
         view!!.setOnKeyListener(object : View.OnKeyListener {
@@ -112,7 +114,6 @@ class WeatherFragment : Fragment() {
             }
         })
     }
-
 
     private fun setOb() {
         adapter1 = WeatherAdapter1()
@@ -184,7 +185,7 @@ class WeatherFragment : Fragment() {
             SettingFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
         }
         nowWea.setOnClickListener {
-            WeatherInfoFragment.getInstance(today).show(activity!!
+            WeatherInfoFragment(today).show(activity!!
                     .supportFragmentManager
                     .beginTransaction(),"setting")
         }

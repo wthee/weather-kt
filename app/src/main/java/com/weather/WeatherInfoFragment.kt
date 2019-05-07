@@ -27,17 +27,8 @@ import com.weather.util.TranslateWithTouchUtil
 import java.text.DecimalFormat
 
 
-class WeatherInfoFragment : DialogFragment() {
+class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
 
-    companion object {
-        fun getInstance(item: Data): WeatherInfoFragment {
-            var instance = WeatherInfoFragment()
-            val args = Bundle()
-            args.putSerializable("item", item)
-            instance!!.arguments = args
-            return instance
-        }
-    }
 
     private lateinit var binding: WeatherInfoBinding
     private lateinit var lineChart: LineChart
@@ -48,7 +39,7 @@ class WeatherInfoFragment : DialogFragment() {
     private lateinit var lineData: LineData
     private var axisWidth: Float = 1f
     private var axisColor: Int = Color.parseColor("#C0C0C0")
-    private lateinit var item: Data
+    private var item = itemBundle
 
     private lateinit var dm: DisplayMetrics
     private lateinit var params: WindowManager.LayoutParams
@@ -56,8 +47,6 @@ class WeatherInfoFragment : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater,
             R.layout.weather_info,container,false)
-
-        item = arguments!!.get("item") as Data
 
         binding.apply{
             data = item

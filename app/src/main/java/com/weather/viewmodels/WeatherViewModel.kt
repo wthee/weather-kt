@@ -28,27 +28,28 @@ class WeatherViewModel(
             when (checkCity(city)) {
                 1 -> {
                     weatherTemp = repository.getWeather(mapOf("version" to "v1", "city" to city))
-                    weather.postValue(formatWeather (weatherTemp))
+                    weather.postValue(formatWeather(weatherTemp))
                 }
                 0 -> {
-                    weatherTemp = repository.getWeather( mapOf("version" to "v1", "ip" to ""))
-                    weather.postValue(formatWeather (weatherTemp))
+                    weatherTemp = repository.getWeather(mapOf("version" to "v1", "ip" to ""))
+                    weather.postValue(formatWeather(weatherTemp))
                 }
             }
 
         }
     }
 
-    fun getNowWeather(city: String){
+    fun getNowWeather(city: String) {
         viewModelScope.launch {
             when (checkCity(city)) {
                 1 -> {
-                    nowWeatherTemp = repository.getNowWeather(mapOf("version" to "v6", "city" to city))
-                    nowWeather.postValue(formatNowWeather (nowWeatherTemp))
+                    nowWeatherTemp =
+                        repository.getNowWeather(mapOf("version" to "v6", "city" to city))
+                    nowWeather.postValue(formatNowWeather(nowWeatherTemp))
                 }
                 0 -> {
-                    nowWeatherTemp = repository.getNowWeather( mapOf("version" to "v6", "ip" to ""))
-                    nowWeather.postValue(formatNowWeather (nowWeatherTemp))
+                    nowWeatherTemp = repository.getNowWeather(mapOf("version" to "v6", "ip" to ""))
+                    nowWeather.postValue(formatNowWeather(nowWeatherTemp))
                 }
             }
 
@@ -83,33 +84,22 @@ class WeatherViewModel(
         return -1
     }
 
-    private fun getLeaderWeather(city: String, getData: IGetData) {
-        viewModelScope.launch {
-            var leader = " "
-            GetAllCity.getInstance().citys.forEach {
-                if(city == it.cityZh){
-                    leader =  it.leaderZh
-                    return@forEach
-                }
-                var temp = repository.getWeather(mapOf("version" to "v1", "city" to leader))
-                getData.get(temp)
-            }
-        }
-    }
-
-
-    private fun formatWeather(weatherTemp: Weather): Weather {
+    private suspend fun formatWeather(weatherTemp: Weather): Weather {
         today = weatherTemp.data[0]
-        if (WeatherViewModel.today.air == 0) {
-            getLeaderWeather(weatherTemp.city, object : IGetData {
-                override fun get(wea: Weather) {
-                    today.air = wea.data[0].air
-                    today.air_level = wea.data[0].air_level
-                    today.air_tips = wea.data[0].air_tips
+        viewModelScope.launch {
+            if (WeatherViewModel.today.air == 0) {
+                var leader = " "
+                GetAllCity.getInstance().citys.forEach {
+                    if (weatherTemp.city == it.cityZh) {
+                        leader = it.leaderZh
+                        return@forEach
+                    }
                 }
-
-            })
-        }else{
+                var wea = repository.getWeather(mapOf("version" to "v1", "city" to leader))
+                today.air = wea.data[0].air
+                today.air_level = wea.data[0].air_level
+                today.air_tips = wea.data[0].air_tips
+            }
         }
         RainUtil.getRainInfo(weatherTemp)
         return weatherTemp
@@ -120,10 +110,6 @@ class WeatherViewModel(
         return nowWeatherTemp
     }
 
-
-    interface IGetData {
-        fun get(wea: Weather)
-    }
 
     //彩蛋？？？
     private var myUser = arrayListOf(

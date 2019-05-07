@@ -26,7 +26,7 @@ class WeatherAdapter2 : ListAdapter<Data, WeatherAdapter2.ViewHolder>(WeatherDif
 
     private fun createOnClickListener(item: Data): View.OnClickListener {
         return View.OnClickListener {
-            var wf = WeatherInfoFragment.getInstance(item)
+            var wf = WeatherInfoFragment(item)
             wf.show(ActivityUtil.instance.currentActivity!!.supportFragmentManager.beginTransaction(),"123")
         }
     }
