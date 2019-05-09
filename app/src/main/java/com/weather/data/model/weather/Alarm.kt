@@ -1,4 +1,4 @@
-package com.weather.data
+package com.weather.data.model.weather
 
 class Alarm(
     val alarm_content: String,

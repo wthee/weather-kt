@@ -1,4 +1,4 @@
-package com.weather.data
+package com.weather.data.model
 
 class City(
     val cityZh: String,

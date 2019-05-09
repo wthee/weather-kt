@@ -1,7 +1,7 @@
 package com.weather.data
 
 import com.weather.data.network.WeatherNetWork
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 
@@ -9,11 +9,11 @@ class WeatherRepository(
     private val netWork: WeatherNetWork
 ) {
 
-    suspend fun getWeather(map:Map<String,String>) = withContext(Dispatchers.IO) {
+    suspend fun getWeather(map:Map<String,String>) = withContext(IO) {
         netWork.fetchWeather(map)
     }
 
-    suspend fun getNowWeather(map:Map<String,String>) = withContext(Dispatchers.IO) {
+    suspend fun getNowWeather(map:Map<String,String>) = withContext(IO) {
         netWork.fetchNowWeather(map)
     }
 

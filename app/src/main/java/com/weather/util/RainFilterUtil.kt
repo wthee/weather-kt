@@ -1,10 +1,10 @@
 package com.weather.util
 
-import com.weather.data.Weather
+import com.weather.data.model.weather.Weather
 import java.text.SimpleDateFormat
 import java.util.*
 
-object RainUtil {
+object RainFilterUtil {
     fun getRainInfo(weatherTemp: Weather){
         weatherTemp.data.toHashSet().forEach {
             if (!it.wea.contains("雨")) {

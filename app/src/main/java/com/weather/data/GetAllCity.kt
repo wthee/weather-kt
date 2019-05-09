@@ -2,6 +2,7 @@ package com.weather.data
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.weather.data.model.City
 import com.weather.util.ActivityUtil
 import java.io.ByteArrayOutputStream
 import java.io.IOException

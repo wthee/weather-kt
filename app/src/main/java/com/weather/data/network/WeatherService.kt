@@ -1,10 +1,11 @@
-package com.weather.data.network.api
+package com.weather.data.network
 
-import com.weather.data.NowWeather
-import com.weather.data.Weather
+import com.weather.data.model.weather.NowWeather
+import com.weather.data.model.weather.Weather
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.QueryMap
+
 
 interface WeatherService {
 

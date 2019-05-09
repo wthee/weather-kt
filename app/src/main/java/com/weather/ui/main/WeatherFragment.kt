@@ -1,4 +1,4 @@
-package com.weather
+package com.weather.ui.main
 
 import android.appwidget.AppWidgetManager
 import android.os.Bundle
@@ -11,20 +11,20 @@ import com.weather.databinding.WeatherFragmentBinding
 import com.google.android.material.textfield.TextInputEditText
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.weather.*
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isFirstOpen
 import com.weather.MainActivity.Companion.sharedPreferences
-import com.weather.setting.SettingFragment
-import com.weather.viewmodels.WeatherViewModel
+import com.weather.ui.info.WeatherInfoFragment
+import com.weather.ui.setting.MainSettingFragment
 import com.weather.util.*
-import com.weather.viewmodels.WeatherViewModel.Companion.today
+import com.weather.ui.main.WeatherViewModel.Companion.today
 
 class WeatherFragment : Fragment() {
 
@@ -66,6 +66,22 @@ class WeatherFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
+        settingViewisClose = sharedPreferences.getBoolean("settingViewisClose", true)
+
+        binding = WeatherFragmentBinding.inflate(inflater, container, false)
+        val factory = InjectorUtil.getWeatherViewModelFactory()
+        viewModel = ViewModelProviders.of(this, factory).get(
+            WeatherViewModel::class.java)
+        imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        density = ActivityUtil.instance.currentActivity!!.resources.displayMetrics.density
+        initView()
+        setOb()
+        return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         nlIsGone = sharedPreferences.getBoolean("nl",
             nlIsGone
         )
@@ -76,25 +92,8 @@ class WeatherFragment : Fragment() {
             lastCity
         )
 
-        settingViewisClose = sharedPreferences.getBoolean("settingViewisClose", true)
-
-        binding = WeatherFragmentBinding.inflate(inflater, container, false)
-        val factory = InjectorUtil.getWeatherViewModelFactory()
-        viewModel = ViewModelProviders.of(this, factory).get(WeatherViewModel::class.java)
-        imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        density = ActivityUtil.instance.currentActivity!!.resources.displayMetrics.density
-        initView()
-        setOb()
-        if(viewModel.weather.value == null){
-            viewModel.getWeather(lastCity)
-            viewModel.getNowWeather(lastCity)
-        }
-
-        return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
+        viewModel.getWeather(lastCity)
+        viewModel.getNowWeather(lastCity)
 
         view!!.isFocusableInTouchMode = true
         view!!.requestFocus()
@@ -136,19 +135,23 @@ class WeatherFragment : Fragment() {
                 editor.putString("city", weather.city)
                 editor.apply()
                 if (bjType == 0) {
-                    binding.recycler.adapter = adapter1
+                    binding.recycler.adapter =
+                        adapter1
                     adapter1.submitList(weather.data)
                     adapter1.notifyDataSetChanged()
                 }
                 if (bjType == 1) {
-                    binding.recycler.adapter = adapter2
+                    binding.recycler.adapter =
+                        adapter2
                     adapter2.submitList(weather.data)
                     adapter2.notifyDataSetChanged()
                 }
 
                 if(isFirstOpen){
-                    GuideView(setting,2).show(activity!!.supportFragmentManager.beginTransaction(),"test")
-                    GuideView(setting,1).show(activity!!.supportFragmentManager.beginTransaction(),"test")
+                    GuideView(setting, 2)
+                        .show(activity!!.supportFragmentManager.beginTransaction(),"test")
+                    GuideView(setting, 1)
+                        .show(activity!!.supportFragmentManager.beginTransaction(),"test")
                     editor.putBoolean("isFirstOpen",false)
                     editor.apply()
                     isFirstOpen = sharedPreferences.getBoolean("isFirstOpen",false)
@@ -157,7 +160,6 @@ class WeatherFragment : Fragment() {
                 var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                 MyApplication.context.sendBroadcast(intent)
             }
-
         })
 
         viewModel.nowWeather.observe(viewLifecycleOwner, Observer { now ->
@@ -182,7 +184,7 @@ class WeatherFragment : Fragment() {
 
 
         setting.setOnClickListener {
-            SettingFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
+            MainSettingFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
         }
         nowWea.setOnClickListener {
             WeatherInfoFragment(today).show(activity!!

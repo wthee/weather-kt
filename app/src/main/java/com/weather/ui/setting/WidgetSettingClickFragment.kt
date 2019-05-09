@@ -1,4 +1,4 @@
-package com.weather.setting
+package com.weather.ui.setting
 
 import android.content.DialogInterface
 import android.content.pm.ApplicationInfo
@@ -7,11 +7,10 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.graphics.drawable.ColorDrawable
 import android.view.*
-import android.widget.CheckBox
 import android.widget.ProgressBar
 import androidx.fragment.app.DialogFragment
 import com.weather.R
-import com.weather.util.TranslateWithTouchUtil
+import com.weather.util.DrawerUtil
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.widget.SearchView
@@ -20,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.weather.AppInfoAdapter
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
-import com.weather.data.AppInfo
+import com.weather.data.model.AppInfo
 import com.weather.util.ActivityUtil
 
 
@@ -141,7 +140,7 @@ class WidgetSettingClickFragment : DialogFragment() {
 
         },300)
 
-        view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
+        view.setOnTouchListener(DrawerUtil.onTouch(view,this))
 
         return view
     }
@@ -176,15 +175,19 @@ class WidgetSettingClickFragment : DialogFragment() {
                 adapter.submitList(applist)
                 toolbar.title = TEXT_SELECTAPP + i
                 showSys = true
-                mSourceList = applist
+                mSourceList =
+                    applist
             } else {
                 item.title = TITLE_SHOW_SYS
                 adapter.submitList(applistNoSys)
                 toolbar.title = TEXT_SELECTAPP + iNoSys
                 showSys = false
-                mSourceList = applistNoSys
+                mSourceList =
+                    applistNoSys
             }
-            editor.putBoolean("showSys", showSys)
+            editor.putBoolean("showSys",
+                showSys
+            )
             editor.apply()
             getMark()
             adapter.notifyDataSetChanged()
@@ -206,7 +209,8 @@ class WidgetSettingClickFragment : DialogFragment() {
                     mark[2] = index
                 }
             }
-            mSourceList = applist
+            mSourceList =
+                applist
         }else{
             applistNoSys.forEachIndexed{ index, appInfo ->
                 if(pn[0] == appInfo.packageName){
@@ -219,7 +223,8 @@ class WidgetSettingClickFragment : DialogFragment() {
                     markNoSys[2] = index
                 }
             }
-            mSourceList = applistNoSys
+            mSourceList =
+                applistNoSys
         }
     }
 
@@ -238,7 +243,8 @@ class WidgetSettingClickFragment : DialogFragment() {
                 packageInfo.applicationInfo.loadLabel(pm).toString(),
                 packageInfo.packageName,
                 packageInfo.versionName,
-                packageInfo.applicationInfo.loadIcon(pm))
+                packageInfo.applicationInfo.loadIcon(pm)
+            )
 
             if (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
                 // 非系统应用
@@ -268,7 +274,7 @@ class WidgetSettingClickFragment : DialogFragment() {
         params = dw.attributes
         //屏幕底部
         params.gravity = Gravity.BOTTOM
-        params.width = dm.widthPixels //屏幕宽度
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
         params.height = dm.heightPixels /3 * 2
 
         params.windowAnimations = R.style.BottomDialogAnimation
@@ -277,6 +283,8 @@ class WidgetSettingClickFragment : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
+
+
         WidgetSettingFragment.getInstance()
             .show(activity!!.supportFragmentManager.beginTransaction(), "widget")
     }

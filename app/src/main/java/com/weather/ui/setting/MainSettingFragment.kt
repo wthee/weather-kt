@@ -1,4 +1,4 @@
-package com.weather.setting
+package com.weather.ui.setting
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -18,19 +18,19 @@ import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isFirstOpenSetting
 import com.weather.R
-import com.weather.WeatherFragment
-import com.weather.WeatherFragment.Companion.saveC1
-import com.weather.WeatherFragment.Companion.saveC2
-import com.weather.WeatherFragment.Companion.saveC3
-import com.weather.WeatherFragment.Companion.title
-import com.weather.WeatherFragment.Companion.viewModel
-import com.weather.util.TranslateWithTouchUtil
+import com.weather.ui.main.WeatherFragment
+import com.weather.ui.main.WeatherFragment.Companion.saveC1
+import com.weather.ui.main.WeatherFragment.Companion.saveC2
+import com.weather.ui.main.WeatherFragment.Companion.saveC3
+import com.weather.ui.main.WeatherFragment.Companion.title
+import com.weather.ui.main.WeatherFragment.Companion.viewModel
+import com.weather.util.DrawerUtil
 
-class SettingFragment : DialogFragment() {
+class MainSettingFragment : DialogFragment() {
 
     companion object {
-        fun getInstance() : SettingFragment {
-            return SettingFragment()
+        fun getInstance() : MainSettingFragment {
+            return MainSettingFragment()
         }
     }
 
@@ -67,7 +67,7 @@ class SettingFragment : DialogFragment() {
         initView()
         resumeAllView()
 
-        view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
+        view.setOnTouchListener(DrawerUtil.onTouch(view,this))
 
         if(isFirstOpenSetting){
             view.post {
@@ -94,12 +94,11 @@ class SettingFragment : DialogFragment() {
         params = dw.attributes
 
         params.gravity = Gravity.BOTTOM
-        params.width = dm.widthPixels //屏幕宽度
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT
 
         params.windowAnimations = R.style.BottomDialogAnimation
         dw.attributes = params
-
 
 
     }
@@ -116,10 +115,6 @@ class SettingFragment : DialogFragment() {
             OtherSettingFragment.getInstance()
                 .show(activity!!.supportFragmentManager.beginTransaction(), "other")
             this.dismiss()
-        }
-
-        groupCity.setOnCheckedChangeListener { group, checkedId ->
-
         }
 
         city1.setOnClickListener {
@@ -183,7 +178,6 @@ class SettingFragment : DialogFragment() {
             if (MainActivity.onNight) {
                 MainActivity.onNight = false
                 editor.putBoolean("onNight", MainActivity.onNight)
-                editor.putBoolean("settingViewisClose", false)
                 editor.apply()
                 activity!!.recreate()
             }
@@ -193,12 +187,10 @@ class SettingFragment : DialogFragment() {
             if (!MainActivity.onNight) {
                 MainActivity.onNight = true
                 editor.putBoolean("onNight", MainActivity.onNight)
-                editor.putBoolean("settingViewisClose", false)
                 editor.apply()
                 activity!!.recreate()
             }
         }
-
 
         modify.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {

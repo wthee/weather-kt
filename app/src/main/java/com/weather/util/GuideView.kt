@@ -1,14 +1,11 @@
 package com.weather
 
-import android.app.Dialog
 import android.graphics.Color
-import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.TextView
-import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.DialogFragment
 
 class GuideView(yourview: View, guideN: Int) : DialogFragment() {

@@ -7,7 +7,7 @@ import android.view.animation.TranslateAnimation
 import androidx.fragment.app.DialogFragment
 import com.nineoldandroids.view.ViewHelper
 
-object TranslateWithTouchUtil {
+object DrawerUtil {
 
     private var offsetY = 0
     private var lastY: Int = 0

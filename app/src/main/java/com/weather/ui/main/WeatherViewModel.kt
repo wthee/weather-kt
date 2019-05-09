@@ -1,4 +1,4 @@
-package com.weather.viewmodels
+package com.weather.ui.main
 
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.weather.MyApplication
 import com.weather.data.*
-import com.weather.util.RainUtil
+import com.weather.data.model.weather.Data
+import com.weather.data.model.weather.NowWeather
+import com.weather.data.model.weather.Weather
+import com.weather.util.RainFilterUtil
 import kotlinx.coroutines.launch
 
 class WeatherViewModel(
@@ -87,7 +90,7 @@ class WeatherViewModel(
     private suspend fun formatWeather(weatherTemp: Weather): Weather {
         today = weatherTemp.data[0]
         viewModelScope.launch {
-            if (WeatherViewModel.today.air == 0) {
+            if (today.air == 0) {
                 var leader = " "
                 GetAllCity.getInstance().citys.forEach {
                     if (weatherTemp.city == it.cityZh) {
@@ -101,7 +104,7 @@ class WeatherViewModel(
                 today.air_tips = wea.data[0].air_tips
             }
         }
-        RainUtil.getRainInfo(weatherTemp)
+        RainFilterUtil.getRainInfo(weatherTemp)
         return weatherTemp
     }
 

@@ -1,12 +1,10 @@
-package com.weather.widgets
+package com.weather.ui.widget
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.weather.data.network.WeatherNetWork
 import android.content.ComponentName
 import android.util.Log
 import android.view.View
@@ -16,14 +14,18 @@ import com.weather.MainActivity.Companion.isDiyTips
 import com.weather.MainActivity.Companion.wColor
 import com.weather.MainActivity.Companion.widgetTips
 import com.weather.R
-import com.weather.viewmodels.WeatherViewModel
+import com.weather.ui.main.WeatherViewModel
 
 class MyWidget2 : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+            updateAppWidget(
+                context,
+                appWidgetManager,
+                appWidgetId
+            )
         }
     }
 
@@ -58,9 +60,15 @@ class MyWidget2 : AppWidgetProvider() {
                 var appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")
                 var appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")
 
-                views.setOnClickPendingIntent(R.id.appwidget2_now_time, MyWidget.getPI(context, appInfo1))
-                views.setOnClickPendingIntent(R.id.appwidget2_now_date, MyWidget.getPI(context, appInfo2))
-                views.setOnClickPendingIntent(R.id.rightView2, MyWidget.getPI(context, appInfo3))
+                views.setOnClickPendingIntent(R.id.appwidget2_now_time,
+                    MyWidget.getPI(context, appInfo1)
+                )
+                views.setOnClickPendingIntent(R.id.appwidget2_now_date,
+                    MyWidget.getPI(context, appInfo2)
+                )
+                views.setOnClickPendingIntent(R.id.rightView2,
+                    MyWidget.getPI(context, appInfo3)
+                )
 
 
                 if(wea.data.size>0){

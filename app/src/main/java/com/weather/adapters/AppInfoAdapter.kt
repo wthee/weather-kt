@@ -14,14 +14,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.weather.MainActivity.Companion.editor
-import com.weather.data.AppInfo
+import com.weather.data.model.AppInfo
 import com.weather.databinding.ItemAppinfoBinding
-import com.weather.setting.WidgetSettingClickFragment
-import com.weather.setting.WidgetSettingClickFragment.Companion.applist
-import com.weather.setting.WidgetSettingClickFragment.Companion.applistNoSys
-import com.weather.setting.WidgetSettingClickFragment.Companion.mSourceList
-import com.weather.setting.WidgetSettingClickFragment.Companion.pn
-import com.weather.setting.WidgetSettingClickFragment.Companion.showSys
+import com.weather.ui.setting.WidgetSettingClickFragment
+import com.weather.ui.setting.WidgetSettingClickFragment.Companion.mSourceList
+import com.weather.ui.setting.WidgetSettingClickFragment.Companion.pn
 
 
 class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDiffCallback()), Filterable {
@@ -63,7 +60,8 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
         }
     }
 
-    var wc = MainActivity.sharedPreferences.getInt("lastAdapter",WidgetSettingClickFragment.lastAdapter)
+    var wc = MainActivity.sharedPreferences.getInt("lastAdapter",
+        WidgetSettingClickFragment.lastAdapter)
 
 
     fun setWC(value: Int) {

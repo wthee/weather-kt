@@ -1,4 +1,4 @@
-package com.weather.setting
+package com.weather.ui.setting
 
 import android.content.DialogInterface
 import android.graphics.Color
@@ -10,11 +10,11 @@ import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.weather.MainActivity.Companion.editor
 import com.weather.R
-import com.weather.WeatherFragment
-import com.weather.WeatherFragment.Companion.adapter1
-import com.weather.WeatherFragment.Companion.adapter2
-import com.weather.WeatherFragment.Companion.viewModel
-import com.weather.util.TranslateWithTouchUtil
+import com.weather.ui.main.WeatherFragment
+import com.weather.ui.main.WeatherFragment.Companion.adapter1
+import com.weather.ui.main.WeatherFragment.Companion.adapter2
+import com.weather.ui.main.WeatherFragment.Companion.viewModel
+import com.weather.util.DrawerUtil
 
 
 class OtherSettingFragment : DialogFragment() {
@@ -61,7 +61,7 @@ class OtherSettingFragment : DialogFragment() {
             R.id.rb4
         )
 
-        view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
+        view.setOnTouchListener(DrawerUtil.onTouch(view,this))
 
         return view
     }
@@ -78,7 +78,7 @@ class OtherSettingFragment : DialogFragment() {
         params = dw.attributes
         //屏幕底部
         params.gravity = Gravity.BOTTOM
-        params.width = dm.widthPixels //屏幕宽度
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT
 
         params.windowAnimations = R.style.BottomDialogAnimation
@@ -87,7 +87,7 @@ class OtherSettingFragment : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
-        SettingFragment.getInstance()
+        MainSettingFragment.getInstance()
             .show(activity!!.supportFragmentManager.beginTransaction(), "setting")
     }
 }

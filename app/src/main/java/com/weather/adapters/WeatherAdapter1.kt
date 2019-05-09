@@ -7,8 +7,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.weather.data.Data
+import com.weather.data.model.weather.Data
 import com.weather.databinding.ItemWeather1Binding
+import com.weather.ui.info.WeatherInfoFragment
+import com.weather.ui.main.WeatherFragment
 import com.weather.util.ActivityUtil
 
 class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDiffCallback()) {

@@ -1,4 +1,4 @@
-package com.weather.setting
+package com.weather.ui.setting
 
 import android.appwidget.AppWidgetManager
 import android.content.DialogInterface
@@ -18,18 +18,15 @@ import com.jrummyapps.android.colorpicker.ColorPickerDialogListener
 import android.util.DisplayMetrics
 import android.graphics.drawable.ColorDrawable
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import com.nineoldandroids.view.ViewHelper
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isDiyTips
 import com.weather.MyApplication
 import com.weather.R
-import com.weather.WeatherFragment
-import com.weather.util.TranslateWithTouchUtil
+import com.weather.ui.main.WeatherFragment
+import com.weather.util.DrawerUtil
 
 
 class WidgetSettingFragment : DialogFragment() {
@@ -70,7 +67,7 @@ class WidgetSettingFragment : DialogFragment() {
 
         initView()
 
-        view.setOnTouchListener(TranslateWithTouchUtil.onTouch(view,this))
+        view.setOnTouchListener(DrawerUtil.onTouch(view,this))
 
         return view
     }
@@ -169,7 +166,7 @@ class WidgetSettingFragment : DialogFragment() {
         params = dw.attributes
         //屏幕底部
         params.gravity = Gravity.BOTTOM
-        params.width = dm.widthPixels //屏幕宽度
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT
 
         params.windowAnimations = R.style.BottomDialogAnimation
@@ -179,7 +176,8 @@ class WidgetSettingFragment : DialogFragment() {
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
         if(!WidgetSettingClickFragment.getInstance().isAdded){
-            SettingFragment.getInstance().show(fragmentManager, "setting")
+            MainSettingFragment.getInstance()
+                .show(fragmentManager, "setting")
         }
     }
 

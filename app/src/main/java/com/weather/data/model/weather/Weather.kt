@@ -1,4 +1,4 @@
-package com.weather.data
+package com.weather.data.model.weather
 
 import java.io.Serializable
 

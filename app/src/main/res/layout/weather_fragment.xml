@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="weather" type="com.weather.data.Weather"/>
-        <variable name="now" type="com.weather.data.NowWeather"/>
+        <variable name="weather" type="com.weather.data.model.weather.Weather"/>
+        <variable name="now" type="com.weather.data.model.weather.NowWeather"/>
         <variable name="hint" type="String"/>
     </data>
 

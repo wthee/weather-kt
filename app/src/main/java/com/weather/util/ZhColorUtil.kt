@@ -2,7 +2,7 @@ package com.weather.util
 
 import android.graphics.Color
 
-object WeaColorUtil {
+object ZhColorUtil {
 
     fun formColor(color: String):Int{
         var colorInt = when(color[0]){

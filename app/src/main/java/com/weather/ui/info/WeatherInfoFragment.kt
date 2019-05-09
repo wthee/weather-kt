@@ -1,4 +1,4 @@
-package com.weather
+package com.weather.ui.info
 
 import android.graphics.Canvas
 import android.graphics.Color
@@ -21,9 +21,11 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
-import com.weather.data.Data
+import com.weather.MainActivity
+import com.weather.R
+import com.weather.data.model.weather.Data
 import com.weather.databinding.WeatherInfoBinding
-import com.weather.util.TranslateWithTouchUtil
+import com.weather.util.DrawerUtil
 import java.text.DecimalFormat
 
 
@@ -71,7 +73,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             air.visibility = View.GONE
         }
 
-        binding.root.setOnTouchListener(TranslateWithTouchUtil.onTouch(binding.root,this))
+        binding.root.setOnTouchListener(DrawerUtil.onTouch(binding.root,this))
 
         return binding.root
     }
@@ -88,7 +90,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         params = dw.attributes
         //屏幕底部
         params.gravity = Gravity.BOTTOM
-        params.width = dm.widthPixels //屏幕宽度
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT
 
         params.windowAnimations = R.style.BottomDialogAnimation

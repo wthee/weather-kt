@@ -7,7 +7,7 @@
 
         <variable
             name="data"
-            type="com.weather.data.Data" />
+            type="com.weather.data.model.weather.Data" />
 
         <variable
             name="onClick"

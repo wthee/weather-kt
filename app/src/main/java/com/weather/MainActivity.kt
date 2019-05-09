@@ -9,11 +9,10 @@ import androidx.databinding.DataBindingUtil
 import com.weather.databinding.MainActivityBinding
 import com.weather.util.ActivityUtil
 import android.app.Activity
-import android.util.Log
 import android.view.View
 import android.content.Intent
-
-
+import android.os.Build
+import com.weather.ui.widget.WidgetUpdateService
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,10 +28,11 @@ class MainActivity : AppCompatActivity() {
         lateinit var sharedPreferences: SharedPreferences
         lateinit var editor: SharedPreferences.Editor
     }
-
     private lateinit var binding: MainActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         // 避免从桌面启动程序后，会重新实例化入口类的activity
         if (!this.isTaskRoot) { // 当前类不是该Task的根部，那么之前启动
             val intent = intent
@@ -61,6 +61,14 @@ class MainActivity : AppCompatActivity() {
         }
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
         ActivityUtil.instance.currentActivity = this
+
+        val service = Intent(this@MainActivity, WidgetUpdateService::class.java)
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O ){
+            startForegroundService(service)
+        }else{
+            startService(service)
+        }
+
     }
 
     private fun setAndroidNativeLightStatusBar(activity: Activity, onNight: Boolean) {
