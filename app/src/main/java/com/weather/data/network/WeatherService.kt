@@ -9,10 +9,14 @@ import retrofit2.http.QueryMap
 
 interface WeatherService {
 
+    /*
+    https://www.tianqiapi.com/api/?version=v1&city=%E6%9D%AD%E5%B7%9E
+    mapOf("version" to "v1", "city" to leader)
+    */
     @GET(".")
-    fun reqGetWea(@QueryMap map:Map<String ,String>): Call<Weather>
+    fun getWeather(@QueryMap map:Map<String ,String>): Call<Weather>
 
     @GET(".")
-    fun reqGetNowWea(@QueryMap map:Map<String ,String>): Call<NowWeather>
+    fun getNowWeather(@QueryMap map:Map<String ,String>): Call<NowWeather>
 
 }
