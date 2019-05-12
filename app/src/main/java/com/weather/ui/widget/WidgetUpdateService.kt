@@ -34,7 +34,7 @@ class WidgetUpdateService : Service() {
             MyApplication.context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         var mChannel : NotificationChannel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mChannel = NotificationChannel("1", "自动更新服务运行中...", NotificationManager
+            mChannel = NotificationChannel("1", "自动更新服务运行中", NotificationManager
                 .IMPORTANCE_HIGH)
             notificationManager.createNotificationChannel(mChannel);
             var notification =  Notification.Builder(applicationContext, "1")
