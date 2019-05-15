@@ -11,30 +11,33 @@
 
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:cardCornerRadius="@dimen/lineHeight">
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                 <TextView
-                        android:id="@+id/weaDay"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_small"
-                        android:textSize="@dimen/setting_title_size"
-                        android:textColor="@color/colorItemText"
-                        android:text="@{data.day}"
-                        tools:text="18日（今天）"/>
+                    android:id="@+id/weaDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_small"
+                    android:textSize="@dimen/setting_title_size"
+                    android:textColor="@drawable/other_text_click"
+                    android:text="@{data.day}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="18日（今天）" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <com.github.mikephil.charting.charts.LineChart

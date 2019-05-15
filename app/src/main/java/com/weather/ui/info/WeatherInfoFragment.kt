@@ -1,9 +1,6 @@
 package com.weather.ui.info
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -26,7 +23,10 @@ import com.weather.R
 import com.weather.data.model.weather.Data
 import com.weather.databinding.WeatherInfoBinding
 import com.weather.util.DrawerUtil
+import com.weather.util.ShareUtil
 import java.text.DecimalFormat
+import android.provider.MediaStore
+import android.net.Uri
 
 
 class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
@@ -71,6 +71,22 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             air.visibility = View.VISIBLE
         } else {
             air.visibility = View.GONE
+        }
+
+        binding.weaDay.setOnClickListener {
+            var sView = binding.root
+            sView.isDrawingCacheEnabled = true
+            sView.buildDrawingCache()
+            var bp = Bitmap.createBitmap(sView.drawingCache)
+            val uri = Uri.parse(
+                MediaStore.Images.Media.insertImage(
+                    activity!!.contentResolver,
+                    bp,
+                    null,
+                    null
+                )
+            )
+            ShareUtil.shareImg(uri,this.context!!)
         }
 
         binding.root.setOnTouchListener(DrawerUtil.onTouch(binding.root,this))

@@ -1,5 +1,6 @@
 package com.weather
 
+import android.Manifest
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,8 +12,13 @@ import com.weather.util.ActivityUtil
 import android.app.Activity
 import android.view.View
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.weather.ui.widget.WidgetUpdateService
+import java.util.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -69,6 +75,7 @@ class MainActivity : AppCompatActivity() {
             startService(service)
         }
 
+        getAuthority()
     }
 
     private fun setAndroidNativeLightStatusBar(activity: Activity, onNight: Boolean) {
@@ -77,6 +84,24 @@ class MainActivity : AppCompatActivity() {
             decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         } else {
             decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        }
+    }
+
+    private fun getAuthority() {
+        //申请权限
+        val permissions = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        val mPermissions = ArrayList<String>()
+        for (string in permissions) {
+            if (ContextCompat.checkSelfPermission(this@MainActivity, string) !== PackageManager.PERMISSION_GRANTED) {
+                mPermissions.add(string)
+            }
+        }
+        if (mPermissions.size > 0) {
+            Toast.makeText(this,"分享功能需要读写权限",Toast.LENGTH_LONG).show()
+            ActivityCompat.requestPermissions(this, permissions, 1)
         }
     }
 

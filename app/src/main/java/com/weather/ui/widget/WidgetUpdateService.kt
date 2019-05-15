@@ -53,15 +53,12 @@ class WidgetUpdateService : Service() {
                         "version" to "v1",
                         "city" to city))
                     RainFilterUtil.getRainInfo(WeatherViewModel.weatherTemp)
-                    WeatherViewModel.weatherTemp.data[0].tip =
-                        (System.currentTimeMillis() / 1000 / 60 % 60).toString() +
-                                WeatherViewModel.weatherTemp.update_time
                     var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
                     Log.e("widget","update"+WeatherViewModel.weatherTemp.data[0].tip)
                 }
             }
-        }, 0, 1 * 60 * 1000) //30min
+        }, 0, 30 * 60 * 1000) //30min
 
     }
 }

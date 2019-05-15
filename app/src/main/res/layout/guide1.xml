@@ -28,18 +28,6 @@
                 android:textColor = "@color/colorPrimary"
                 android:textSize = "@dimen/item_text_size" />
 
-            <!--<View-->
-                <!--android:layout_width = "match_parent"-->
-                <!--android:layout_height = "1dp"-->
-                <!--android:background = "@color/line" />-->
-
-            <!--<TextView-->
-                <!--android:id = "@+id/next"-->
-                <!--android:layout_width = "wrap_content"-->
-                <!--android:layout_height = "wrap_content"-->
-                <!--android:text = "@string/nextStep"-->
-                <!--android:textColor = "@color/colorPrimary"-->
-                <!--android:textSize = "@dimen/item_text_size" />-->
 
         </LinearLayout>
 
