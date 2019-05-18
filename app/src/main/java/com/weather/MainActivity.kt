@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.weather.ui.widget.WidgetUpdateService
+import com.weather.util.Logger
 import java.util.ArrayList
 
 
