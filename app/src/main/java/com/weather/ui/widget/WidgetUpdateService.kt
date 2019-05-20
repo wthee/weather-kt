@@ -55,7 +55,6 @@ class WidgetUpdateService : Service() {
                     RainFilterUtil.getRainInfo(WeatherViewModel.weatherTemp)
                     var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
-                    Log.e("widget","update"+WeatherViewModel.weatherTemp.data[0].tip)
                 }
             }
         }, 0, 30 * 60 * 1000) //30min
