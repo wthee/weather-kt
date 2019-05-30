@@ -1,4 +1,4 @@
-package com.weather
+package com.weather.adapters
 
 
 import android.appwidget.AppWidgetManager
@@ -13,7 +13,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
+import com.weather.MyApplication
+import com.weather.R
 import com.weather.data.model.AppInfo
 import com.weather.databinding.ItemAppinfoBinding
 import com.weather.ui.setting.WidgetSettingClickFragment
@@ -52,6 +55,8 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
                 charSequence: CharSequence,
                 filterResults: FilterResults
             ) {
+
+                @SuppressWarnings("unchecked")
                 mFilterList = filterResults.values as MutableList<AppInfo>
                 //刷新数据
                 submitList(mFilterList)
@@ -82,7 +87,7 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
         )
     }
 
-    private fun createOnClickListener(appInfo: AppInfo, p: Int): View.OnClickListener {
+    private fun createOnClickListener(appInfo: AppInfo): View.OnClickListener {
         return View.OnClickListener {
 
             pn[wc] = appInfo.packageName
@@ -91,7 +96,7 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
             editor.putString("appInfo2",pn[1])
             editor.putString("appInfo3",pn[2])
             editor.apply()
-            var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
             MyApplication.context.sendBroadcast(intent)
 
             notifyDataSetChanged()
@@ -102,7 +107,7 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
         val info = getItem(p)
 
         holder.apply {
-            bind(info, createOnClickListener(info,p))
+            bind(info, createOnClickListener(info))
             itemView.tag = info
             if(info.packageName == pn[wc]){
                 itemView.setBackgroundColor(Color.parseColor("#C0C0C0"))

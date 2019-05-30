@@ -19,6 +19,7 @@ import androidx.annotation.NonNull
 
 object ShareUtil{
 
+    @Suppress("DEPRECATION")
     fun shareImg(uri: Uri, context: Context){
         val shareIntent = ShareCompat.IntentBuilder.from(ActivityUtil.instance.currentActivity)
             .setStream(uri)
@@ -38,6 +39,7 @@ object ShareUtil{
         context.startActivity(shareIntent)
     }
 
+    @Suppress("DEPRECATION")
     fun shareText(text: String, context: Context){
         val shareIntent = ShareCompat.IntentBuilder.from(ActivityUtil.instance.currentActivity)
             .setText(text)

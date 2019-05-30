@@ -109,11 +109,11 @@ class WidgetSettingFragment : DialogFragment() {
             }
             editor.putBoolean("widgetTips", MainActivity.widgetTips)
             editor.apply()
-            var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
             MyApplication.context.sendBroadcast(intent)
         }
 
-        groupDiyTips.setOnCheckedChangeListener { group, checkedId ->
+        groupDiyTips.setOnCheckedChangeListener { _, checkedId ->
             isDiyTips = checkedId == R.id.diytips_o
             editor.putBoolean("isDiyTips", MainActivity.isDiyTips)
             editor.apply()
@@ -191,6 +191,7 @@ class WidgetSettingFragment : DialogFragment() {
             .setAllowPresets(false)
             .create()
         colorPickerDialog.setColorPickerDialogListener(pickerDialogListener)
+        @Suppress("DEPRECATION")
         colorPickerDialog.show(activity!!.fragmentManager, "color-picker-dialog")
     }
 

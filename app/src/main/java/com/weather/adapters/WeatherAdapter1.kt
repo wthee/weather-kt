@@ -63,7 +63,7 @@ class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDif
 
 
 
-public class WeatherDiffCallback : DiffUtil.ItemCallback<Data>() {
+class WeatherDiffCallback : DiffUtil.ItemCallback<Data>() {
 
     override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
         return oldItem == newItem

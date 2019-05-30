@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         wColor = sharedPreferences.getInt("widgetColor", wColor)
         widgetTips = sharedPreferences.getBoolean("widgetTips", widgetTips)
         isDiyTips = sharedPreferences.getBoolean("isDiyTips", isDiyTips)
-        diyTips = sharedPreferences.getString("diyTips", diyTips)
+        diyTips = sharedPreferences.getString("diyTips", diyTips)!!
         onNight = sharedPreferences.getBoolean("onNight",false)
         isFirstOpen = sharedPreferences.getBoolean("isFirstOpen",true)
         isFirstOpenSetting = sharedPreferences.getBoolean("isFirstOpenSetting",true)
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         )
         val mPermissions = ArrayList<String>()
         for (string in permissions) {
-            if (ContextCompat.checkSelfPermission(this@MainActivity, string) !== PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this@MainActivity, string) != PackageManager.PERMISSION_GRANTED) {
                 mPermissions.add(string)
             }
         }

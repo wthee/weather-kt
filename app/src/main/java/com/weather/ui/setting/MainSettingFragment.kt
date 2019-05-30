@@ -230,9 +230,9 @@ class MainSettingFragment : DialogFragment() {
 
     private fun resumeAllView() {
 
-        saveC1 = MainActivity.sharedPreferences.getString("city1", saveC1)
-        saveC2 = MainActivity.sharedPreferences.getString("city2", saveC2)
-        saveC3 = MainActivity.sharedPreferences.getString("city3", saveC3)
+        saveC1 = MainActivity.sharedPreferences.getString("city1", saveC1)!!
+        saveC2 = MainActivity.sharedPreferences.getString("city2", saveC2)!!
+        saveC3 = MainActivity.sharedPreferences.getString("city3", saveC3)!!
         city1.text = saveC1
         city2.text = saveC2
         city3.text = saveC3

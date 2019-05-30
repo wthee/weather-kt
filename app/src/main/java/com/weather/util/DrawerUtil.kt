@@ -13,8 +13,8 @@ object DrawerUtil {
     private var lastY: Int = 0
 
     fun onTouch(view: View,df: DialogFragment): View.OnTouchListener{
-        return View.OnTouchListener { v, event ->
-            var y = event.rawY.toInt()
+        return View.OnTouchListener { _, event ->
+            val y = event.rawY.toInt()
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     lastY = event.rawY.toInt()
@@ -29,7 +29,7 @@ object DrawerUtil {
                     if (offsetY > 0) {
                         if (offsetY < view.height / 4) {
                             //设置动画
-                            var anim = TranslateAnimation(0f, 0f, 0f, -offsetY.toFloat());
+                            val anim = TranslateAnimation(0f, 0f, 0f, -offsetY.toFloat());
                             anim.duration = 150
                             anim.setAnimationListener(object : Animation.AnimationListener {
                                 override fun onAnimationRepeat(animation: Animation?) {}
