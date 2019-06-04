@@ -196,7 +196,7 @@
                             android:paddingTop="@dimen/padding_small"
                             android:textSize="@dimen/item_text_size"
                             android:text="@{@string/tab+data.index[3].desc}"
-                            tools:text="空气质量asfdagsas："/>
+                            tools:text="穿衣："/>
 
                     </LinearLayout>
 
