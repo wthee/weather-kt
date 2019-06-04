@@ -3,9 +3,10 @@
 ## 下载地址
 https://www.coolapk.com/apk/com.weather
 ## 主要功能
-- 未来七天的雨天
+- 显示未来七天的雨天
 - 全天温度变化
 - 实时天气
+- 桌面插件
 ## 应用截图
 ![Image text](https://github.com/wthee/weather-kt/blob/master/screenshot/main.jpg)
 ![Image text](https://github.com/wthee/weather-kt/blob/master/screenshot/info.jpg)
