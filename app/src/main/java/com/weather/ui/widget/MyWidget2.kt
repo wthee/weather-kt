@@ -39,7 +39,7 @@ class MyWidget2 : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         val mgr = AppWidgetManager.getInstance(context)
-        val cn = ComponentName(context, MyWidget2::class.java!!)
+        val cn = ComponentName(context, MyWidget2::class.java)
         onUpdate(context, mgr, mgr.getAppWidgetIds(cn))
     }
 
@@ -52,13 +52,13 @@ class MyWidget2 : AppWidgetProvider() {
         ) {
             try {
 
-                var wea = WeatherViewModel.weatherTemp
+                val wea = WeatherViewModel.weatherTemp
 
-                var views: RemoteViews = RemoteViews(context.packageName, R.layout.widget_2)
+                val views: RemoteViews = RemoteViews(context.packageName, R.layout.widget_2)
 
-                var appInfo1 = MainActivity.sharedPreferences.getString("appInfo1", "com.weather")
-                var appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")
-                var appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")
+                val appInfo1 = MainActivity.sharedPreferences.getString("appInfo1", "com.weather")!!
+                val appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")!!
+                val appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")!!
 
                 views.setOnClickPendingIntent(R.id.appwidget2_now_time,
                     MyWidget.getPI(context, appInfo1)
@@ -75,7 +75,7 @@ class MyWidget2 : AppWidgetProvider() {
                     views.setTextViewText(R.id.appwidget2_date, wea.data[0].m + wea.data[0].d)
                     views.setTextViewText(R.id.appwidget2_city, wea.city)
                     views.setTextViewText(R.id.appwidget2_wea, wea.data[0].wea)
-                    var tips = wea.data[0].tip.split("，")
+                    val tips = wea.data[0].tip.split("，")
                     if(tips.size>1){
                         views.setTextViewText(R.id.appwidget2_tip, tips[0])
                         views.setTextViewText(R.id.appwidget2_tip2, tips[1])
@@ -86,7 +86,7 @@ class MyWidget2 : AppWidgetProvider() {
                 }
 
                 if(isDiyTips){
-                    var tips = diyTips.split("，")
+                    val tips = diyTips.split("，")
                     if(tips.size>1){
                         views.setTextViewText(R.id.appwidget2_tip, tips[0])
                         views.setTextViewText(R.id.appwidget2_tip2, tips[1])

@@ -41,7 +41,7 @@ class MyWidget : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         val mgr = AppWidgetManager.getInstance(context)
-        val cn = ComponentName(context, MyWidget::class.java!!)
+        val cn = ComponentName(context, MyWidget::class.java)
         onUpdate(context, mgr, mgr.getAppWidgetIds(cn))
     }
 
@@ -49,7 +49,7 @@ class MyWidget : AppWidgetProvider() {
 
         fun getPI(context: Context,appInfo: String): PendingIntent{
             val packageManager = context.packageManager
-            var intent = Intent(packageManager.getLaunchIntentForPackage(appInfo))
+            val intent = Intent(packageManager.getLaunchIntentForPackage(appInfo))
             return PendingIntent.getActivity(context, 0,intent,0)
         }
 
@@ -59,12 +59,12 @@ class MyWidget : AppWidgetProvider() {
         ) {
             try {
 
-                var wea = WeatherViewModel.weatherTemp
-                var views = RemoteViews(context.packageName, R.layout.widget_1)
+                val wea = WeatherViewModel.weatherTemp
+                val views = RemoteViews(context.packageName, R.layout.widget_1)
 
-                var appInfo1 = MainActivity.sharedPreferences.getString("appInfo1", "com.weather")
-                var appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")
-                var appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")
+                val appInfo1 = MainActivity.sharedPreferences.getString("appInfo1", "com.weather")!!
+                val appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")!!
+                val appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")!!
 
                 views.setOnClickPendingIntent(R.id.appwidget_now_time,
                     getPI(context, appInfo1)

@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.weather.ui.widget.WidgetUpdateService
+import com.weather.util.Logger
 import java.util.ArrayList
 
 
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         wColor = sharedPreferences.getInt("widgetColor", wColor)
         widgetTips = sharedPreferences.getBoolean("widgetTips", widgetTips)
         isDiyTips = sharedPreferences.getBoolean("isDiyTips", isDiyTips)
-        diyTips = sharedPreferences.getString("diyTips", diyTips)
+        diyTips = sharedPreferences.getString("diyTips", diyTips)!!
         onNight = sharedPreferences.getBoolean("onNight",false)
         isFirstOpen = sharedPreferences.getBoolean("isFirstOpen",true)
         isFirstOpenSetting = sharedPreferences.getBoolean("isFirstOpenSetting",true)
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         )
         val mPermissions = ArrayList<String>()
         for (string in permissions) {
-            if (ContextCompat.checkSelfPermission(this@MainActivity, string) !== PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this@MainActivity, string) != PackageManager.PERMISSION_GRANTED) {
                 mPermissions.add(string)
             }
         }

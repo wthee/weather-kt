@@ -16,9 +16,9 @@ import android.widget.RadioGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
-import com.weather.AppInfoAdapter
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
+import com.weather.adapters.AppInfoAdapter
 import com.weather.data.model.AppInfo
 import com.weather.util.ActivityUtil
 
@@ -149,7 +149,7 @@ class WidgetSettingClickFragment : DialogFragment() {
         activity!!.menuInflater.inflate(R.menu.widget_setting_menu, menu)
 
         val searchItem = menu!!.findItem(R.id.search)
-        val showSysItem = menu!!.findItem(R.id.show_sys)
+        val showSysItem = menu.findItem(R.id.show_sys)
         val searchView = searchItem.actionView as SearchView
 
         showSysItem.title = if(showSys) TITLE_HID_SYS else TITLE_SHOW_SYS

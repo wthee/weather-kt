@@ -46,6 +46,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
     private lateinit var dm: DisplayMetrics
     private lateinit var params: WindowManager.LayoutParams
 
+    @Suppress("DEPRECATION")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater,
             R.layout.weather_info,container,false)
@@ -58,8 +59,8 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
 
         initLineChart()//初始化
 
-        var air = binding.air
-        var alarm = binding.alarm
+        val air = binding.air
+        val alarm = binding.alarm
 
         if (item.alarm != null && item.alarm.alarm_type != "") {
             alarm.visibility = View.VISIBLE
@@ -74,10 +75,10 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         }
 
         binding.weaDay.setOnClickListener {
-            var sView = binding.root
+            val sView = binding.root
             sView.isDrawingCacheEnabled = true
             sView.buildDrawingCache()
-            var bp = Bitmap.createBitmap(sView.drawingCache)
+            val bp = Bitmap.createBitmap(sView.drawingCache)
             val uri = Uri.parse(
                 MediaStore.Images.Media.insertImage(
                     activity!!.contentResolver,
@@ -136,8 +137,8 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         xAxis.position = XAxis.XAxisPosition.BOTTOM
 
         //y
-        var yAxis = lineChart.axisLeft
-        var yAxis1 = lineChart.axisRight
+        val yAxis = lineChart.axisLeft
+        val yAxis1 = lineChart.axisRight
         yAxis.axisLineWidth = axisWidth
         yAxis.setDrawGridLines(false)
         yAxis1.setDrawGridLines(false)
@@ -205,12 +206,12 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             var y: Float = hour.tem.substring(0, hour.tem.lastIndex).toFloat()
             mPointValues.add(Entry(index.toFloat(), y))
         }
-        var dataSet = LineDataSet(mPointValues, null)
+        val dataSet = LineDataSet(mPointValues, null)
 
         item.hours.forEachIndexed { index, hour ->
-            var y: Float = hour.tem.substring(0, hour.tem.lastIndex).toFloat()
-            var dif = dataSet.yMax - dataSet.yMin  //差值
-            var offsetY = if (dif <= 1f) {  //偏移量
+            val y: Float = hour.tem.substring(0, hour.tem.lastIndex).toFloat()
+            val dif = dataSet.yMax - dataSet.yMin  //差值
+            val offsetY = if (dif <= 1f) {  //偏移量
                 lineChart.axisLeft.axisMaximum = dataSet.yMax + 1
                 lineChart.axisLeft.axisMinimum = dataSet.yMin - 1
                 2.0f / 8
@@ -220,7 +221,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             mPointValues1.add(Entry(index.toFloat(), y + offsetY))
         }
 
-        var dataSet1 = LineDataSet(mPointValues1, null)
+        val dataSet1 = LineDataSet(mPointValues1, null)
 
         dataSets = listOf(dataSet, dataSet1)
         lineData = LineData(dataSets)
@@ -247,7 +248,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         override fun refreshContent(e: Entry, highlight: Highlight) {
             super.refreshContent(e, highlight)
             index = highlight.dataSetIndex//这个方法用于获得折线是哪根
-            var hour = item.hours[e.x.toInt()]
+            val hour = item.hours[e.x.toInt()]
             tvContent.text = hour.win + hour.win_speed
         }
 
@@ -294,7 +295,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             val offset = getOffsetForDrawingAtPoint(posX, posY)
             val saveId = canvas.save()
 
-            var path: Path
+            val path: Path
             if (posY < height + ARROW_SIZE) {//处理超过上边界
                 path = Path()
                 path.moveTo(0f, 0f)

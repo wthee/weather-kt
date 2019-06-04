@@ -46,7 +46,7 @@ class OtherSettingFragment : DialogFragment() {
             viewModel.changeType()
         }
 
-        radioGroup2.setOnCheckedChangeListener { group, checkedId ->
+        radioGroup2.setOnCheckedChangeListener { _, checkedId ->
             WeatherFragment.nlIsGone = checkedId == R.id.rb3
             editor.putBoolean("nl", WeatherFragment.nlIsGone)
             editor.apply()

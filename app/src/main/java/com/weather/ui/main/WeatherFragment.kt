@@ -1,5 +1,6 @@
 package com.weather.ui.main
 
+import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.text.Editable
@@ -90,7 +91,7 @@ class WeatherFragment : Fragment() {
         )
         lastCity = sharedPreferences.getString("city",
             lastCity
-        )
+        )!!
 
         viewModel.getWeather(lastCity)
         viewModel.getNowWeather(lastCity)
@@ -99,8 +100,8 @@ class WeatherFragment : Fragment() {
         view!!.requestFocus()
         view!!.setOnKeyListener(object : View.OnKeyListener {
             override fun onKey(view: View, i: Int, keyEvent: KeyEvent): Boolean {
-                var secondTime = System.currentTimeMillis();
-                if (keyEvent.action === KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK) {
+                val secondTime = System.currentTimeMillis();
+                if (keyEvent.action == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK) {
                     if (secondTime - firstTime < 2000) {
                         System.exit(0)
                     } else {
@@ -172,6 +173,8 @@ class WeatherFragment : Fragment() {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    @Suppress("DEPRECATION")
     private fun initView() {
         progressBar = binding.pb
         swipe = binding.swipe
@@ -220,11 +223,11 @@ class WeatherFragment : Fragment() {
         })
 
 
-        recyclerView.setOnTouchListener(View.OnTouchListener { v, event ->
+        recyclerView.setOnTouchListener(View.OnTouchListener { _, _ ->
             hideAndClear()
             return@OnTouchListener false
         })
-        mainLayout.setOnTouchListener(View.OnTouchListener { v, event ->
+        mainLayout.setOnTouchListener(View.OnTouchListener { _, _ ->
             hideAndClear()
             return@OnTouchListener true
         })
