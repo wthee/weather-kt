@@ -5,3 +5,6 @@
 - 全天温度变化
 - 实时天气
 ## 应用截图
+![Image text](https://github.com/wthee/weather-kt/blob/master/screenshot/main.jpg)
+![Image text](https://github.com/wthee/weather-kt/blob/master/screenshot/info.jpg)
+![Image text](https://github.com/wthee/weather-kt/blob/master/screenshot/setting.jpg)
