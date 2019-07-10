@@ -56,7 +56,7 @@ class GuideView(yourview: View, guideN: Int) : DialogFragment() {
         dm = DisplayMetrics()
         activity!!.windowManager.defaultDisplay.getMetrics(dm)
 
-        val dw = dialog.window
+        val dw = dialog?.window
         dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) //一定要设置背景
 
         params = dw.attributes

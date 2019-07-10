@@ -145,7 +145,7 @@ class WidgetSettingClickFragment : DialogFragment() {
         return view
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         activity!!.menuInflater.inflate(R.menu.widget_setting_menu, menu)
 
         val searchItem = menu!!.findItem(R.id.search)
@@ -165,10 +165,9 @@ class WidgetSettingClickFragment : DialogFragment() {
             }
 
         })
-
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item!!.itemId == R.id.show_sys){
             if(!showSys) {
                 item.title = TITLE_HID_SYS
@@ -265,7 +264,7 @@ class WidgetSettingClickFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        val dw = dialog.window
+        val dw = dialog?.window
         dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dm = DisplayMetrics()
@@ -281,10 +280,8 @@ class WidgetSettingClickFragment : DialogFragment() {
         dw.attributes = params
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-
-
         WidgetSettingFragment.getInstance()
             .show(activity!!.supportFragmentManager.beginTransaction(), "widget")
     }

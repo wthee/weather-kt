@@ -41,9 +41,10 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-        <activity android:name=".MainActivity"
+        <activity android:name="com.weather.MainActivity"
             android:configChanges="orientation|screenSize"
             android:excludeFromRecents="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

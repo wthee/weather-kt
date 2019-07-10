@@ -85,7 +85,7 @@ class MainSettingFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dw = dialog.window
+        val dw = dialog?.window
         dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) //一定要设置背景
 
         dm = DisplayMetrics()

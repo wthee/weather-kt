@@ -69,7 +69,7 @@ class OtherSettingFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        val dw = dialog.window
+        val dw = dialog?.window
         dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) //一定要设置背景
 
         dm = DisplayMetrics()
@@ -85,7 +85,8 @@ class OtherSettingFragment : DialogFragment() {
         dw.attributes = params
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         MainSettingFragment.getInstance()
             .show(activity!!.supportFragmentManager.beginTransaction(), "setting")
