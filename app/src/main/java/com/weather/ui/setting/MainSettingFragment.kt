@@ -10,6 +10,7 @@ import android.view.*
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -17,6 +18,7 @@ import com.weather.GuideView
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isFirstOpenSetting
+import com.weather.MainActivity.Companion.sharedPreferences
 import com.weather.R
 import com.weather.ui.main.WeatherFragment
 import com.weather.ui.main.WeatherFragment.Companion.saveC1
@@ -72,11 +74,12 @@ class MainSettingFragment : DialogFragment() {
         if(isFirstOpenSetting){
             view.post {
                 GuideView(city3, 4)
-                    .show(activity!!.supportFragmentManager.beginTransaction(),"test")
+                    .show(fragmentManager!!,"test")
                 GuideView(city3, 3)
-                    .show(activity!!.supportFragmentManager.beginTransaction(),"test")
-                editor.putBoolean("isFirstOpenSetting",false)
-                editor.apply()
+                    .show(fragmentManager!!,"test")
+                sharedPreferences.edit {
+                    putBoolean("isFirstOpenSetting",false)
+                }
                 isFirstOpenSetting = MainActivity.sharedPreferences.getBoolean("isFirstOpen",false)
             }
         }
@@ -107,13 +110,13 @@ class MainSettingFragment : DialogFragment() {
 
         widgetsetting.setOnClickListener {
             WidgetSettingFragment.getInstance()
-                .show(activity!!.supportFragmentManager.beginTransaction(), "widget")
+                .show(fragmentManager!!, "widget")
             this.dismiss()
         }
 
         othersetting.setOnClickListener {
             OtherSettingFragment.getInstance()
-                .show(activity!!.supportFragmentManager.beginTransaction(), "other")
+                .show(fragmentManager!!, "other")
             this.dismiss()
         }
 
@@ -177,8 +180,9 @@ class MainSettingFragment : DialogFragment() {
         rb5.setOnClickListener {
             if (MainActivity.onNight) {
                 MainActivity.onNight = false
-                editor.putBoolean("onNight", MainActivity.onNight)
-                editor.apply()
+                sharedPreferences.edit {
+                    putBoolean("onNight", MainActivity.onNight)
+                }
                 activity!!.recreate()
             }
         }
@@ -186,8 +190,9 @@ class MainSettingFragment : DialogFragment() {
         rb6.setOnClickListener {
             if (!MainActivity.onNight) {
                 MainActivity.onNight = true
-                editor.putBoolean("onNight", MainActivity.onNight)
-                editor.apply()
+                sharedPreferences.edit {
+                    putBoolean("onNight", MainActivity.onNight)
+                }
                 activity!!.recreate()
             }
         }
@@ -197,22 +202,27 @@ class MainSettingFragment : DialogFragment() {
                 if (viewModel.checkCity(s.toString()) != -1) {
                     if (city1.isChecked) {
                         city1.text = s
-                        editor.putString("city1", s.toString())
+                        sharedPreferences.edit {
+                            putString("city1", s.toString())
+                        }
                         modifyLayout.visibility = View.GONE
                     }
                     if (city2.isChecked) {
                         city2.text = s
-                        editor.putString("city2", s.toString())
+                        sharedPreferences.edit {
+                            putString("city2", s.toString())
+                        }
                         modifyLayout.visibility = View.GONE
                     }
                     if (city3.isChecked) {
                         city3.text = s
-                        editor.putString("city3", s.toString())
+                        sharedPreferences.edit {
+                            putString("city3", s.toString())
+                        }
                         modifyLayout.visibility = View.GONE
                     }
                     groupCity.visibility = View.VISIBLE
                     modify.text = null
-                    editor.apply()
                     viewModel.changeCity(s.toString())
                 }
             }
@@ -230,9 +240,9 @@ class MainSettingFragment : DialogFragment() {
 
     private fun resumeAllView() {
 
-        saveC1 = MainActivity.sharedPreferences.getString("city1", saveC1)!!
-        saveC2 = MainActivity.sharedPreferences.getString("city2", saveC2)!!
-        saveC3 = MainActivity.sharedPreferences.getString("city3", saveC3)!!
+        saveC1 = sharedPreferences.getString("city1", saveC1)!!
+        saveC2 = sharedPreferences.getString("city2", saveC2)!!
+        saveC3 = sharedPreferences.getString("city3", saveC3)!!
         city1.text = saveC1
         city2.text = saveC2
         city3.text = saveC3

@@ -1,48 +1,63 @@
 package com.weather.data.model.weather
 
-import java.io.Serializable
-
-
-class Weather(
+data class Weather(
+    val `data`: MutableList<Data>,
     val city: String,
-    val `data`: ArrayList<Data>,
+    val cityEn: String,
+    val cityid: String,
+    val country: String,
+    val countryEn: String,
     val update_time: String
 )
 
-class Data(
-    var air: Int,
+data class Data(
+    var air: String,
     var air_level: String,
     var air_tips: String,
     val alarm: Alarm,
     val date: String,
     val day: String,
-    val hours: ArrayList<Hour>,
-    val humidity: Int,
-    val index: ArrayList<Index>,
+    val hours: List<Hour>,
+    val humidity: String,
+    val index: List<Index>,
+    val pressure: String,
+    val sunrise: String,
+    val sunset: String,
     val tem: String,
     val tem1: String,
     val tem2: String,
+    val visibility: String,
     val wea: String,
+    val wea_day: String,
+    val wea_day_img: String,
+    val wea_img: String,
+    val wea_night: String,
+    val wea_night_img: String,
     val week: String,
-
-    var date_nl: String,
+    val win: List<String>,
+    val win_speed: String,
+    var date_nl: String,//农历
     var tems: String,
     var tip: String,
     var y: String,
     var m: String,
     var d: String
-): Serializable
+)
 
 
-class Hour(
-    val day: String,
+data class Hour(
+    val hours: String,
     val tem: String,
     val wea: String,
+    val wea_img: String,
     val win: String,
     val win_speed: String
 )
-class Index(
+
+data class Index(
     val desc: String,
     val level: String,
     val title: String
 )
+
+

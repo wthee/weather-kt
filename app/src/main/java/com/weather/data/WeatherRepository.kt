@@ -9,11 +9,11 @@ class WeatherRepository(
     private val netWork: WeatherNetWork
 ) {
 
-    suspend fun getWeather(map:Map<String,String>) = withContext(IO) {
+    suspend fun getWeather(map:MutableMap<String,String>) = withContext(IO) {
         netWork.fetchWeather(map)
     }
 
-    suspend fun getNowWeather(map:Map<String,String>) = withContext(IO) {
+    suspend fun getNowWeather(map:MutableMap<String,String>) = withContext(IO) {
         netWork.fetchNowWeather(map)
     }
 

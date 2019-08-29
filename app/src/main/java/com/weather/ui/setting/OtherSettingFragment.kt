@@ -85,10 +85,9 @@ class OtherSettingFragment : DialogFragment() {
         dw.attributes = params
     }
 
-
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         MainSettingFragment.getInstance()
-            .show(activity!!.supportFragmentManager.beginTransaction(), "setting")
+            .show(fragmentManager!!, "setting")
     }
 }

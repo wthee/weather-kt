@@ -1,76 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
-                name="data"
-                type="com.weather.data.model.weather.Data"/>
+            name="data"
+            type="com.weather.data.model.weather.Data" />
     </data>
 
     <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="@dimen/lineHeight">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/cardRadius">
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/weaDay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_small"
-                    android:textSize="@dimen/setting_title_size"
-                    android:textColor="@drawable/other_text_click"
                     android:text="@{data.day}"
+                    android:textColor="@drawable/other_text_click"
+                    android:textSize="@dimen/setting_title_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     tools:text="18日（今天）" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/lineChart"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_marginLeft="@dimen/padding_small"
-                    android:layout_marginRight="@dimen/padding_small"
-                    android:layout_marginBottom="@dimen/padding_small">
+                android:id="@+id/lineChart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginLeft="@dimen/padding_small"
+                android:layout_marginRight="@dimen/padding_small"
+                android:layout_marginBottom="@dimen/padding_small">
 
             </com.github.mikephil.charting.charts.LineChart>
 
             <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/lineHeight"
-                    android:layout_marginBottom="@dimen/padding_small"
-                    android:background="@color/line"/>
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lineHeight"
+                android:layout_marginBottom="@dimen/padding_small"
+                android:background="@color/line" />
+
             <androidx.core.widget.NestedScrollView
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:layout_width = "match_parent"
-                    android:layout_height = "wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/alarm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:paddingLeft="@dimen/padding_small"
-                        android:paddingRight="@dimen/padding_small"
-                        android:orientation="vertical">
+                        android:paddingRight="@dimen/padding_small">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -81,20 +83,20 @@
                                 android:id="@+id/alarm_type"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="@dimen/setting_title_size"
-                                android:textColor="@color/colorAccent"
                                 android:text='@{data.alarm.alarm_type+@string/alarm}'
-                                tools:text="大风预警："/>
+                                android:textColor="@color/colorAccent"
+                                android:textSize="@dimen/setting_title_size"
+                                tools:text="大风预警：" />
 
                             <TextView
                                 android:id="@+id/alarm_lv"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:text="@{data.alarm.alarm_level}"
+                                android:textColor="@color/colorAccent"
                                 android:textSize="@dimen/setting_title_size"
                                 app:AutoColor='@{(data.alarm != null) ? data.alarm.alarm_level : @string/space}'
-                                android:textColor="@color/colorAccent"
-                                android:text="@{data.alarm.alarm_level}"
-                                tools:text="黄色"/>
+                                tools:text="黄色" />
 
                         </LinearLayout>
 
@@ -104,9 +106,9 @@
                             android:layout_height="wrap_content"
                             android:paddingTop="@dimen/padding_small"
                             android:paddingBottom="@dimen/padding_small"
-                            android:textSize="@dimen/item_text_size"
                             android:text="@{@string/tab+data.alarm.alarm_content}"
-                            tools:text="空气质量asfdagsas："/>
+                            android:textSize="@dimen/item_text_size"
+                            tools:text="空气质量asfdagsas：" />
 
                     </LinearLayout>
 
@@ -114,9 +116,9 @@
                         android:id="@+id/air"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:paddingLeft="@dimen/padding_small"
-                        android:paddingRight="@dimen/padding_small"
-                        android:orientation="vertical">
+                        android:paddingRight="@dimen/padding_small">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -126,19 +128,19 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="@dimen/setting_title_size"
-                                android:textColor="@color/colorAccent"
                                 android:text="空气质量："
-                                tools:text="空气质量："/>
+                                android:textColor="@color/colorAccent"
+                                android:textSize="@dimen/setting_title_size"
+                                tools:text="空气质量：" />
 
                             <TextView
                                 android:id="@+id/air_lv"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                app:AutoColor="@{data.air_tips != null ? data.air_level : @string/space}"
-                                android:textSize="@dimen/setting_title_size"
                                 android:text="@{data.air+@string/space+data.air_level}"
-                                tools:text="45 优"/>
+                                android:textSize="@dimen/setting_title_size"
+                                app:AutoColor="@{data.air_tips != null ? data.air_level : @string/space}"
+                                tools:text="45 优" />
 
                         </LinearLayout>
 
@@ -148,9 +150,9 @@
                             android:layout_height="wrap_content"
                             android:paddingTop="@dimen/padding_small"
                             android:paddingBottom="@dimen/padding_small"
-                            android:textSize="@dimen/item_text_size"
                             android:text="@{@string/tab+data.air_tips}"
-                            tools:text="空气质量asfdagsas："/>
+                            android:textSize="@dimen/item_text_size"
+                            tools:text="空气质量asfdagsas：" />
 
 
                     </LinearLayout>
@@ -159,10 +161,10 @@
                         android:id="@+id/chuanyi"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:paddingLeft="@dimen/padding_small"
                         android:paddingRight="@dimen/padding_small"
-                        android:paddingBottom="@dimen/padding_small"
-                        android:orientation="vertical">
+                        android:paddingBottom="@dimen/padding_small">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -172,19 +174,19 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="@dimen/setting_title_size"
-                                android:textColor="@color/colorAccent"
                                 android:text="穿衣指数："
-                                tools:text="穿衣指数："/>
+                                android:textColor="@color/colorAccent"
+                                android:textSize="@dimen/setting_title_size"
+                                tools:text="穿衣指数：" />
 
                             <TextView
                                 android:id="@+id/chuanyi_title"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:text="@{data.index[3].level}"
                                 android:textSize="@dimen/setting_title_size"
                                 app:AutoColor="@{data.index[3].level}"
-                                android:text="@{data.index[3].level}"
-                                tools:text="热"/>
+                                tools:text="热" />
 
                         </LinearLayout>
 
@@ -194,9 +196,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingTop="@dimen/padding_small"
-                            android:textSize="@dimen/item_text_size"
                             android:text="@{@string/tab+data.index[3].desc}"
-                            tools:text="穿衣："/>
+                            android:textSize="@dimen/item_text_size"
+                            tools:text="穿衣：" />
 
                     </LinearLayout>
 

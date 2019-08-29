@@ -15,11 +15,11 @@ import android.content.Intent
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.weather.*
-import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isFirstOpen
 import com.weather.MainActivity.Companion.sharedPreferences
 import com.weather.ui.info.WeatherInfoFragment
@@ -133,19 +133,18 @@ class WeatherFragment : Fragment() {
                 input.text = null
                 progressBar.visibility = View.GONE
                 swipe.isRefreshing = false
-                editor.putString("city", weather.city)
-                editor.apply()
+                sharedPreferences.edit {
+                    putString("city", weather.city)
+                }
                 if (bjType == 0) {
-                    binding.recycler.adapter =
-                        adapter1
+                    binding.recycler.adapter = adapter1
                     adapter1.submitList(weather.data)
-                    adapter1.notifyDataSetChanged()
+                    //adapter1.notifyDataSetChanged()
                 }
                 if (bjType == 1) {
-                    binding.recycler.adapter =
-                        adapter2
+                    binding.recycler.adapter = adapter2
                     adapter2.submitList(weather.data)
-                    adapter2.notifyDataSetChanged()
+                    //adapter2.notifyDataSetChanged()
                 }
 
                 if(isFirstOpen){
@@ -153,12 +152,13 @@ class WeatherFragment : Fragment() {
                         .show(activity!!.supportFragmentManager.beginTransaction(),"test")
                     GuideView(setting, 1)
                         .show(activity!!.supportFragmentManager.beginTransaction(),"test")
-                    editor.putBoolean("isFirstOpen",false)
-                    editor.apply()
+                    sharedPreferences.edit {
+                        putBoolean("isFirstOpen",false)
+                    }
                     isFirstOpen = sharedPreferences.getBoolean("isFirstOpen",false)
                 }
 
-                var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                 MyApplication.context.sendBroadcast(intent)
             }
         })
@@ -185,10 +185,21 @@ class WeatherFragment : Fragment() {
         input = binding.input
         mainLayout = binding.mainLayout
 
-
+        //左上城市名点击事件
         setting.setOnClickListener {
             MainSettingFragment.getInstance().show(activity!!.supportFragmentManager.beginTransaction(),"setting")
         }
+
+        //左上城市名长按事件
+        setting.setOnLongClickListener {
+            MainActivity.onNight = !MainActivity.onNight
+            sharedPreferences.edit {
+                putBoolean("onNight", MainActivity.onNight)
+            }
+            activity!!.recreate()
+            return@setOnLongClickListener true
+        }
+
         nowWea.setOnClickListener {
             WeatherInfoFragment(today).show(activity!!
                     .supportFragmentManager

@@ -4,9 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="weather" type="com.weather.data.model.weather.Weather"/>
-        <variable name="now" type="com.weather.data.model.weather.NowWeather"/>
-        <variable name="hint" type="String"/>
+        <variable
+            name="weather"
+            type="com.weather.data.model.weather.Weather" />
+        <variable
+            name="now"
+            type="com.weather.data.model.weather.NowWeather" />
+        <variable
+            name="hint"
+            type="String" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -44,9 +50,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_small"
                     android:clickable="true"
+                    android:text="@{weather.city}"
                     android:textColor="@drawable/title_text_click"
                     android:textSize="@dimen/title_text_size"
-                    android:text="@{weather.city}"
                     tools:text="杭州" />
 
                 <TextView
@@ -80,8 +86,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/colorPrimary"
-                    android:inputType="text"
                     android:hint="@{hint}"
+                    android:inputType="text"
                     android:singleLine="true"
                     android:textSize="@dimen/item_text_size" />
 

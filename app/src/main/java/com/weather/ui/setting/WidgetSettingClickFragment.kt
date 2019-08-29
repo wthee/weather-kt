@@ -3,24 +3,25 @@ package com.weather.ui.setting
 import android.content.DialogInterface
 import android.content.pm.ApplicationInfo
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.graphics.drawable.ColorDrawable
 import android.view.*
 import android.widget.ProgressBar
-import androidx.fragment.app.DialogFragment
-import com.weather.R
-import com.weather.util.DrawerUtil
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.edit
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.weather.MainActivity
-import com.weather.MainActivity.Companion.editor
+import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.R
 import com.weather.adapters.AppInfoAdapter
 import com.weather.data.model.AppInfo
 import com.weather.util.ActivityUtil
+import com.weather.util.DrawerUtil
 
 
 class WidgetSettingClickFragment : DialogFragment() {
@@ -28,7 +29,6 @@ class WidgetSettingClickFragment : DialogFragment() {
     companion object {
         @Volatile
         private var instance: WidgetSettingClickFragment? = null
-
 
         fun getInstance() = instance ?: synchronized(this) {
             instance
@@ -43,9 +43,7 @@ class WidgetSettingClickFragment : DialogFragment() {
         var myAppIndex = 0
         var myAppIndexNoSys = 0
         var lastAdapter = 0
-
         var showSys = false
-
         var mSourceList = arrayListOf<AppInfo>()
         var applist =  arrayListOf<AppInfo>()
         var applistNoSys =  arrayListOf<AppInfo>()
@@ -61,21 +59,18 @@ class WidgetSettingClickFragment : DialogFragment() {
     private lateinit var ce3: RadioButton
     private lateinit var toolbar: Toolbar
     private lateinit var loading: ProgressBar
-
     private var i = 0
     private var iNoSys = 0
-
     private var mark = arrayListOf(0,0,0)
     private var markNoSys = arrayListOf(0,0,0)
-
     private val TITLE_SHOW_SYS = "显示系统应用"
     private val TITLE_HID_SYS = "隐藏系统应用"
     private val TEXT_SELECTAPP = "选择要打开的应用:"
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        var view = inflater.inflate(R.layout.setting_widget_click, container,false) as View
 
         showSys = MainActivity.sharedPreferences.getBoolean("showSys", false)
 
-        var view = inflater.inflate(R.layout.setting_widget_click, container,false) as View
         toolbar = view.findViewById(R.id.widgetToolbar)
         toolbar.title = TEXT_SELECTAPP
         ActivityUtil.instance.currentActivity!!.setSupportActionBar(toolbar)
@@ -184,10 +179,9 @@ class WidgetSettingClickFragment : DialogFragment() {
                 mSourceList =
                     applistNoSys
             }
-            editor.putBoolean("showSys",
-                showSys
-            )
-            editor.apply()
+            sharedPreferences.edit{
+                putBoolean("showSys",showSys)
+            }
             getMark()
             adapter.notifyDataSetChanged()
         }
@@ -247,7 +241,6 @@ class WidgetSettingClickFragment : DialogFragment() {
 
             if (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
                 // 非系统应用
-
                 iNoSys++
                 applistNoSys.add(appInfo)
             }
@@ -255,7 +248,6 @@ class WidgetSettingClickFragment : DialogFragment() {
                 myAppIndex = i
                 myAppIndexNoSys = iNoSys
             }
-
             i++
             applist.add(appInfo)
         }
@@ -283,6 +275,6 @@ class WidgetSettingClickFragment : DialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         WidgetSettingFragment.getInstance()
-            .show(activity!!.supportFragmentManager.beginTransaction(), "widget")
+            .show(fragmentManager!!, "widget")
     }
 }

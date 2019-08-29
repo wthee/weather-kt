@@ -27,10 +27,10 @@ import com.weather.util.ShareUtil
 import java.text.DecimalFormat
 import android.provider.MediaStore
 import android.net.Uri
+import com.github.mikephil.charting.components.AxisBase
 
 
 class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
-
 
     private lateinit var binding: WeatherInfoBinding
     private lateinit var lineChart: LineChart
@@ -68,7 +68,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             alarm.visibility = View.GONE
         }
 
-        if (item.air_tips != null) {
+        if (item.air_tips != null && item.air_tips != "") {
             air.visibility = View.VISIBLE
         } else {
             air.visibility = View.GONE
@@ -119,12 +119,15 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         //linechart style
         lineChart.description = null
         lineChart.setDrawBorders(false)
-        lineChart.isScaleXEnabled = false
+        lineChart.isScaleXEnabled = true
         lineChart.isScaleYEnabled = false
+        val m = Matrix()
+        //两个参数分别是x,y轴的缩放比例。例如：将x轴的数据放大为之前的1.5倍
+        m.postScale(item.hours.size / 8f * 2f,1f)
 
+        lineChart.viewPortHandler.refresh(m, lineChart,false)//将图表动画显示之前进行缩放
         //x
-        var xAxis = lineChart.xAxis
-        xAxis.setDrawGridLines(true)
+        val xAxis = lineChart.xAxis
         xAxis.setDrawAxisLine(false)
         xAxis.textSize = 12f
         xAxis.valueFormatter = IndexAxisValueFormatter(mLables)
@@ -135,7 +138,6 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         xAxis.granularity = 1f
         xAxis.yOffset = -3f
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-
         //y
         val yAxis = lineChart.axisLeft
         val yAxis1 = lineChart.axisRight
@@ -150,15 +152,15 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         yAxis1.xOffset = 7f
 
         //legend
-        var legend = lineChart.legend
+        val legend = lineChart.legend
         legend.isEnabled = false
 
         //data
-        setDataStyle(dataSets)
+        setData(dataSets)
 
     }
 
-    private fun setDataStyle(datasets: List<LineDataSet>) {
+    private fun setData(datasets: List<LineDataSet>) {
         datasets.forEach {
             it.mode = LineDataSet.Mode.CUBIC_BEZIER
             it.lineWidth = 4f
@@ -170,60 +172,29 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             it.highLightColor = Color.TRANSPARENT
             it.valueTextSize = 14f
             it.valueTextColor = Color.parseColor("#000000")
-        }
-        var df = DecimalFormat("##0")
-        dataSets[0].valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
-                return df.format(value) + "℃"
-            }
-        }
-        datasets[1].setDrawCircles(false)
-        datasets[1].setDrawCircleHole(false)
-        datasets[1].lineWidth = -1f
-        datasets[1].isHighlightEnabled = false
-        if(MainActivity.onNight){
-            datasets[1].color = Color.parseColor("#434343")
-        }else{
-            datasets[1].color = Color.parseColor("#ffffff")
-        }
-        var index = -1
-        dataSets[1].valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
-                index++
-                return item.hours[index % item.hours.size].wea
+            val df = DecimalFormat("##0")
+            it.valueFormatter = object : ValueFormatter() {
+                override fun getPointLabel(entry: Entry?): String {
+                    return df.format(entry!!.y) + "℃\n" + item.hours[entry!!.x.toInt()].wea
+                }
             }
         }
     }
 
     private fun initLineChart() {
-
+        //折线点上的值
         mPointValues = arrayListOf()
-        mPointValues1 = arrayListOf()
+        //mPointValues1 = arrayListOf()
         mLables = arrayListOf()
 
         item.hours.forEachIndexed { index, hour ->
-            mLables.add(hour.day.substring(3, 5) + ":00")
-            var y: Float = hour.tem.substring(0, hour.tem.lastIndex).toFloat()
+            mLables.add(hour.hours.substring(0, 2) + ":00")
+            val y: Float = hour.tem.toFloat()
             mPointValues.add(Entry(index.toFloat(), y))
         }
         val dataSet = LineDataSet(mPointValues, null)
 
-        item.hours.forEachIndexed { index, hour ->
-            val y: Float = hour.tem.substring(0, hour.tem.lastIndex).toFloat()
-            val dif = dataSet.yMax - dataSet.yMin  //差值
-            val offsetY = if (dif <= 1f) {  //偏移量
-                lineChart.axisLeft.axisMaximum = dataSet.yMax + 1
-                lineChart.axisLeft.axisMinimum = dataSet.yMin - 1
-                2.0f / 8
-            } else {
-                dif / 8
-            }
-            mPointValues1.add(Entry(index.toFloat(), y + offsetY))
-        }
-
-        val dataSet1 = LineDataSet(mPointValues1, null)
-
-        dataSets = listOf(dataSet, dataSet1)
+        dataSets = listOf(dataSet)
         lineData = LineData(dataSets)
         setStyle()
         setmarkView()
@@ -233,7 +204,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
     }
 
     private fun setmarkView() {
-        var mv = XYMarkerView()
+        val mv = XYMarkerView()
         lineChart.marker = mv
     }
 

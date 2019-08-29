@@ -49,7 +49,7 @@ class WidgetUpdateService : Service() {
                 Log.e("widget","running")
                 var city = sharedPreferences.getString("city" ,"ip")
                 GlobalScope.launch {
-                    WeatherViewModel.weatherTemp = WeatherNetWork.getInstance().fetchWeather(mapOf(
+                    WeatherViewModel.weatherTemp = WeatherNetWork.getInstance().fetchWeather(mutableMapOf(
                         "version" to "v1",
                         "city" to city))
                     RainFilterUtil.getRainInfo(WeatherViewModel.weatherTemp)

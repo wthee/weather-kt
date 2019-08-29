@@ -30,11 +30,11 @@ class WeatherViewModel(
         viewModelScope.launch {
             when (checkCity(city)) {
                 1 -> {
-                    weatherTemp = repository.getWeather(mapOf("version" to "v1", "city" to city))
+                    weatherTemp = repository.getWeather(mutableMapOf("version" to "v9", "city" to city))
                     weather.postValue(formatWeather(weatherTemp))
                 }
                 0 -> {
-                    weatherTemp = repository.getWeather(mapOf("version" to "v1", "ip" to ""))
+                    weatherTemp = repository.getWeather(mutableMapOf("version" to "v9", "ip" to ""))
                     weather.postValue(formatWeather(weatherTemp))
                 }
             }
@@ -47,11 +47,11 @@ class WeatherViewModel(
             when (checkCity(city)) {
                 1 -> {
                     nowWeatherTemp =
-                        repository.getNowWeather(mapOf("version" to "v6", "city" to city))
+                        repository.getNowWeather(mutableMapOf("version" to "v6", "city" to city))
                     nowWeather.postValue(formatNowWeather(nowWeatherTemp))
                 }
                 0 -> {
-                    nowWeatherTemp = repository.getNowWeather(mapOf("version" to "v6", "ip" to ""))
+                    nowWeatherTemp = repository.getNowWeather(mutableMapOf("version" to "v6", "ip" to ""))
                     nowWeather.postValue(formatNowWeather(nowWeatherTemp))
                 }
             }
@@ -90,7 +90,7 @@ class WeatherViewModel(
     private suspend fun formatWeather(weatherTemp: Weather): Weather {
         today = weatherTemp.data[0]
         viewModelScope.launch {
-            if (today.air == 0) {
+            if (today.air == "0") {
                 var leader = " "
                 GetAllCity.getInstance().citys.forEach {
                     if (weatherTemp.city == it.cityZh) {
@@ -98,7 +98,7 @@ class WeatherViewModel(
                         return@forEach
                     }
                 }
-                var wea = repository.getWeather(mapOf("version" to "v1", "city" to leader))
+                var wea = repository.getWeather(mutableMapOf("version" to "v9", "city" to leader))
                 today.air = wea.data[0].air
                 today.air_level = wea.data[0].air_level
                 today.air_tips = wea.data[0].air_tips
@@ -127,7 +127,7 @@ class WeatherViewModel(
     private var showResult = arrayListOf(
         "隐约雷鸣 阴霾天空\n即使天无雨 我亦留此地",
         "没有你的天气",
-        "你好！我是这款app的作者wthee",
+        "你好！我是wthee，感谢你使用我的APP",
         "缘起，在人群中，我看见你！\n缘灭，我看见你，在人群中！",
         "没有你的街道，尽是寂寥；\n没有你的时光，近似毒药。",
         "我所知道关于你的，只有天气了",

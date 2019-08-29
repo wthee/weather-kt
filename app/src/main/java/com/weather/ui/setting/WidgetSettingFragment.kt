@@ -19,10 +19,13 @@ import android.util.DisplayMetrics
 import android.graphics.drawable.ColorDrawable
 import android.view.*
 import android.widget.TextView
+import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import com.weather.MainActivity
-import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isDiyTips
+import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.MainActivity.Companion.wColor
+import com.weather.MainActivity.Companion.widgetTips
 import com.weather.MyApplication
 import com.weather.R
 import com.weather.ui.main.WeatherFragment
@@ -52,6 +55,7 @@ class WidgetSettingFragment : DialogFragment() {
 
     private lateinit var dm: DisplayMetrics
     private lateinit var params: WindowManager.LayoutParams
+    private var diyClicked = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.setting_widget, container,false)
@@ -80,8 +84,9 @@ class WidgetSettingFragment : DialogFragment() {
         }
 
         diyClick.setOnClickListener {
+            diyClicked  = true
             WidgetSettingClickFragment.getInstance()
-                .show(activity!!.supportFragmentManager.beginTransaction(), "settingclick")
+                .show(fragmentManager!!, "settingclick")
             this.dismiss()
         }
 
@@ -107,16 +112,18 @@ class WidgetSettingFragment : DialogFragment() {
                 editTip.visibility = View.GONE
                 false
             }
-            editor.putBoolean("widgetTips", MainActivity.widgetTips)
-            editor.apply()
+            sharedPreferences.edit{
+                putBoolean("widgetTips", widgetTips)
+            }
             val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
             MyApplication.context.sendBroadcast(intent)
         }
 
         groupDiyTips.setOnCheckedChangeListener { _, checkedId ->
             isDiyTips = checkedId == R.id.diytips_o
-            editor.putBoolean("isDiyTips", MainActivity.isDiyTips)
-            editor.apply()
+            sharedPreferences.edit{
+                putBoolean("isDiyTips", isDiyTips)
+            }
 
             yourtipLayout.visibility = if (MainActivity.isDiyTips) {
                 yourtip.text = null
@@ -137,11 +144,12 @@ class WidgetSettingFragment : DialogFragment() {
             override fun afterTextChanged(s: Editable?) {
                 if(s!!.isNotEmpty()){
                     MainActivity.diyTips = s.toString()
-                    editor.putString("diyTips", MainActivity.diyTips)
+                    sharedPreferences.edit {
+                        putString("diyTips", MainActivity.diyTips)
+                    }
                     var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
                 }
-                editor.apply()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 return
@@ -173,13 +181,13 @@ class WidgetSettingFragment : DialogFragment() {
         dw.attributes = params
     }
 
-
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if(!WidgetSettingClickFragment.getInstance().isAdded){
+        if(!WidgetSettingClickFragment.getInstance().isAdded && !diyClicked){
             MainSettingFragment.getInstance()
-                .show(activity!!.supportFragmentManager.beginTransaction(), "setting")
+                .show(fragmentManager!!, "setting")
         }
+        diyClicked = false
     }
 
     private fun opeAdvancenDialog() {
@@ -199,9 +207,10 @@ class WidgetSettingFragment : DialogFragment() {
     private val pickerDialogListener = object : ColorPickerDialogListener {
         override fun onColorSelected(dialogId: Int, @ColorInt color: Int) {
             if (dialogId == DIALGE_ID) {
-                MainActivity.wColor = color
-                MainActivity.editor.putInt("widgetColor",color)
-                MainActivity.editor.apply()
+                wColor = color
+                sharedPreferences.edit{
+                    putInt("widgetColor",color)
+                }
 
                 colorpicker.setBackgroundColor(color)
 

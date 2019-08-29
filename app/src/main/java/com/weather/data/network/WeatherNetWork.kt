@@ -1,7 +1,10 @@
 package com.weather.data.network
 
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import com.weather.MyApplication
+import com.weather.data.model.weather.NowWeather
+import com.weather.data.model.weather.Weather
 import kotlinx.coroutines.suspendCancellableCoroutine
 import retrofit2.Call
 import retrofit2.Callback
@@ -13,8 +16,14 @@ class WeatherNetWork {
 
     private val weatherService = ServiceCreator.create(WeatherService::class.java)
 
-    suspend fun fetchWeather(map:Map<String,String>) = weatherService.getWeather(map).await()
-    suspend fun fetchNowWeather(map:Map<String,String>) = weatherService.getNowWeather(map).await()
+    suspend fun fetchWeather(map:MutableMap<String,String>):Weather{
+        addAppKey(map)
+        return weatherService.getWeather(map).await()
+    }
+    suspend fun fetchNowWeather(map:MutableMap<String,String>):NowWeather{
+        addAppKey(map)
+        return weatherService.getNowWeather(map).await()
+    }
 
     private suspend fun <T> Call<T>.await(): T {
         return suspendCancellableCoroutine { continuation ->
@@ -30,6 +39,11 @@ class WeatherNetWork {
                 }
             })
         }
+    }
+
+    fun addAppKey(map: MutableMap<String, String>){
+        map["appid"] = "23238842"
+        map["appsecret"] = "QgdXYe3r"
     }
 
     companion object {
