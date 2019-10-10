@@ -14,4 +14,14 @@
     <string name="guide3">点击可切换城市</string>
     <string name="guide4">长按可修改城市</string>
     <string name = "clickEvent">点击事件</string>
+    <string name="tips_norain">未来7天，无雨</string>
+    <string name="noword">隐约雷鸣 阴霾天空 但盼风雨来 能留你在此</string>
+    <string name="change_city">切换城市</string>
+    <string name="input_hint">输入城市名</string>
+    <string name="night_model">夜间模式</string>
+    <string name="close">关闭</string>
+    <string name="open">开启</string>
+    <string name="change_style">切换布局</string>
+    <string name="default_style">默认</string>
+    <string name="classical_style">经典</string>
 </resources>

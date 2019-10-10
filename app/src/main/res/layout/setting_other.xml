@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/item_text_size"
+        android:padding="@dimen/item_text_size"
+        android:background="@color/background"
         android:orientation="vertical">
 
         <LinearLayout
@@ -19,32 +20,34 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="切换布局"
-                android:textColor="@color/colorItemText"
+                android:text="@string/change_style"
+                android:textColor="@color/main_text"
                 android:textSize="@dimen/setting_title_size" />
 
             <RadioGroup
-                android:id="@+id/groupBJ"
+                android:id="@+id/groupStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checkedButton="@+id/rb1"
+                android:checkedButton="@+id/styleDefault"
                 android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/rb1"
-                    style="@style/radioStyle"
+                    android:id="@+id/styleDefault"
+                    android:button="@null"
+                    android:textColor="@drawable/radio_text_click"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="默认" />
+                    android:text="@string/default_style" />
 
                 <RadioButton
-                    android:id="@+id/rb2"
-                    style="@style/radioStyle"
+                    android:id="@+id/styleClassical"
+                    android:button="@null"
+                    android:textColor="@drawable/radio_text_click"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="测试" />
+                    android:text="@string/classical_style" />
 
             </RadioGroup>
 
@@ -60,27 +63,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="显示农历"
-                android:textColor="@color/colorItemText"
+                android:textColor="@color/main_text"
                 android:textSize="@dimen/setting_title_size" />
 
             <RadioGroup
                 android:id="@+id/groupNL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checkedButton="@+id/rb3"
+                android:checkedButton="@+id/lunarClose"
                 android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/rb3"
-                    style="@style/radioStyle"
+                    android:id="@+id/lunarClose"
+                    android:button="@null"
+                    android:textColor="@drawable/radio_text_click"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
                     android:text="隐藏" />
 
                 <RadioButton
-                    android:id="@+id/rb4"
-                    style="@style/radioStyle"
+                    android:id="@+id/lunarOpen"
+                    android:button="@null"
+                    android:textColor="@drawable/radio_text_click"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"

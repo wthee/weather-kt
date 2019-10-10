@@ -1,18 +1,21 @@
 package com.weather.ui.setting
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.RadioGroup
-import android.util.DisplayMetrics
-import android.graphics.drawable.ColorDrawable
-import android.view.*
+import androidx.core.content.edit
+import androidx.core.view.forEachIndexed
 import androidx.fragment.app.DialogFragment
-import com.weather.MainActivity.Companion.editor
+import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.MyApplication
 import com.weather.R
-import com.weather.ui.main.WeatherFragment
-import com.weather.ui.main.WeatherFragment.Companion.adapter1
-import com.weather.ui.main.WeatherFragment.Companion.adapter2
+import com.weather.ui.main.WeatherFragment.Companion.adapter
+import com.weather.ui.main.WeatherFragment.Companion.lunarGone
+import com.weather.ui.main.WeatherFragment.Companion.styleType
 import com.weather.ui.main.WeatherFragment.Companion.viewModel
 import com.weather.util.DrawerUtil
 
@@ -20,6 +23,7 @@ import com.weather.util.DrawerUtil
 class OtherSettingFragment : DialogFragment() {
 
     companion object {
+        @SuppressLint("StaticFieldLeak")
         @Volatile
         private var instance: OtherSettingFragment? = null
 
@@ -29,65 +33,62 @@ class OtherSettingFragment : DialogFragment() {
         }
     }
 
-    private lateinit var radioGroup1: RadioGroup
-    private lateinit var radioGroup2: RadioGroup
-    private lateinit var dm: DisplayMetrics
-    private lateinit var params: WindowManager.LayoutParams
+    private lateinit var groupStyle: RadioGroup
+    private lateinit var groupNL: RadioGroup
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.setting_other, container,false)
-        radioGroup1 = view.findViewById(R.id.groupBJ)
-        radioGroup2 = view.findViewById(R.id.groupNL)
+        val view = inflater.inflate(R.layout.setting_other, container,false)
+        groupStyle = view.findViewById(R.id.groupStyle)
+        groupNL = view.findViewById(R.id.groupNL)
 
-        radioGroup1.setOnCheckedChangeListener { _, checkedId ->
-            WeatherFragment.bjType = if (checkedId == R.id.rb1) 0 else 1
-            editor.putInt("type", WeatherFragment.bjType)
-            editor.apply()
-            viewModel.changeType()
-        }
+        initView()
 
-        radioGroup2.setOnCheckedChangeListener { _, checkedId ->
-            WeatherFragment.nlIsGone = checkedId == R.id.rb3
-            editor.putBoolean("nl", WeatherFragment.nlIsGone)
-            editor.apply()
-            adapter1.notifyDataSetChanged()
-            adapter2.notifyDataSetChanged()
-        }
-
-        if (WeatherFragment.bjType == 0) radioGroup1.check(R.id.rb1) else radioGroup1.check(
-            R.id.rb2
-        )
-        if (WeatherFragment.nlIsGone) radioGroup2.check(R.id.rb3) else radioGroup2.check(
-            R.id.rb4
-        )
-
-        view.setOnTouchListener(DrawerUtil.onTouch(view,this))
-
+        //滑动关闭
+        DrawerUtil.bindAllViewOnTouchListener(view,this)
         return view
     }
 
     override fun onStart() {
         super.onStart()
-
-        val dw = dialog?.window
-        dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) //一定要设置背景
-
-        dm = DisplayMetrics()
-        activity!!.windowManager.defaultDisplay.getMetrics(dm)
-
-        params = dw.attributes
-        //屏幕底部
-        params.gravity = Gravity.BOTTOM
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-        params.windowAnimations = R.style.BottomDialogAnimation
-        dw.attributes = params
+        DrawerUtil.setBottomDrawer(dialog, activity, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
+    private fun initView(){
+        //点击切换布局
+        groupStyle.forEachIndexed { index, v ->
+            v.setOnClickListener {
+                styleType = index
+                sharedPreferences.edit {
+                    putInt("type", styleType)
+                }
+                viewModel.changeType()
+            }
+        }
+
+        //点击切换农历显示
+        groupNL.forEachIndexed { index, v ->
+            v.setOnClickListener {
+                lunarGone = index == 0
+                sharedPreferences.edit {
+                    putBoolean("nl", lunarGone)
+                }
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+        //恢复选择
+        if (styleType == 0) groupStyle.check(R.id.styleDefault) else groupStyle.check(
+            R.id.styleClassical
+        )
+        if (lunarGone) groupNL.check(R.id.lunarClose) else groupNL.check(
+            R.id.lunarOpen
+        )
+    }
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        MainSettingFragment.getInstance()
-            .show(fragmentManager!!, "setting")
+        if(MyApplication().isForeground()){
+            MainSettingFragment.getInstance()
+                .show(fragmentManager!!, "setting")
+        }
     }
 }

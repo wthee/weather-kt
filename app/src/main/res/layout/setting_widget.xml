@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background"
         android:orientation="vertical"
         android:padding="@dimen/padding_small">
 
@@ -28,18 +29,28 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/widgetText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="字体颜色"
-                android:textColor="@color/colorItemText"
+                android:textColor="@color/main_text"
                 android:textSize="@dimen/setting_title_size" />
 
-
-            <Button
-                android:id="@+id/colorpicker"
-                android:layout_width="wrap_content"
+            <com.weather.util.ColorPickerView
+                android:id="@+id/colorPicker"
+                android:layout_margin="@dimen/margin_small"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small" />
+                android:minHeight="@dimen/seekbar_height">
+            </com.weather.util.ColorPickerView>
+
+            <com.weather.util.ColorPickerView
+                android:id="@+id/colorGradient"
+                android:layout_margin="@dimen/margin_small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/seekbar_height">
+            </com.weather.util.ColorPickerView>
 
 
         </LinearLayout>
@@ -53,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="显示提醒"
-                android:textColor="@color/colorItemText"
+                android:textColor="@color/main_text"
                 android:textSize="@dimen/setting_title_size" />
 
             <RadioGroup
@@ -65,19 +76,21 @@
 
                 <RadioButton
                     android:id="@+id/tips_o"
-                    style="@style/radioStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="显示" />
+                    android:button="@null"
+                    android:text="显示"
+                    android:textColor="@drawable/radio_text_click" />
 
                 <RadioButton
                     android:id="@+id/tips_c"
-                    style="@style/radioStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="关闭" />
+                    android:button="@null"
+                    android:text="关闭"
+                    android:textColor="@drawable/radio_text_click" />
 
             </RadioGroup>
 
@@ -93,7 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="提醒内容"
-                android:textColor="@color/colorItemText"
+                android:textColor="@color/main_text"
                 android:textSize="@dimen/setting_title_size" />
 
             <LinearLayout
@@ -110,19 +123,21 @@
 
                     <RadioButton
                         android:id="@+id/diytips_c"
-                        style="@style/radioStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin_small"
-                        android:text="默认" />
+                        android:button="@null"
+                        android:text="默认"
+                        android:textColor="@drawable/radio_text_click" />
 
                     <RadioButton
                         android:id="@+id/diytips_o"
-                        style="@style/radioStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin_small"
-                        android:text="自定义" />
+                        android:button="@null"
+                        android:text="自定义"
+                        android:textColor="@drawable/radio_text_click" />
 
                 </RadioGroup>
 
@@ -142,9 +157,11 @@
                     android:id="@+id/yourTip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/background"
                     android:inputType="text"
                     android:singleLine="true"
+                    android:textColor="@color/main_text"
+                    tools:hint="@string/app_name"
                     android:textSize="@dimen/item_text_size" />
 
             </com.google.android.material.textfield.TextInputLayout>

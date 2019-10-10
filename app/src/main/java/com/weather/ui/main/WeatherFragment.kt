@@ -2,108 +2,122 @@ package com.weather.ui.main
 
 import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.weather.databinding.WeatherFragmentBinding
-import com.google.android.material.textfield.TextInputEditText
-import android.content.Context
-import android.content.Intent
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.weather.*
+import com.google.android.material.textfield.TextInputEditText
+import com.scwang.smartrefresh.layout.SmartRefreshLayout
+import com.weather.GuideView
+import com.weather.MainActivity
 import com.weather.MainActivity.Companion.isFirstOpen
 import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.MyApplication
+import com.weather.R
+import com.weather.adapters.WeatherAdapter
+import com.weather.databinding.WeatherFragmentBinding
 import com.weather.ui.info.WeatherInfoFragment
-import com.weather.ui.setting.MainSettingFragment
-import com.weather.util.*
 import com.weather.ui.main.WeatherViewModel.Companion.today
+import com.weather.ui.setting.MainSettingFragment
+import com.weather.util.InjectorUtil
+import com.weather.util.NightModelUtil
+import kotlin.system.exitProcess
 
 class WeatherFragment : Fragment() {
 
     companion object {
-        var nlIsGone = false
-        var bjType = 0
+        var lunarGone = false
+        var styleType = 0
         var lastCity = "ip"
+
+
+        var weatherFragment = WeatherFragment()
         lateinit var imm: InputMethodManager
-        lateinit var adapter1: WeatherAdapter1
-        lateinit var adapter2: WeatherAdapter2
+        lateinit var adapter: WeatherAdapter
         lateinit var viewModel: WeatherViewModel
 
-        var saveC1 = "ip"
-        var saveC2 = "北京"
-        var saveC3 = "上海"
+        var cityIndex: Int = 0
+        var toUpdate = true
+        var saveC1 = sharedPreferences.getString("city1", "ip")!!
+        var saveC2 = sharedPreferences.getString("city2", "北京")!!
+        var saveC3 = sharedPreferences.getString("city3", "上海")!!
 
         var title = ""
     }
 
     private lateinit var binding: WeatherFragmentBinding
     private lateinit var progressBar: ProgressBar
-    private lateinit var swipe: SwipeRefreshLayout
+    private lateinit var refresh: SmartRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var setting: TextView
     private lateinit var input: TextInputEditText
-    private lateinit var mainLayout: CoordinatorLayout
-
-    //now
+    private lateinit var mainLayout: ConstraintLayout
+    //今日实时天气、温度
     private lateinit var nowWea: TextView
     private lateinit var nowTem: TextView
-
+    //返回确认
     private var firstTime: Long = 0
-    private var density: Float = 0f
-
-    private var settingViewisClose = true
 
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        settingViewisClose = sharedPreferences.getBoolean("settingViewisClose", true)
 
         binding = WeatherFragmentBinding.inflate(inflater, container, false)
         val factory = InjectorUtil.getWeatherViewModelFactory()
         viewModel = ViewModelProviders.of(this, factory).get(
             WeatherViewModel::class.java)
         imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        density = ActivityUtil.instance.currentActivity!!.resources.displayMetrics.density
         initView()
-        setOb()
+        //为livedata设置observe
+        setObserve()
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
 
-        nlIsGone = sharedPreferences.getBoolean("nl",
-            nlIsGone
+        lunarGone = sharedPreferences.getBoolean("nl",
+            lunarGone
         )
-        bjType = sharedPreferences.getInt("type",
-            bjType
+        styleType = sharedPreferences.getInt("type",
+            styleType
         )
         lastCity = sharedPreferences.getString("city",
             lastCity
         )!!
 
-        viewModel.getWeather(lastCity)
-        viewModel.getNowWeather(lastCity)
+        changeCityIndex(lastCity)
+        toUpdate = true
+        viewModel.changeCity(lastCity)
 
+        //返回两次退出应用
         view!!.isFocusableInTouchMode = true
         view!!.requestFocus()
         view!!.setOnKeyListener(object : View.OnKeyListener {
             override fun onKey(view: View, i: Int, keyEvent: KeyEvent): Boolean {
-                val secondTime = System.currentTimeMillis();
+                val secondTime = System.currentTimeMillis()
                 if (keyEvent.action == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK) {
                     if (secondTime - firstTime < 2000) {
-                        System.exit(0)
+                        exitProcess(0)
                     } else {
                         Toast.makeText(activity, "再按一次退出", Toast.LENGTH_SHORT).show()
                         firstTime = System.currentTimeMillis()
@@ -115,38 +129,34 @@ class WeatherFragment : Fragment() {
         })
     }
 
-    private fun setOb() {
-        adapter1 = WeatherAdapter1()
-        binding.recycler.adapter = adapter1
-        adapter2 = WeatherAdapter2()
-        binding.recycler.adapter = adapter2
+    private fun setObserve() {
+
+        val controller = LayoutAnimationController(AnimationUtils.loadAnimation(binding.root.context,R.anim.item_load))
+        controller.order = LayoutAnimationController.ORDER_NORMAL
+        controller.delay = 0.2f
 
         viewModel.weather.observe(viewLifecycleOwner, Observer { weather ->
             if (weather != null) {
-
                 binding.apply {
                     this.weather = weather
+                    this.now = WeatherViewModel.now
                     hint = "更新于 " + weather.update_time
                 }
 
                 title = weather.city
                 input.text = null
                 progressBar.visibility = View.GONE
-                swipe.isRefreshing = false
+                //下次打开APP显示的city
                 sharedPreferences.edit {
                     putString("city", weather.city)
                 }
-                if (bjType == 0) {
-                    binding.recycler.adapter = adapter1
-                    adapter1.submitList(weather.data)
-                    //adapter1.notifyDataSetChanged()
-                }
-                if (bjType == 1) {
-                    binding.recycler.adapter = adapter2
-                    adapter2.submitList(weather.data)
-                    //adapter2.notifyDataSetChanged()
-                }
 
+                binding.recycler.layoutAnimation = controller
+                adapter = WeatherAdapter()
+                binding.recycler.adapter = adapter
+                adapter.submitList(weather.data)
+
+                //操作引导
                 if(isFirstOpen){
                     GuideView(setting, 2)
                         .show(activity!!.supportFragmentManager.beginTransaction(),"test")
@@ -157,27 +167,25 @@ class WeatherFragment : Fragment() {
                     }
                     isFirstOpen = sharedPreferences.getBoolean("isFirstOpen",false)
                 }
-
+                //通知桌面小部件更新
                 val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                 MyApplication.context.sendBroadcast(intent)
             }
         })
 
-        viewModel.nowWeather.observe(viewLifecycleOwner, Observer { now ->
-            if(now!=null){
-                binding.apply {
-                    this.now = now
-                }
+        //刷新判断
+        viewModel.isRefresh.observe(viewLifecycleOwner, Observer {isRefresh ->
+            if (!isRefresh){
+                refresh.finishRefresh(600)
             }
         })
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Suppress("DEPRECATION")
     private fun initView() {
         progressBar = binding.pb
-        swipe = binding.swipe
+        refresh = binding.refresh
         recyclerView = binding.recycler
         setting = binding.setting
         nowWea = binding.nowWea
@@ -196,7 +204,7 @@ class WeatherFragment : Fragment() {
             sharedPreferences.edit {
                 putBoolean("onNight", MainActivity.onNight)
             }
-            activity!!.recreate()
+            NightModelUtil.initNightModel(MainActivity.onNight)
             return@setOnLongClickListener true
         }
 
@@ -210,17 +218,24 @@ class WeatherFragment : Fragment() {
             nowWea.callOnClick()
         }
 
-        swipe.setColorSchemeColors(activity!!.resources.getColor(R.color.colorAccent))
-        swipe.setProgressBackgroundColorSchemeColor(activity!!.resources.getColor(R.color.line))
-
-        swipe.setOnRefreshListener {
+        //下拉刷新
+        refresh.setOnRefreshListener {
             viewModel.changeCity(setting.text.toString())
         }
 
-
+        //输入框搜索城市
         input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                viewModel.changeCity(s.toString())
+                val input = s.toString()
+                if( input != ""&& viewModel.checkCity(input) != -1){
+                    lastCity = input
+                    sharedPreferences.edit{
+                        putString("city", lastCity)
+                    }
+                    changeCityIndex(input)
+                    toUpdate = true
+                    viewModel.changeCity(input)
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -233,7 +248,7 @@ class WeatherFragment : Fragment() {
 
         })
 
-
+        //点击关闭键盘
         recyclerView.setOnTouchListener(View.OnTouchListener { _, _ ->
             hideAndClear()
             return@OnTouchListener false
@@ -242,12 +257,36 @@ class WeatherFragment : Fragment() {
             hideAndClear()
             return@OnTouchListener true
         })
-
     }
 
-
+    //关闭键盘，取消输入框焦点
     private fun hideAndClear() {
         input.clearFocus()
         imm.hideSoftInputFromWindow(input.windowToken, 0)
+    }
+
+    //定位滑动到的城市的下标
+    private fun changeCityIndex(city: String){
+        cityIndex = when (city) {
+            saveC1 -> 1
+            saveC2 -> 2
+            saveC3 -> 3
+            else -> 0
+        }
+    }
+
+    //切换城市
+    fun swipToChangeCity(cityIndex: Int){
+        val city = when (cityIndex) {
+            1 -> saveC1
+            2 -> saveC2
+            3 -> saveC3
+            else -> lastCity
+        }
+        sharedPreferences.edit{
+            putString("city", city)
+        }
+        toUpdate = true
+        viewModel.changeCity(city)
     }
 }

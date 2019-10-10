@@ -3,5 +3,5 @@
 <!-- Values used for animations -->
 <resources>
     <!-- Duration (in milliseconds) for slide transition animation -->
-    <integer name="slide">350</integer>
+    <integer name="slide">500</integer>
 </resources>

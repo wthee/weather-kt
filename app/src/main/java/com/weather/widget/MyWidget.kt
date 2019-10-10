@@ -1,18 +1,18 @@
-package com.weather.ui.widget
+package com.weather.widget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.widget.RemoteViews
-import android.content.ComponentName
 import android.util.Log
 import android.view.View
+import android.widget.RemoteViews
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.diyTips
 import com.weather.MainActivity.Companion.isDiyTips
-import com.weather.MainActivity.Companion.wColor
+import com.weather.MainActivity.Companion.widgetTextColor
 import com.weather.MainActivity.Companion.widgetTips
 import com.weather.R
 import com.weather.ui.main.WeatherViewModel
@@ -101,14 +101,13 @@ class MyWidget : AppWidgetProvider() {
                 views.setViewVisibility(R.id.appwidget_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
 
 
-
-                views.setTextColor(R.id.appwidget_now_time, wColor)
-                views.setTextColor(R.id.appwidget_now_date, wColor)
-                views.setTextColor(R.id.center, wColor)
-                views.setTextColor(R.id.appwidget_city, wColor)
-                views.setTextColor(R.id.appwidget_date, wColor)
-                views.setTextColor(R.id.appwidget_wea, wColor)
-                views.setTextColor(R.id.appwidget_tip, wColor)
+                views.setTextColor(R.id.appwidget_now_time, widgetTextColor)
+                views.setTextColor(R.id.appwidget_now_date, widgetTextColor)
+                views.setTextColor(R.id.center, widgetTextColor)
+                views.setTextColor(R.id.appwidget_city, widgetTextColor)
+                views.setTextColor(R.id.appwidget_date, widgetTextColor)
+                views.setTextColor(R.id.appwidget_wea, widgetTextColor)
+                views.setTextColor(R.id.appwidget_tip, widgetTextColor)
 
                 // Instruct the widget manager to update the widget
                 appWidgetManager.updateAppWidget(appWidgetId, views)

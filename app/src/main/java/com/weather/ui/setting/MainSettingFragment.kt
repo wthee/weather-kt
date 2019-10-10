@@ -1,86 +1,88 @@
 package com.weather.ui.setting
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.DisplayMetrics
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.core.content.edit
+import androidx.core.view.forEachIndexed
+import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.weather.GuideView
-import com.weather.MainActivity
-import com.weather.MainActivity.Companion.editor
 import com.weather.MainActivity.Companion.isFirstOpenSetting
+import com.weather.MainActivity.Companion.onNight
 import com.weather.MainActivity.Companion.sharedPreferences
 import com.weather.R
-import com.weather.ui.main.WeatherFragment
+import com.weather.ui.main.WeatherFragment.Companion.cityIndex
+import com.weather.ui.main.WeatherFragment.Companion.imm
 import com.weather.ui.main.WeatherFragment.Companion.saveC1
 import com.weather.ui.main.WeatherFragment.Companion.saveC2
 import com.weather.ui.main.WeatherFragment.Companion.saveC3
 import com.weather.ui.main.WeatherFragment.Companion.title
+import com.weather.ui.main.WeatherFragment.Companion.toUpdate
 import com.weather.ui.main.WeatherFragment.Companion.viewModel
 import com.weather.util.DrawerUtil
+import com.weather.util.NightModelUtil
 
 class MainSettingFragment : DialogFragment() {
 
     companion object {
-        fun getInstance() : MainSettingFragment {
+        fun getInstance(): MainSettingFragment {
             return MainSettingFragment()
         }
     }
 
     private lateinit var widgetsetting: TextView
     private lateinit var othersetting: TextView
-    private lateinit var city1: RadioButton
-    private lateinit var city2: RadioButton
-    private lateinit var city3: RadioButton
-    private lateinit var rb5: RadioButton
-    private lateinit var rb6: RadioButton
     private lateinit var modify: TextInputEditText
     private lateinit var modifyLayout: TextInputLayout
     private lateinit var groupCity: RadioGroup
-    private lateinit var radioGroup3: RadioGroup
+    private lateinit var groupDN: RadioGroup
+    private lateinit var mainView: LinearLayout
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.setting_main, container, false)
 
-    private lateinit var dm: DisplayMetrics
-    private lateinit var params: WindowManager.LayoutParams
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.setting_main, container, false)
-
+        mainView = view.findViewById(R.id.mainView)
         widgetsetting = view.findViewById(R.id.widgetset)
         othersetting = view.findViewById(R.id.othersetting)
-        city1 = view.findViewById(R.id.city1)
-        city2 = view.findViewById(R.id.city2)
-        city3 = view.findViewById(R.id.city3)
-        rb5 = view.findViewById(R.id.rb5)
-        rb6 = view.findViewById(R.id.rb6)
         modify = view.findViewById(R.id.modify)
         modifyLayout = view.findViewById(R.id.modifyLayout)
         groupCity = view.findViewById(R.id.groupCity)
-        radioGroup3 = view.findViewById(R.id.groupDN)
+        groupDN = view.findViewById(R.id.groupDN)
 
         initView()
         resumeAllView()
-
-        view.setOnTouchListener(DrawerUtil.onTouch(view,this))
-
-        if(isFirstOpenSetting){
+        DrawerUtil.bindAllViewOnTouchListener(view, this)
+        //取消输入框焦点
+        mainView.setOnClickListener {
+            modify.clearFocus()
+            modifyLayout.visibility = View.GONE
+            groupCity.visibility = View.VISIBLE
+            imm.hideSoftInputFromWindow(modify.windowToken, 0)
+        }
+        //第一次打开，显示提示内容
+        if (isFirstOpenSetting) {
             view.post {
-                GuideView(city3, 4)
-                    .show(fragmentManager!!,"test")
-                GuideView(city3, 3)
-                    .show(fragmentManager!!,"test")
+                GuideView(groupCity[2], 4)
+                    .show(fragmentManager!!, "test")
+                GuideView(groupCity[2], 3)
+                    .show(fragmentManager!!, "test")
                 sharedPreferences.edit {
-                    putBoolean("isFirstOpenSetting",false)
+                    putBoolean("isFirstOpenSetting", false)
                 }
-                isFirstOpenSetting = MainActivity.sharedPreferences.getBoolean("isFirstOpen",false)
+                isFirstOpenSetting = sharedPreferences.getBoolean("isFirstOpen", false)
             }
         }
         return view
@@ -88,141 +90,78 @@ class MainSettingFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dw = dialog?.window
-        dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) //一定要设置背景
-
-        dm = DisplayMetrics()
-        activity!!.windowManager.defaultDisplay.getMetrics(dm)
-
-        params = dw.attributes
-
-        params.gravity = Gravity.BOTTOM
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-        params.windowAnimations = R.style.BottomDialogAnimation
-        dw.attributes = params
-
-
+        DrawerUtil.setBottomDrawer(dialog, activity,ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private fun initView() {
+        //切换&修改城市
+        groupCity.forEachIndexed { index, view ->
+            var cityView = view as RadioButton
+            //点击切换城市
+            cityView.setOnClickListener {
+                cityIndex = index + 1
+                toUpdate = true
+                viewModel.changeCity(cityView.text.toString())
+            }
+            //长按显示修改城市输入框
+            cityView.setOnLongClickListener {
+                modifyLayout.visibility = View.VISIBLE
+                modify.text = null
+                modify.requestFocus()
+                imm.showSoftInput(modify, 0)
+                groupCity.visibility =
+                    if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
+                return@setOnLongClickListener false
+            }
+        }
 
+        // 夜间模式
+        groupDN.forEachIndexed { _, view ->
+            view.setOnClickListener {
+                onNight = !onNight
+                sharedPreferences.edit {
+                    putBoolean("onNight", onNight)
+                }
+                NightModelUtil.initNightModel(onNight)
+            }
+        }
+
+        //小部件设置
         widgetsetting.setOnClickListener {
             WidgetSettingFragment.getInstance()
                 .show(fragmentManager!!, "widget")
             this.dismiss()
         }
 
+        //显示风格
         othersetting.setOnClickListener {
             OtherSettingFragment.getInstance()
                 .show(fragmentManager!!, "other")
             this.dismiss()
         }
 
-        city1.setOnClickListener {
-            viewModel.changeCity(city1.text.toString())
-        }
-        city2.setOnClickListener {
-            viewModel.changeCity(city2.text.toString())
-        }
-        city3.setOnClickListener {
-            viewModel.changeCity(city3.text.toString())
-        }
-
-
-        city1.setOnLongClickListener {
-            modifyLayout.visibility = if (modifyLayout.visibility == View.GONE) {
-                modify.text = null
-                modify.requestFocus()
-                WeatherFragment.imm.showSoftInput(modify, 0)
-                View.VISIBLE
-            } else {
-                modify.clearFocus()
-                WeatherFragment.imm.hideSoftInputFromWindow(modify.windowToken, 0)
-                View.GONE
-            }
-            groupCity.visibility = if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
-            return@setOnLongClickListener false
-        }
-
-        city2.setOnLongClickListener {
-            modifyLayout.visibility = if (modifyLayout.visibility == View.GONE) {
-                modify.text = null
-                modify.requestFocus()
-                WeatherFragment.imm.showSoftInput(modify, 0)
-                View.VISIBLE
-            } else {
-                modify.clearFocus()
-                WeatherFragment.imm.hideSoftInputFromWindow(modify.windowToken, 0)
-                View.GONE
-            }
-            groupCity.visibility = if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
-            return@setOnLongClickListener false
-        }
-
-        city3.setOnLongClickListener {
-            modifyLayout.visibility = if (modifyLayout.visibility == View.GONE) {
-                modify.text = null
-                modify.requestFocus()
-                WeatherFragment.imm.showSoftInput(modify, 0)
-                View.VISIBLE
-            } else {
-                modify.clearFocus()
-                WeatherFragment.imm.hideSoftInputFromWindow(modify.windowToken, 0)
-                View.GONE
-            }
-            groupCity.visibility = if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
-            return@setOnLongClickListener false
-        }
-
-
-        rb5.setOnClickListener {
-            if (MainActivity.onNight) {
-                MainActivity.onNight = false
-                sharedPreferences.edit {
-                    putBoolean("onNight", MainActivity.onNight)
-                }
-                activity!!.recreate()
-            }
-        }
-
-        rb6.setOnClickListener {
-            if (!MainActivity.onNight) {
-                MainActivity.onNight = true
-                sharedPreferences.edit {
-                    putBoolean("onNight", MainActivity.onNight)
-                }
-                activity!!.recreate()
-            }
-        }
-
+        //修改城市名
         modify.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (viewModel.checkCity(s.toString()) != -1) {
-                    if (city1.isChecked) {
-                        city1.text = s
-                        sharedPreferences.edit {
-                            putString("city1", s.toString())
+                    groupCity.forEachIndexed { index, view ->
+                        if ((view as RadioButton).isChecked) {
+                            view.text = s
+                            when (index) {
+                                0 -> saveC1 = view.text.toString()
+                                1 -> saveC2 = view.text.toString()
+                                2 -> saveC3 = view.text.toString()
+                            }
+                            sharedPreferences.edit {
+                                putString("city" + (index + 1), s.toString())
+                            }
+                            cityIndex = index + 1
                         }
-                        modifyLayout.visibility = View.GONE
                     }
-                    if (city2.isChecked) {
-                        city2.text = s
-                        sharedPreferences.edit {
-                            putString("city2", s.toString())
-                        }
-                        modifyLayout.visibility = View.GONE
-                    }
-                    if (city3.isChecked) {
-                        city3.text = s
-                        sharedPreferences.edit {
-                            putString("city3", s.toString())
-                        }
-                        modifyLayout.visibility = View.GONE
-                    }
+                    modifyLayout.visibility = View.GONE
                     groupCity.visibility = View.VISIBLE
                     modify.text = null
+                    toUpdate = true
                     viewModel.changeCity(s.toString())
                 }
             }
@@ -238,22 +177,23 @@ class MainSettingFragment : DialogFragment() {
         })
     }
 
+    //打开设置页面时，显示已选择城市
     private fun resumeAllView() {
 
         saveC1 = sharedPreferences.getString("city1", saveC1)!!
         saveC2 = sharedPreferences.getString("city2", saveC2)!!
         saveC3 = sharedPreferences.getString("city3", saveC3)!!
-        city1.text = saveC1
-        city2.text = saveC2
-        city3.text = saveC3
 
-        if (title == city1.text) groupCity.check(R.id.city1)
-        if (title == city2.text) groupCity.check(R.id.city2)
-        if (title == city3.text) groupCity.check(R.id.city3)
+        groupCity.forEachIndexed { index, view ->
+            (view as RadioButton).text = when (index) {
+                0 -> saveC1
+                1 -> saveC2
+                2 -> saveC3
+                else -> "ip"
+            }
+            if(title == view.text) groupCity.check(view.id)
+        }
 
-        if (MainActivity.onNight) radioGroup3.check(R.id.rb6) else radioGroup3.check(
-            R.id.rb5
-        )
+        if (onNight) groupDN.check(R.id.nightModelOpen) else groupDN.check(R.id.nightModelClose)
     }
-
 }

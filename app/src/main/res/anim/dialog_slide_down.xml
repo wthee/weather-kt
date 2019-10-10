@@ -3,8 +3,8 @@
     android:fillAfter="true">
     <translate
         android:duration="@integer/slide"
-        android:interpolator="@android:anim/overshoot_interpolator"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:fromYDelta="0"
         android:toYDelta="100%p"/>
-    <alpha android:fromAlpha="1" android:toAlpha="0.5" android:duration="@integer/slide"/>
+    <alpha android:fromAlpha="1" android:toAlpha="0" android:duration="@integer/slide"/>
 </set>

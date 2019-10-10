@@ -7,28 +7,25 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.Button
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioGroup
-import androidx.annotation.ColorInt
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.jrummyapps.android.colorpicker.ColorPickerDialog
-import com.jrummyapps.android.colorpicker.ColorPickerDialogListener
-import android.util.DisplayMetrics
-import android.graphics.drawable.ColorDrawable
-import android.view.*
 import android.widget.TextView
 import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.isDiyTips
 import com.weather.MainActivity.Companion.sharedPreferences
-import com.weather.MainActivity.Companion.wColor
+import com.weather.MainActivity.Companion.widgetTextColor
 import com.weather.MainActivity.Companion.widgetTips
 import com.weather.MyApplication
 import com.weather.R
 import com.weather.ui.main.WeatherFragment
+import com.weather.util.ColorPickerView
 import com.weather.util.DrawerUtil
 
 
@@ -44,88 +41,146 @@ class WidgetSettingFragment : DialogFragment() {
         }
     }
 
-    private lateinit var colorpicker : Button
-    private lateinit var groupTips : RadioGroup
-    private lateinit var groupDiyTips : RadioGroup
-    private lateinit var yourtip : TextInputEditText
-    private lateinit var yourtipLayout : TextInputLayout
-    private lateinit var editTip : LinearLayout
-    private lateinit var diyClick : TextView
-    private val DIALGE_ID = 0
-
-    private lateinit var dm: DisplayMetrics
-    private lateinit var params: WindowManager.LayoutParams
+    private lateinit var colorPicker: ColorPickerView
+    private lateinit var colorGradient: ColorPickerView
+    private lateinit var groupTips: RadioGroup
+    private lateinit var groupDiyTips: RadioGroup
+    private lateinit var yourtip: TextInputEditText
+    private lateinit var yourtipLayout: TextInputLayout
+    private lateinit var editTip: LinearLayout
+    private lateinit var diyClick: TextView
+    private lateinit var widgetText: TextView
+    private var firstCursor = 0
+    private var secondCursor = 50
     private var diyClicked = false
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.setting_widget, container,false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        var view = inflater.inflate(R.layout.setting_widget, container, false)
 
-        colorpicker = view.findViewById(R.id.colorpicker)
+        colorPicker = view.findViewById(R.id.colorPicker)
+        colorGradient = view.findViewById(R.id.colorGradient)
         groupTips = view.findViewById(R.id.groupTips)
         groupDiyTips = view.findViewById(R.id.groupDiyTips)
         yourtip = view.findViewById(R.id.yourTip)
         yourtipLayout = view.findViewById(R.id.yourTipLayout)
         diyClick = view.findViewById(R.id.diyClick)
         editTip = view.findViewById(R.id.editTip)
-        colorpicker.setBackgroundColor(MainActivity.wColor)
+        widgetText = view.findViewById(R.id.widgetText)
 
         initView()
-
-        view.setOnTouchListener(DrawerUtil.onTouch(view,this))
+        //滑动关闭
+        DrawerUtil.bindAllViewOnTouchListener(view, this)
 
         return view
     }
 
+
+    override fun onStart() {
+        super.onStart()
+        DrawerUtil.setBottomDrawer(dialog, activity, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if(MyApplication().isForeground()){
+            if (!WidgetSettingClickFragment.getInstance().isAdded && !diyClicked) {
+                MainSettingFragment.getInstance()
+                    .show(fragmentManager!!, "setting")
+            }
+            diyClicked = false
+        }
+    }
+
     private fun initView() {
-        if(MainActivity.diyTips.isNotEmpty()){
+        firstCursor = sharedPreferences.getInt("firstCursor",0)
+        secondCursor = sharedPreferences.getInt("secondCursor",50)
+
+        //填充自定义提示内容
+        if (MainActivity.diyTips.isNotEmpty()) {
             yourtip.hint = MainActivity.diyTips
-        }else{
+        } else {
             yourtip.hint = "输入内容"
         }
+        //设置渐变滑动条
+        colorPicker.progress = firstCursor
+        colorGradient.progress = secondCursor
 
+        colorPicker.setOnDrawListener(object : ColorPickerView.OnDrawListener {
+            override fun onDrawStart(seekBar: ColorPickerView) {
+                colorPicker.setBackgroundGradientColors(ColorPickerView.DEFAULT_COLORS)
+            }
+
+            override fun onDrawFinish(seekBar: ColorPickerView) {
+                //绘制结束，设置渐变中间色
+                colorGradient.setBackgroundGradientColors(
+                    arrayListOf(
+                        Color.BLACK,
+                        colorPicker.getThumbColor(),
+                        Color.WHITE
+                    )
+                )
+                colorGradient.postInvalidate()
+            }
+        })
+        colorGradient.setOnDrawListener(object : ColorPickerView.OnDrawListener {
+            override fun onDrawStart(seekBar: ColorPickerView) {
+            }
+
+            override fun onDrawFinish(seekBar: ColorPickerView) {
+                //改变字体颜色
+                changeWidgetTextColor()
+            }
+        })
+
+        //自定义点击事件
         diyClick.setOnClickListener {
-            diyClicked  = true
+            diyClicked = true
             WidgetSettingClickFragment.getInstance()
                 .show(fragmentManager!!, "settingclick")
             this.dismiss()
         }
 
-        colorpicker.setOnClickListener {
-            opeAdvancenDialog()
-        }
-
-        if(MainActivity.widgetTips) {
+        //是否自定义提示
+        if (widgetTips) {
             groupTips.check(R.id.tips_o)
             editTip.visibility = View.VISIBLE
         } else {
             groupTips.check(R.id.tips_c)
             editTip.visibility = View.GONE
         }
-        if(isDiyTips) groupDiyTips.check(R.id.diytips_o) else groupDiyTips.check(R.id.diytips_c)
-        yourtipLayout.visibility = if(isDiyTips) View.VISIBLE else View.GONE
 
+        //显示/隐藏输入框
+        if (isDiyTips) groupDiyTips.check(R.id.diytips_o) else groupDiyTips.check(R.id.diytips_c)
+        yourtipLayout.visibility = if (isDiyTips) View.VISIBLE else View.GONE
+
+        //显示/隐藏桌面提示
         groupTips.setOnCheckedChangeListener { _, checkedId ->
-            MainActivity.widgetTips = if(checkedId == R.id.tips_o){
+            widgetTips = if (checkedId == R.id.tips_o) {
                 editTip.visibility = View.VISIBLE
                 true
-            }else{
+            } else {
                 editTip.visibility = View.GONE
                 false
             }
-            sharedPreferences.edit{
+            sharedPreferences.edit {
                 putBoolean("widgetTips", widgetTips)
             }
             val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
             MyApplication.context.sendBroadcast(intent)
         }
 
-        groupDiyTips.setOnCheckedChangeListener { _, checkedId ->
+        //默认/自定义提示内容
+        groupDiyTips.setOnCheckedChangeListener { group, checkedId ->
             isDiyTips = checkedId == R.id.diytips_o
-            sharedPreferences.edit{
+            sharedPreferences.edit {
                 putBoolean("isDiyTips", isDiyTips)
             }
 
-            yourtipLayout.visibility = if (MainActivity.isDiyTips) {
+            yourtipLayout.visibility = if (isDiyTips) {
                 yourtip.text = null
                 yourtip.requestFocus()
                 WeatherFragment.imm.showSoftInput(yourtip, 0)
@@ -140,9 +195,10 @@ class WidgetSettingFragment : DialogFragment() {
 
         }
 
+        //自定义内容
         yourtip.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if(s!!.isNotEmpty()){
+                if (s!!.isNotEmpty()) {
                     MainActivity.diyTips = s.toString()
                     sharedPreferences.edit {
                         putString("diyTips", MainActivity.diyTips)
@@ -151,6 +207,7 @@ class WidgetSettingFragment : DialogFragment() {
                     MyApplication.context.sendBroadcast(intent)
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 return
             }
@@ -159,68 +216,19 @@ class WidgetSettingFragment : DialogFragment() {
                 return
             }
         })
-
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        val dw = dialog?.window
-        dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) //一定要设置背景
-
-        dm = DisplayMetrics()
-        activity!!.windowManager.defaultDisplay.getMetrics(dm)
-
-        params = dw.attributes
-        //屏幕底部
-        params.gravity = Gravity.BOTTOM
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-        params.windowAnimations = R.style.BottomDialogAnimation
-        dw.attributes = params
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        if(!WidgetSettingClickFragment.getInstance().isAdded && !diyClicked){
-            MainSettingFragment.getInstance()
-                .show(fragmentManager!!, "setting")
+    private fun changeWidgetTextColor(){
+        val textColor = colorGradient.getThumbColor()
+        widgetText.setTextColor(textColor)
+        sharedPreferences.edit {
+            putInt("widgetColor", textColor)
+            putInt("firstCursor",colorPicker.progress)
+            putInt("secondCursor",colorGradient.progress)
         }
-        diyClicked = false
-    }
-
-    private fun opeAdvancenDialog() {
-        val color = MainActivity.wColor
-        val colorPickerDialog = ColorPickerDialog.newBuilder().setColor(color)
-            .setDialogTitle(R.string.widgetcolor)
-            .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
-            .setShowAlphaSlider(true)
-            .setDialogId(DIALGE_ID)
-            .setAllowPresets(false)
-            .create()
-        colorPickerDialog.setColorPickerDialogListener(pickerDialogListener)
-        @Suppress("DEPRECATION")
-        colorPickerDialog.show(activity!!.fragmentManager, "color-picker-dialog")
-    }
-
-    private val pickerDialogListener = object : ColorPickerDialogListener {
-        override fun onColorSelected(dialogId: Int, @ColorInt color: Int) {
-            if (dialogId == DIALGE_ID) {
-                wColor = color
-                sharedPreferences.edit{
-                    putInt("widgetColor",color)
-                }
-
-                colorpicker.setBackgroundColor(color)
-
-                var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-                MyApplication.context.sendBroadcast(intent)
-            }
-        }
-
-        override fun onDialogDismissed(dialogId: Int) {
-
-        }
+        widgetTextColor = textColor
+        //通知桌面小部件更新
+        val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+        MyApplication.context.sendBroadcast(intent)
     }
 }

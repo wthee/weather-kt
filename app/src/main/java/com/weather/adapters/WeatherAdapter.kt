@@ -1,4 +1,4 @@
-package com.weather
+package com.weather.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,13 +7,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.weather.data.model.weather.Data
-import com.weather.databinding.ItemWeather1Binding
+import com.weather.R
+import com.weather.data.model.Data
+import com.weather.databinding.ItemWeatherBinding
 import com.weather.ui.info.WeatherInfoFragment
 import com.weather.ui.main.WeatherFragment
 import com.weather.util.ActivityUtil
 
-class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDiffCallback()) {
+class WeatherAdapter : ListAdapter<Data, WeatherAdapter.ViewHolder>(WeatherDiffCallback()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -22,7 +23,7 @@ class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDif
         return ViewHolder(
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.item_weather1, parent, false
+                R.layout.item_weather, parent, false
             )
         )
     }
@@ -44,17 +45,18 @@ class WeatherAdapter1 : ListAdapter<Data, WeatherAdapter1.ViewHolder>(WeatherDif
 
 
     class ViewHolder(
-        private val binding: ItemWeather1Binding
+        private val binding: ItemWeatherBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Data, listener: View.OnClickListener) {
             binding.apply {
                 data = item
                 onClick = listener
-                isGone = if (WeatherFragment.nlIsGone) {
+                isGone = if (WeatherFragment.lunarGone) {
                     View.GONE
                 } else {
                     View.VISIBLE
                 }
+                bjtype = WeatherFragment.styleType == 0
                 executePendingBindings()
             }
         }

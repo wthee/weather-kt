@@ -1,4 +1,4 @@
-package com.weather.data.model.weather
+package com.weather.data.model
 
 data class Weather(
     val `data`: MutableList<Data>,
@@ -16,18 +16,19 @@ data class Data(
     var air_tips: String,
     val alarm: Alarm,
     val date: String,
-    val day: String,
+    var day: String,
+    var day_after: String,
     val hours: List<Hour>,
     val humidity: String,
     val index: List<Index>,
     val pressure: String,
     val sunrise: String,
     val sunset: String,
-    val tem: String,
+    var tem: String,
     val tem1: String,
     val tem2: String,
     val visibility: String,
-    val wea: String,
+    var wea: String,
     val wea_day: String,
     val wea_day_img: String,
     val wea_img: String,
@@ -47,7 +48,7 @@ data class Data(
 
 data class Hour(
     val hours: String,
-    val tem: String,
+    var tem: String,
     val wea: String,
     val wea_img: String,
     val win: String,
@@ -60,4 +61,8 @@ data class Index(
     val title: String
 )
 
-
+class Alarm(
+    val alarm_content: String,
+    val alarm_level: String,
+    val alarm_type: String
+)

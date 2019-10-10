@@ -6,16 +6,16 @@ import androidx.databinding.BindingAdapter
 import com.weather.util.ZhColorUtil
 
 
-@BindingAdapter("AutoColor")
-fun AutoColor(view: View, type: Any){
+@BindingAdapter("autoColor")
+fun autoColor(view: View, type: Any){
     if(type!="\t"&&type!=""){
         view as TextView
         view.setTextColor(ZhColorUtil.formColor(type.toString()))
     }
 }
 
-@BindingAdapter("IsGone")
-fun IsGone(view: View, isGone: Boolean){
+@BindingAdapter("isGone")
+fun isGone(view: View, isGone: Boolean){
     if(isGone){
         view.visibility = View.GONE
     }else{

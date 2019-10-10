@@ -1,17 +1,17 @@
-package com.weather.ui.widget
+package com.weather.widget
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.widget.RemoteViews
-import android.content.ComponentName
 import android.util.Log
 import android.view.View
+import android.widget.RemoteViews
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.diyTips
 import com.weather.MainActivity.Companion.isDiyTips
-import com.weather.MainActivity.Companion.wColor
+import com.weather.MainActivity.Companion.widgetTextColor
 import com.weather.MainActivity.Companion.widgetTips
 import com.weather.R
 import com.weather.ui.main.WeatherViewModel
@@ -110,14 +110,14 @@ class MyWidget2 : AppWidgetProvider() {
                 views.setViewVisibility(R.id.center2, if(wea.data.size>0) View.VISIBLE else View.GONE)
                 views.setViewVisibility(R.id.appwidget2_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
 
-                views.setTextColor(R.id.appwidget2_now_time, wColor)
-                views.setTextColor(R.id.appwidget2_now_date, wColor)
-                views.setTextColor(R.id.center2, wColor)
-                views.setTextColor(R.id.appwidget2_city, wColor)
-                views.setTextColor(R.id.appwidget2_date, wColor)
-                views.setTextColor(R.id.appwidget2_wea, wColor)
-                views.setTextColor(R.id.appwidget2_tip, wColor)
-                views.setTextColor(R.id.appwidget2_tip2, wColor)
+                views.setTextColor(R.id.appwidget2_now_time, widgetTextColor)
+                views.setTextColor(R.id.appwidget2_now_date, widgetTextColor)
+                views.setTextColor(R.id.center2, widgetTextColor)
+                views.setTextColor(R.id.appwidget2_city, widgetTextColor)
+                views.setTextColor(R.id.appwidget2_date, widgetTextColor)
+                views.setTextColor(R.id.appwidget2_wea, widgetTextColor)
+                views.setTextColor(R.id.appwidget2_tip, widgetTextColor)
+                views.setTextColor(R.id.appwidget2_tip2, widgetTextColor)
                 // Instruct the widget manager to update the widget
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }catch (e: Exception){

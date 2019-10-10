@@ -4,44 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="weather"
-            type="com.weather.data.model.weather.Weather" />
+            type="com.weather.data.model.Weather" />
+
         <variable
             name="now"
-            type="com.weather.data.model.weather.NowWeather" />
+            type="com.weather.data.model.Hour" />
+
         <variable
             name="hint"
             type="String" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/background"
         android:fitsSystemWindows="true">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="center"
-            android:text="隐约雷鸣 阴霾天空 但盼风雨来 能留你在此"
-            android:textColor="@color/colorPrimary"
-            android:textIsSelectable="true"
-            android:textSize="@dimen/item_text_size" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/setting_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -61,6 +53,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_small"
                     android:text="@{now.wea}"
+                    android:textColor="@color/secondary_text"
                     tools:text="小雨" />
 
                 <TextView
@@ -69,12 +62,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_small"
                     android:text="@{now.tem}"
+                    android:textColor="@color/secondary_text"
                     tools:text="15℃" />
 
 
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_small"
@@ -85,11 +80,14 @@
                     android:id="@+id/input"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/background"
                     android:hint="@{hint}"
                     android:inputType="text"
                     android:singleLine="true"
-                    android:textSize="@dimen/item_text_size" />
+                    android:textColor="@color/main_text"
+                    android:textColorHint="@color/placeholder_text"
+                    android:textSize="@dimen/item_text_size"
+                    tools:hint="更新时间" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -97,29 +95,32 @@
                 android:id="@+id/noWea"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/item_text_size"
                 android:gravity="center"
-                android:text="未来7天，无雨"
-                android:textColor="@color/colorAccent"
-                app:IsGone="@{weather!=null? weather.data.size>0 : true}"
+                android:text="@string/tips_norain"
+                android:textColor="@color/theme"
+                app:isGone="@{weather!=null? weather.data.size>0 : true}"
                 tools:visibility="visible" />
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipe"
+            <com.scwang.smartrefresh.layout.SmartRefreshLayout
+                android:id="@+id/refresh"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/item_text_size"
-                android:layout_marginBottom="@dimen/item_text_size"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/padding_small">
+
+                <com.scwang.smartrefresh.header.DeliveryHeader
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_weather2" />
+                    android:layout_height="match_parent"
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_weather"
+                    tools:visibility="invisible"/>
+
+            </com.scwang.smartrefresh.layout.SmartRefreshLayout>
         </LinearLayout>
 
         <ProgressBar
@@ -127,8 +128,24 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
-            android:visibility="visible" />
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/noword"
+            android:textColor="@color/alpha"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/item_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

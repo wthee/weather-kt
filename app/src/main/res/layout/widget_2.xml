@@ -21,10 +21,10 @@
             android:ems="1"
             android:format12Hour="HHmm  "
             android:format24Hour="HHmm"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/widget_main_text"
             android:textSize="@dimen/widget_text_size"
             tools:text="1725"
-            tools:textColor="@color/colorItemText" />
+            tools:textColor="@color/widget_main_text" />
 
         <TextClock
             android:id="@+id/appwidget2_now_date"
@@ -33,10 +33,10 @@
             android:layout_below="@id/appwidget2_now_time"
             android:format12Hour="MMdd"
             android:format24Hour="MMdd"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/widget_main_text"
             android:textSize="@dimen/item_smalltext_size"
             tools:text="0406"
-            tools:textColor="@color/colorItemText" />
+            tools:textColor="@color/widget_main_text" />
 
     </LinearLayout>
 
@@ -68,10 +68,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="1"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/widget_main_text"
                 android:textSize="@dimen/widget_text_size"
                 tools:text="杭州"
-                tools:textColor="@color/colorItemText" />
+                tools:textColor="@color/widget_main_text" />
 
         </LinearLayout>
 
@@ -88,20 +88,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/margin_small"
                 android:ems="1"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/widget_main_text"
                 android:textSize="@dimen/item_smalltext_size"
                 tools:text="0404"
-                tools:textColor="@color/colorItemText" />
+                tools:textColor="@color/widget_main_text" />
 
             <TextView
                 android:id="@+id/appwidget2_wea"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="1"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/widget_main_text"
                 android:textSize="@dimen/item_smalltext_size"
                 tools:text="小雨"
-                tools:textColor="@color/colorItemText" />
+                tools:textColor="@color/widget_main_text" />
 
         </LinearLayout>
 
@@ -113,10 +113,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/rightView2"
         android:ems="1"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/widget_main_text"
         android:textSize="@dimen/item_smalltext_size"
         tools:text="下雨天"
-        tools:textColor="@color/colorItemText" />
+        tools:textColor="@color/widget_main_text" />
 
     <TextView
         android:id="@+id/appwidget2_tip2"
@@ -125,9 +125,9 @@
         android:layout_below="@id/rightView2"
         android:layout_marginLeft="@dimen/lineHeight"
         android:ems="1"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/widget_main_text"
         android:textSize="@dimen/item_smalltext_size"
         tools:text="记得带伞"
-        tools:textColor="@color/colorItemText" />
+        tools:textColor="@color/widget_main_text" />
 
 </LinearLayout>

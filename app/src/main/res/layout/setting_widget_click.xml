@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -22,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/clickEvent"
-                android:textColor="@color/colorItemText"
+                android:textColor="@color/main_text"
                 android:textSize="@dimen/setting_title_size" />
 
             <RadioGroup
@@ -34,29 +35,32 @@
 
                 <RadioButton
                     android:id="@+id/ce1"
-                    style="@style/radioStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_small"
+                    android:button="@null"
                     android:text="时间"
+                    android:textColor="@drawable/radio_text_click"
                     android:textSize="@dimen/setting_title_size" />
 
                 <RadioButton
                     android:id="@+id/ce2"
-                    style="@style/radioStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_small"
+                    android:button="@null"
                     android:text="日期"
+                    android:textColor="@drawable/radio_text_click"
                     android:textSize="@dimen/setting_title_size" />
 
                 <RadioButton
                     android:id="@+id/ce3"
-                    style="@style/radioStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_small"
+                    android:button="@null"
                     android:text="天气"
+                    android:textColor="@drawable/radio_text_click"
                     android:textSize="@dimen/setting_title_size" />
 
             </RadioGroup>
@@ -73,7 +77,9 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/widgetToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+
+            </androidx.appcompat.widget.Toolbar>
 
             <FrameLayout
                 android:layout_width="match_parent"

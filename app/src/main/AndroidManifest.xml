@@ -15,13 +15,14 @@
         android:persistent="true"
         android:roundIcon="@drawable/weather"
         android:supportsRtl="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
         <service
-            android:name=".ui.widget.WidgetUpdateService"
+            android:name="com.weather.widget.WidgetUpdateService"
             android:enabled="true"
             android:exported="true"></service>
 
-        <receiver android:name=".ui.widget.MyWidget2">
+        <receiver android:name="com.weather.widget.MyWidget2">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -31,7 +32,7 @@
                 android:resource="@xml/widget2_info" />
         </receiver>
 
-        <receiver android:name=".ui.widget.MyWidget">
+        <receiver android:name="com.weather.widget.MyWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

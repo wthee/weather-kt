@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="@dimen/setting_title_size"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/theme"
                 android:text="@{info.appName}"
                 android:maxLines="1"
                 android:ellipsize="end"
@@ -47,6 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/secondary_text"
                 android:textSize="@dimen/item_text_size"
                 android:text="@{info.packageName}"
                 android:maxLines="1"
@@ -54,8 +55,6 @@
                 tools:text="444343"/>
 
         </LinearLayout>
-
-
 
     </LinearLayout>
 

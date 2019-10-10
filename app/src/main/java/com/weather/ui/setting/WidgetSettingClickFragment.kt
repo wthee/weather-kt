@@ -1,32 +1,37 @@
 package com.weather.ui.setting
 
+
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.pm.ApplicationInfo
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.ProgressBar
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
+import androidx.core.view.forEachIndexed
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
-import com.weather.MainActivity
 import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.MyApplication
 import com.weather.R
 import com.weather.adapters.AppInfoAdapter
 import com.weather.data.model.AppInfo
 import com.weather.util.ActivityUtil
 import com.weather.util.DrawerUtil
+import skin.support.content.res.SkinCompatResources
 
 
 class WidgetSettingClickFragment : DialogFragment() {
 
     companion object {
+        @SuppressLint("StaticFieldLeak")
         @Volatile
         private var instance: WidgetSettingClickFragment? = null
 
@@ -36,9 +41,9 @@ class WidgetSettingClickFragment : DialogFragment() {
         }
 
         var pn = arrayListOf(
-            MainActivity.sharedPreferences.getString("appInfo1","com.weather"),
-            MainActivity.sharedPreferences.getString("appInfo2","com.weather"),
-            MainActivity.sharedPreferences.getString("appInfo3","com.weather")
+            sharedPreferences.getString("appInfo1","com.weather"),
+            sharedPreferences.getString("appInfo2","com.weather"),
+            sharedPreferences.getString("appInfo3","com.weather")
         )
         var myAppIndex = 0
         var myAppIndexNoSys = 0
@@ -49,14 +54,9 @@ class WidgetSettingClickFragment : DialogFragment() {
         var applistNoSys =  arrayListOf<AppInfo>()
     }
 
-    private lateinit var dm: DisplayMetrics
-    private lateinit var params: WindowManager.LayoutParams
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: AppInfoAdapter
     private lateinit var groupCE: RadioGroup
-    private lateinit var ce1: RadioButton
-    private lateinit var ce2: RadioButton
-    private lateinit var ce3: RadioButton
     private lateinit var toolbar: Toolbar
     private lateinit var loading: ProgressBar
     private var i = 0
@@ -65,43 +65,30 @@ class WidgetSettingClickFragment : DialogFragment() {
     private var markNoSys = arrayListOf(0,0,0)
     private val TITLE_SHOW_SYS = "显示系统应用"
     private val TITLE_HID_SYS = "隐藏系统应用"
-    private val TEXT_SELECTAPP = "选择要打开的应用:"
+    private val TEXT_SELECTAPP = "选择要打开的应用: "
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.setting_widget_click, container,false) as View
+        val view = inflater.inflate(R.layout.setting_widget_click, container,false) as View
 
-        showSys = MainActivity.sharedPreferences.getBoolean("showSys", false)
+        showSys = sharedPreferences.getBoolean("showSys", false)
 
         toolbar = view.findViewById(R.id.widgetToolbar)
         toolbar.title = TEXT_SELECTAPP
+        toolbar.setTitleTextColor(SkinCompatResources.getColor(context,R.color.main_text))
         ActivityUtil.instance.currentActivity!!.setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.app_info_list)
         loading = view.findViewById(R.id.loadingApp)
-
+        groupCE = view.findViewById(R.id.groupCE)
         loading.visibility = View.VISIBLE
 
-        groupCE = view.findViewById(R.id.groupCE)
-        ce1 = view.findViewById(R.id.ce1)
-        ce2 = view.findViewById(R.id.ce2)
-        ce3 = view.findViewById(R.id.ce3)
-
-        ce1.setOnClickListener {
-            adapter.setWC(0)
-            recycler.scrollToPosition(if(showSys) mark[0] else markNoSys[0])
-            adapter.notifyDataSetChanged()
+        groupCE.forEachIndexed { index, v ->
+            v.setOnClickListener {
+                adapter.setWC(index)
+                recycler.scrollToPosition(if(showSys) mark[index] else markNoSys[index])
+                adapter.notifyDataSetChanged()
+            }
         }
-        ce2.setOnClickListener {
-            adapter.setWC(1)
-            recycler.scrollToPosition(if(showSys) mark[1] else markNoSys[1])
-            adapter.notifyDataSetChanged()
-        }
-        ce3.setOnClickListener {
-            adapter.setWC(2)
-            recycler.scrollToPosition(if(showSys) mark[2] else markNoSys[2])
-            adapter.notifyDataSetChanged()
-        }
-
 
         view.postDelayed({
             getAppList()
@@ -135,19 +122,39 @@ class WidgetSettingClickFragment : DialogFragment() {
 
         },300)
 
-        view.setOnTouchListener(DrawerUtil.onTouch(view,this))
+        DrawerUtil.bindAllViewOnTouchListener(view,this)
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val dm = DisplayMetrics()
+        activity!!.windowManager.defaultDisplay.getMetrics(dm)
+        DrawerUtil.setBottomDrawer(dialog, activity,(dm.heightPixels * 0.618).toInt())
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if(MyApplication().isForeground()){
+            WidgetSettingFragment.getInstance()
+                .show(fragmentManager!!, "widget")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         activity!!.menuInflater.inflate(R.menu.widget_setting_menu, menu)
 
-        val searchItem = menu!!.findItem(R.id.search)
+        val searchItem = menu.findItem(R.id.search)
         val showSysItem = menu.findItem(R.id.show_sys)
         val searchView = searchItem.actionView as SearchView
 
-        showSysItem.title = if(showSys) TITLE_HID_SYS else TITLE_SHOW_SYS
+        showSysItem.title = if(showSys) {
+            addColor(TITLE_HID_SYS,SkinCompatResources.getColor(context,R.color.main_text))
+        } else {
+            addColor(TITLE_SHOW_SYS,SkinCompatResources.getColor(context,R.color.main_text))
+        }
+
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -163,7 +170,7 @@ class WidgetSettingClickFragment : DialogFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item!!.itemId == R.id.show_sys){
+        if(item.itemId == R.id.show_sys){
             if(!showSys) {
                 item.title = TITLE_HID_SYS
                 adapter.submitList(applist)
@@ -188,6 +195,21 @@ class WidgetSettingClickFragment : DialogFragment() {
         return true
     }
 
+    /*
+         * Add color to a given text
+         */
+    private fun addColor(text: CharSequence, color: Int): SpannableStringBuilder {
+        val builder = SpannableStringBuilder(text)
+        if (color != 0) {
+            builder.setSpan(
+                ForegroundColorSpan(color), 0, text.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        return builder
+    }
+
+    //当前选择的应用的下标
     private fun getMark(){
 
         if(showSys){
@@ -202,8 +224,7 @@ class WidgetSettingClickFragment : DialogFragment() {
                     mark[2] = index
                 }
             }
-            mSourceList =
-                applist
+            mSourceList = applist
         }else{
             applistNoSys.forEachIndexed{ index, appInfo ->
                 if(pn[0] == appInfo.packageName){
@@ -216,11 +237,11 @@ class WidgetSettingClickFragment : DialogFragment() {
                     markNoSys[2] = index
                 }
             }
-            mSourceList =
-                applistNoSys
+            mSourceList = applistNoSys
         }
     }
 
+    //获取应用列表
     private fun getAppList() {
         applistNoSys = arrayListOf()
         applist = arrayListOf()
@@ -232,7 +253,7 @@ class WidgetSettingClickFragment : DialogFragment() {
 
         for (packageInfo in packages) {
 
-            var appInfo = AppInfo(
+            val appInfo = AppInfo(
                 packageInfo.applicationInfo.loadLabel(pm).toString(),
                 packageInfo.packageName,
                 packageInfo.versionName,
@@ -251,30 +272,5 @@ class WidgetSettingClickFragment : DialogFragment() {
             i++
             applist.add(appInfo)
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        val dw = dialog?.window
-        dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        dm = DisplayMetrics()
-        activity!!.windowManager.defaultDisplay.getMetrics(dm)
-
-        params = dw.attributes
-        //屏幕底部
-        params.gravity = Gravity.BOTTOM
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT
-        params.height = dm.heightPixels /3 * 2
-
-        params.windowAnimations = R.style.BottomDialogAnimation
-        dw.attributes = params
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        WidgetSettingFragment.getInstance()
-            .show(fragmentManager!!, "widget")
     }
 }

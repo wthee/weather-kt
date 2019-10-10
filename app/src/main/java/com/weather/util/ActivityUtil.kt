@@ -4,6 +4,12 @@ package com.weather.util
 import androidx.appcompat.app.AppCompatActivity
 
 import java.lang.ref.WeakReference
+import android.text.TextUtils
+import android.content.ComponentName
+import android.content.Context.ACTIVITY_SERVICE
+import androidx.core.content.ContextCompat.getSystemService
+import android.app.ActivityManager
+import android.content.Context
 
 
 class ActivityUtil private constructor() {
@@ -21,6 +27,7 @@ class ActivityUtil private constructor() {
         set(activity) {
             sCurrentActivityWeakRef = WeakReference<AppCompatActivity>(activity)
         }
+
 
     companion object {
 

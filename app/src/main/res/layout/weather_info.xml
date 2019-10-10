@@ -7,7 +7,7 @@
 
         <variable
             name="data"
-            type="com.weather.data.model.weather.Data" />
+            type="com.weather.data.model.Data" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -18,6 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/background"
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,14 +30,26 @@
                     android:id="@+id/weaDay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_small"
+                    android:paddingLeft="@dimen/padding_small"
                     android:text="@{data.day}"
                     android:textColor="@drawable/other_text_click"
                     android:textSize="@dimen/setting_title_size"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="18日（今天）" />
+                    tools:text="18日" />
+
+                <TextView
+                    android:id="@+id/weaDayAfter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{data.day_after}"
+                    android:textColor="@drawable/other_text_click"
+                    android:textSize="@dimen/item_text_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/weaDay"
+                    tools:text="（今天）" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -45,17 +58,16 @@
                 android:id="@+id/lineChart"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:layout_marginLeft="@dimen/padding_small"
-                android:layout_marginRight="@dimen/padding_small"
-                android:layout_marginBottom="@dimen/padding_small">
+                android:layout_marginBottom="@dimen/padding_small"
+                android:clipChildren="false">
 
             </com.github.mikephil.charting.charts.LineChart>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/lineHeight"
-                android:layout_marginBottom="@dimen/padding_small"
-                android:background="@color/line" />
+                android:layout_margin="@dimen/margin_small"
+                android:background="@color/hr" />
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -84,7 +96,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text='@{data.alarm.alarm_type+@string/alarm}'
-                                android:textColor="@color/colorAccent"
+                                android:textColor="@color/theme"
                                 android:textSize="@dimen/setting_title_size"
                                 tools:text="大风预警：" />
 
@@ -93,9 +105,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@{data.alarm.alarm_level}"
-                                android:textColor="@color/colorAccent"
+                                android:textColor="@color/theme"
                                 android:textSize="@dimen/setting_title_size"
-                                app:AutoColor='@{(data.alarm != null) ? data.alarm.alarm_level : @string/space}'
+                                app:autoColor='@{(data.alarm != null) ? data.alarm.alarm_level : @string/space}'
                                 tools:text="黄色" />
 
                         </LinearLayout>
@@ -107,8 +119,9 @@
                             android:paddingTop="@dimen/padding_small"
                             android:paddingBottom="@dimen/padding_small"
                             android:text="@{@string/tab+data.alarm.alarm_content}"
+                            android:textColor="@color/secondary_text"
                             android:textSize="@dimen/item_text_size"
-                            tools:text="空气质量asfdagsas：" />
+                            tools:text="空气质量还行" />
 
                     </LinearLayout>
 
@@ -129,7 +142,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="空气质量："
-                                android:textColor="@color/colorAccent"
+                                android:textColor="@color/theme"
                                 android:textSize="@dimen/setting_title_size"
                                 tools:text="空气质量：" />
 
@@ -139,7 +152,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@{data.air+@string/space+data.air_level}"
                                 android:textSize="@dimen/setting_title_size"
-                                app:AutoColor="@{data.air_tips != null ? data.air_level : @string/space}"
+                                app:autoColor="@{data.air_tips != null ? data.air_level : @string/space}"
                                 tools:text="45 优" />
 
                         </LinearLayout>
@@ -151,6 +164,7 @@
                             android:paddingTop="@dimen/padding_small"
                             android:paddingBottom="@dimen/padding_small"
                             android:text="@{@string/tab+data.air_tips}"
+                            android:textColor="@color/secondary_text"
                             android:textSize="@dimen/item_text_size"
                             tools:text="空气质量asfdagsas：" />
 
@@ -175,7 +189,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="穿衣指数："
-                                android:textColor="@color/colorAccent"
+                                android:textColor="@color/theme"
                                 android:textSize="@dimen/setting_title_size"
                                 tools:text="穿衣指数：" />
 
@@ -185,7 +199,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@{data.index[3].level}"
                                 android:textSize="@dimen/setting_title_size"
-                                app:AutoColor="@{data.index[3].level}"
+                                app:autoColor="@{data.index[3].level}"
                                 tools:text="热" />
 
                         </LinearLayout>
@@ -197,6 +211,7 @@
                             android:layout_height="wrap_content"
                             android:paddingTop="@dimen/padding_small"
                             android:text="@{@string/tab+data.index[3].desc}"
+                            android:textColor="@color/secondary_text"
                             android:textSize="@dimen/item_text_size"
                             tools:text="穿衣：" />
 

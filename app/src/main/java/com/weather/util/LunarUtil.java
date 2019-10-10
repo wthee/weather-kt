@@ -70,12 +70,6 @@ public class LunarUtil {
             return 30;
     }
 
-    /** */
-    /**
-     * 　　* 传出y年m月d日对应的农历. 　　* yearCyl3:农历年与1864的相差数 ? 　　*
-     * monCyl4:从1900年1月31日以来,闰月数 　　* dayCyl5:与1900年1月31日相差的天数,再加40 ? 　　* @param
-     * cal 　　* @return
-     */
     public LunarUtil(Calendar cal) {
         @SuppressWarnings("unused")
         int yearCyl, monCyl, dayCyl;
@@ -89,7 +83,6 @@ public class LunarUtil {
         }
         // 求出和1900年1月31日相差的天数
         int offset = (int) ((cal.getTime().getTime() - baseDate.getTime()) / 86400000L);
-        dayCyl = offset + 40;
         monCyl = 14;
         // 用offset减去每农历年的天数
         // 计算当天是农历第几天
@@ -108,7 +101,6 @@ public class LunarUtil {
         }
         // 农历年份
         year = iYear;
-        yearCyl = iYear - 1864;
         leapMonth = leapMonth(iYear); // 闰哪个月,1-12
         leap = false;
         // 用当年的天数offset,逐个减去每月（农历）的天数，求出当天是本月的第几天
@@ -160,7 +152,6 @@ public class LunarUtil {
     }
 
     public String toString() {
-        return year + "年" + (leap ? "闰" : "") + chineseNumber[month - 1] + "月"
-                + getChinaDayString(day);
+        return getChinaDayString(day);
     }
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  dark  -->
+    <color name="theme_dark">#1E71AD</color>
+    <color name="background_dark">#FC131313</color>
+    <color name="main_text_dark">#E6E6E6</color>
+    <color name="secondary_text_dark">#B1B1B1</color>
+    <color name="white_text_dark">#FFFFFF</color>
+    <color name="placeholder_text_dark">#6D6D6D</color>
+    <color name="hr_dark">#333333</color>
+</resources>

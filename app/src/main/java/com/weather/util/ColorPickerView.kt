@@ -3,280 +3,376 @@ package com.weather.util
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.RectF
-import android.graphics.Shader
-import android.graphics.SweepGradient
-import android.view.MotionEvent
-import android.view.View
+import android.graphics.drawable.BitmapDrawable
+import android.os.Handler
+import android.util.AttributeSet
+import android.util.Log
+import android.widget.SeekBar
+import com.weather.R
+import skin.support.content.res.SkinCompatResources
+import kotlin.math.ceil
 
-class ColorPickerView : View {
 
-    private var paintCirclePhantom: Paint? = null
-    var paintCircle: Paint? = null
-    var paintCenterShadow: Paint? = null
-    var paintCenter: Paint? = null
-    var paintGrayShadow: Paint? = null
-    var paintGray: Paint? = null
-    private var paintLightShadow: Paint? = null
-    private var paintLight: Paint? = null
-    var zoom: Double = 0.toDouble()
-    var arrColorGray: IntArray? = null
-    val arrColorCircle = intArrayOf(-0x10000, -0xff01, -0xffff01, -0xff0001, -0xff0100, -0x100, -0x10000)
-    private var mRedrawHSV: Boolean = false
-    var isIsPressCenter: Boolean = false
-    var isIsMoveCenter: Boolean = false
+class ColorPickerView : SeekBar {
 
-    private var CenterX = 100
-    private var CenterY = 100
-    private var CenterRadius = 30
-    var strColor = ""
+    companion object{
+        val DEFAULT_COLORS = arrayListOf(0x000000, 0xFF0000, 0xFF00FF,
+            0x0000FF, 0x00FFFF, 0x00FF00, 0xFFFF00, 0xFFFFFF)
+    }
 
-    private var l: OnColorBackListener? = null
+    /**
+     * 背景画笔
+     */
+    private var mBackgroundPaint: Paint? = null
+
+    /**
+     * 进度画笔
+     */
+    private var mProgressPaint: Paint? = null
+
+    /**
+     * 第二进度画笔
+     */
+    private var mSecondProgressPaint: Paint? = null
+
+    /**
+     * 游标画笔
+     */
+    private var mThumbPaint: Paint? = null
+
+    /**
+     * 默认
+     */
+    private val TRACKTOUCH_NONE = -1
+    /**
+     * 开始拖动
+     */
+    private val TRACKTOUCH_START = 0
+    private var mTrackTouch = TRACKTOUCH_NONE
+
+    private var mOnChangeListener: OnChangeListener? = null
+    private var mOnDrawListener: OnDrawListener? = null
+
+    //TrackingTouch
+    private var isTrackingTouch = false
+    private var mTrackingTouchSleepTime = 0L
+    private val mHandler = Handler()
+    private val mRunnable = Runnable { setTrackTouch(TRACKTOUCH_NONE) }
+
+    //背景渐变颜色数组
+    private var backgroundColors = gradientColor(Color.GRAY,Color.GRAY,max)
+
 
     constructor(context: Context) : super(context) {
-        val density = getContext().resources.displayMetrics.density
-        val Zoom = density / 2.0 + 0.5
-        val color = Color.parseColor("#FFFFFF")
-        init(color, Zoom)
+        init(context)
     }
 
-    constructor(context: Context, color: Int, Zoom: Double) : super(context) {
-        init(color, Zoom)
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        init(context)
     }
 
-    private fun init(color: Int, Zoom: Double) {
-        this.zoom = Zoom
-        CenterX = (100 * Zoom).toInt()
-        CenterY = (100 * Zoom).toInt()
-        CenterRadius = (30 * Zoom).toInt()
-        paintCirclePhantom = Paint(Paint.ANTI_ALIAS_FLAG)
-        paintCircle = Paint(Paint.ANTI_ALIAS_FLAG)
-        paintCenterShadow = Paint(Paint.ANTI_ALIAS_FLAG)
-        paintCenter = Paint(Paint.ANTI_ALIAS_FLAG)
-        paintGrayShadow = Paint(Paint.ANTI_ALIAS_FLAG)
-        paintGray = Paint(Paint.ANTI_ALIAS_FLAG)
-        paintLightShadow = Paint(Paint.ANTI_ALIAS_FLAG)
-        paintLight = Paint(Paint.ANTI_ALIAS_FLAG)
-        paintCirclePhantom!!.color = -0x1000000
-        paintCirclePhantom!!.style = Paint.Style.STROKE
-        paintCirclePhantom!!.strokeWidth = (32 * Zoom).toFloat()
+    /**
+     * 初始化
+     */
+    private fun init(context: Context) {
 
-        paintCircle!!.shader = SweepGradient(0f, 0f, arrColorCircle, null)
-        paintCircle!!.style = Paint.Style.STROKE
-        paintCircle!!.strokeWidth = (32 * Zoom).toFloat()
+        setBackgroundColor(Color.TRANSPARENT)
 
-        paintCenterShadow!!.color = -0x1000000
-        paintCenterShadow!!.strokeWidth = (5 * Zoom).toFloat()
+        //背景画笔
+        mBackgroundPaint = Paint()
+        mBackgroundPaint!!.isDither = true
+        mBackgroundPaint!!.isAntiAlias = true
+        mBackgroundPaint!!.color = SkinCompatResources.getColor(context, R.color.hr)
 
-        paintCenter!!.color = color
-        paintCenter!!.strokeWidth = (5 * Zoom).toFloat()
+        //
+        mProgressPaint = Paint()
+        mProgressPaint!!.isDither = true
+        mProgressPaint!!.isAntiAlias = true
+        mProgressPaint!!.color = SkinCompatResources.getColor(context, R.color.hr)
 
-        paintGrayShadow!!.color = -0x1000000
-        paintGrayShadow!!.strokeWidth = (30 * Zoom).toFloat()
+        //
+        mSecondProgressPaint = Paint()
+        mSecondProgressPaint!!.isDither = true
+        mSecondProgressPaint!!.isAntiAlias = true
+        mSecondProgressPaint!!.color = SkinCompatResources.getColor(context, R.color.alpha)
 
-        arrColorGray = intArrayOf(-0x1, color, -0x1000000)
-        paintGray!!.strokeWidth = (30 * Zoom).toFloat()
+        //
+        mThumbPaint = Paint()
+        mThumbPaint!!.isDither = true
+        mThumbPaint!!.isAntiAlias = true
+        mThumbPaint!!.color = SkinCompatResources.getColor(context, R.color.theme)
 
-        paintLightShadow!!.color = -0x1000000
-        paintLightShadow!!.strokeWidth = (60 * Zoom).toFloat()
+        //
+        thumb = BitmapDrawable()
+        setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                if (mTrackTouch == TRACKTOUCH_START) {
+                    if (mOnChangeListener != null) {
+                        mOnChangeListener!!.onProgressChanged(this@ColorPickerView)
+                    }
+                }
+            }
 
-        paintLight!!.strokeWidth = (60 * Zoom).toFloat()
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                isTrackingTouch = true
+                mHandler.removeCallbacks(mRunnable)
+                if (mTrackTouch == TRACKTOUCH_NONE) {
+                    setTrackTouch(TRACKTOUCH_START)
+                    if (mOnChangeListener != null) {
+                        mOnChangeListener!!.onTrackingTouchStart(this@ColorPickerView)
+                    }
+                }
+            }
 
-        mRedrawHSV = true
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                isTrackingTouch = false
+                if (mTrackTouch == TRACKTOUCH_START) {
+                    if (mOnChangeListener != null) {
+                        mOnChangeListener!!.onTrackingTouchFinish(this@ColorPickerView)
+                    }
+                    mHandler.postDelayed(mRunnable, mTrackingTouchSleepTime)
+                }
+            }
+        })
+        
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.translate(CenterX.toFloat(), CenterY.toFloat())
-        val r = CenterX - paintCircle!!.strokeWidth * 0.5f
-        val color = paintCenter!!.color
-        strColor = "#" + Integer.toHexString(color).substring(2).toUpperCase()
-
-        if (mRedrawHSV) {
-            arrColorGray?.set(1, color)
-            paintGray!!.shader = LinearGradient(CenterX.toFloat(), (-CenterY).toFloat(), CenterX.toFloat(),
-                    (100 * zoom).toFloat(), arrColorGray!!, null,
-                    Shader.TileMode.CLAMP)
+        //绘制开始回调
+        if (mOnDrawListener != null) {
+            mOnDrawListener!!.onDrawStart(this@ColorPickerView)
         }
 
-        canvas.drawOval(RectF(-r + 3, -r + 3, r + 3, r + 3),
-                paintCirclePhantom!!)
-        canvas.drawOval(RectF(-r, -r, r, r), paintCircle!!)
-        canvas.drawCircle(3f, 3f, CenterRadius.toFloat(), paintCenterShadow!!)
-        canvas.drawCircle(0f, 0f, CenterRadius.toFloat(), paintCenter!!)
-        canvas.drawRect(RectF(CenterX + (18 * zoom).toFloat(), (-CenterY + 3).toFloat(),
-                CenterX + (48 * zoom).toFloat(), (103 * zoom).toFloat()),
-                paintGrayShadow!!)
-        canvas.drawRect(RectF(CenterX + (15 * zoom).toFloat(), (-CenterY).toFloat(),
-                CenterX + (45 * zoom).toFloat(), (100 * zoom).toFloat()), paintGray!!)
+        var rSize = height / 4f
+        if (isTrackingTouch) {
+            rSize = height / 3f
+        }
+        val height = height / 4 / 3
+        var leftPadding = rSize
 
-        if (isIsPressCenter) {
-            paintCenter!!.style = Paint.Style.STROKE
-
-            if (isIsMoveCenter)
-                paintCenter!!.alpha = 0xFF
-            else
-                paintCenter!!.alpha = 0x66
-
-            canvas.drawCircle(0f, 0f,
-                    CenterRadius + paintCenter!!.strokeWidth, paintCenter!!)
-            paintCenter!!.style = Paint.Style.FILL
-            paintCenter!!.color = color
+        if (progress > 0) {
+            leftPadding = 0f
         }
 
-        mRedrawHSV = true
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        setMeasuredDimension(CenterX * 2 + 50, CenterY * 2 + 23)
-    }
-
-    private fun ave(s: Int, d: Int, p: Float): Int {
-        return s + java.lang.Math.round(p * (d - s))
-    }
-
-    private fun interpColor(colors: IntArray, unit: Float): Int {
-        if (unit <= 0) {
-            return colors[0]
-        }
-        if (unit >= 1) {
-            return colors[colors.size - 1]
+        val stepWidth = width.toFloat() / max
+        var leftX=leftPadding
+        //背景渐变
+        mBackgroundPaint!!.color = backgroundColors[0]
+        var backgroundRect: RectF
+        for(i in 0 until max){
+            backgroundRect = RectF(
+                leftX, (getHeight() / 2 - height).toFloat(), width.toFloat(),
+                (getHeight() / 2 + height).toFloat()
+            )
+            canvas.drawRoundRect(backgroundRect, rSize, rSize, mBackgroundPaint)
+            leftX += stepWidth
+            mBackgroundPaint!!.color = backgroundColors[i]
         }
 
-        var p = unit * (colors.size - 1)
-        val i = p.toInt()
-        p -= i.toFloat()
 
-        val c0 = colors[i]
-        val c1 = colors[i + 1]
-        val a = ave(Color.alpha(c0), Color.alpha(c1), p)
-        val r = ave(Color.red(c0), Color.red(c1), p)
-        val g = ave(Color.green(c0), Color.green(c1), p)
-        val b = ave(Color.blue(c0), Color.blue(c1), p)
-        if (l != null) {
-            l!!.onColorBack(a, r, g, b)
-        }
-        return Color.argb(a, r, g, b)
-    }
+        if (max != 0) {
+            val secondRight = (secondaryProgress.toFloat() / max * width).toInt()
+            val secondProgressRect = RectF(
+                leftPadding.toFloat(), (getHeight() / 2 - height).toFloat(),
+                secondRight.toFloat(), (getHeight() / 2 + height).toFloat()
+            )
+            canvas.drawRoundRect(secondProgressRect, rSize, rSize, mSecondProgressPaint)
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val x = event.x - CenterX
-        val y = event.y - CenterY
-        val inCenter = java.lang.Math.sqrt((x * x + y * y).toDouble()) <= CenterRadius
 
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                run {
-                    isIsPressCenter = inCenter
-                    if (inCenter) {
-                        isIsMoveCenter = true
-                        invalidate()
-                    }
-                }
-                run {
-                    if (isIsPressCenter) {
-                        if (isIsMoveCenter != inCenter) {
-                            isIsMoveCenter = inCenter
-                            invalidate()
-                        }
-                    } else if (x >= -CenterX && x <= CenterX && y >= -CenterY && y <= CenterY) {
-                        val angle = java.lang.Math.atan2(y.toDouble(), x.toDouble()).toFloat()
-                        var unit = angle / (2 * PI)
-                        if (unit < 0)
-                            unit += 1f
-                        paintCenter!!.color = interpColor(arrColorCircle, unit)
-                        invalidate()
-                    } else {
-                        val a: Int
-                        val r: Int
-                        val g: Int
-                        val b: Int
-                        val c0: Int
-                        val c1: Int
-                        val p: Float
+            mThumbPaint!!.color = backgroundColors[progress]
 
-                        if (y < 0) {
-                            c0 = arrColorGray!![0]
-                            c1 = arrColorGray!![1]
-                            p = (y + 100) / 100
-                        } else {
-                            c0 = arrColorGray!![1]
-                            c1 = arrColorGray!![2]
-                            p = y / 100
-                        }
 
-                        a = ave(Color.alpha(c0), Color.alpha(c1), p)
-                        r = ave(Color.red(c0), Color.red(c1), p)
-                        g = ave(Color.green(c0), Color.green(c1), p)
-                        b = ave(Color.blue(c0), Color.blue(c1), p)
-
-                        paintCenter!!.color = Color.argb(a, r, g, b)
-                        mRedrawHSV = false
-                        if (l != null) {
-                            l!!.onColorBack(a, r, g, b)
-                        }
-                        invalidate()
-                    }
-                }
+            var cx = progress.toFloat() / max * width
+            if (cx + rSize > width) {
+                cx = width - rSize
+            } else {
+                cx = Math.max(cx, rSize)
             }
-            MotionEvent.ACTION_MOVE -> {
-                if (isIsPressCenter) {
-                    if (isIsMoveCenter != inCenter) {
-                        isIsMoveCenter = inCenter
-                        invalidate()
-                    }
-                } else if (x >= -CenterX && x <= CenterX && y >= -CenterY && y <= CenterY) {
-                    val angle = java.lang.Math.atan2(y.toDouble(), x.toDouble()).toFloat()
-                    var unit = angle / (2 * PI)
-                    if (unit < 0)
-                        unit += 1f
-                    paintCenter!!.color = interpColor(arrColorCircle, unit)
-                    invalidate()
-                } else {
-                    val a: Int
-                    val r: Int
-                    val g: Int
-                    val b: Int
-                    val c0: Int
-                    val c1: Int
-                    val p: Float
-                    if (y < 0) {
-                        c0 = arrColorGray!![0]
-                        c1 = arrColorGray!![1]
-                        p = (y + 100) / 100
-                    } else {
-                        c0 = arrColorGray!![1]
-                        c1 = arrColorGray!![2]
-                        p = y / 100
-                    }
-                    a = ave(Color.alpha(c0), Color.alpha(c1), p)
-                    r = ave(Color.red(c0), Color.red(c1), p)
-                    g = ave(Color.green(c0), Color.green(c1), p)
-                    b = ave(Color.blue(c0), Color.blue(c1), p)
-                    paintCenter!!.color = Color.argb(a, r, g, b)
-                    mRedrawHSV = false
-                    if (l != null) {
-                        l!!.onColorBack(a, r, g, b)
-                    }
-                    invalidate()
-                }
-            }
-            MotionEvent.ACTION_UP -> {
-                if (isIsPressCenter) {
-                    isIsPressCenter = false
-                    invalidate()
-                }
+            val cy = getHeight() / 2f
+            canvas.drawCircle(cx, cy, rSize, mThumbPaint)
+        }
+
+        //绘制完成回调
+        if (mOnDrawListener != null) {
+            mOnDrawListener!!.onDrawFinish(this@ColorPickerView)
+        }
+    }
+
+    @Synchronized
+    override fun setProgress(progress: Int) {
+        if (mTrackTouch == TRACKTOUCH_NONE && max != 0) {
+            super.setProgress(progress)
+        }
+        postInvalidate()
+    }
+
+    @Synchronized
+    override fun setSecondaryProgress(secondaryProgress: Int) {
+        super.setSecondaryProgress(secondaryProgress)
+        postInvalidate()
+    }
+
+    @Synchronized
+    override fun setMax(max: Int) {
+        super.setMax(max)
+        postInvalidate()
+    }
+
+    @Synchronized
+    private fun setTrackTouch(trackTouch: Int) {
+        this.mTrackTouch = trackTouch
+    }
+
+    /**
+     * 设置背景颜色
+     *
+     * @param backgroundColor
+     */
+    fun setBackgroundPaintColor(backgroundColor: Int) {
+        mBackgroundPaint!!.setColor(backgroundColor)
+        postInvalidate()
+    }
+
+    /**
+     * 设置进度颜色
+     *
+     * @param progressColor
+     */
+    fun setProgressColor(progressColor: Int) {
+        mProgressPaint!!.setColor(progressColor)
+        postInvalidate()
+    }
+
+    /**
+     * 设置第二进度颜色
+     *
+     * @param secondProgressColor
+     */
+    fun setSecondProgressColor(secondProgressColor: Int) {
+        mSecondProgressPaint!!.setColor(secondProgressColor)
+        postInvalidate()
+    }
+
+    /**
+     * 设置游标颜色
+     *
+     * @param thumbColor
+     */
+    fun setThumbColor(thumbColor: Int) {
+        mThumbPaint!!.color = thumbColor
+        postInvalidate()
+    }
+
+    fun getThumbColor(): Int {
+        return mThumbPaint!!.color
+    }
+
+    fun setOnChangeListener(onChangeListener: OnChangeListener) {
+        this.mOnChangeListener = onChangeListener
+    }
+
+    fun setOnDrawListener(onDrawListener: OnDrawListener) {
+        this.mOnDrawListener = onDrawListener
+    }
+
+    fun setTrackingTouchSleepTime(mTrackingTouchSleepTime: Long) {
+        this.mTrackingTouchSleepTime = mTrackingTouchSleepTime
+    }
+
+    fun setBackgroundGradientColors(colorArray: ArrayList<Int>){
+        backgroundColors = arrayListOf()
+        var colorSize = colorArray.size - 1
+        colorArray.forEachIndexed { index, i ->
+            if(index != colorSize){
+                backgroundColors.addAll(gradientColor(colorArray[index],colorArray[index+1], max / colorSize))
             }
         }
-        return true
+        for( i in backgroundColors.size .. max){
+            backgroundColors.add(backgroundColors.last())
+        }
     }
 
-    interface OnColorBackListener {
-        fun onColorBack(a: Int, r: Int, g: Int, b: Int)
+    //Color的Int整型转Color的16进制颜色值
+    private fun int2Hex(colorInt: Int): String {
+        var hexCode = ""
+        hexCode = String.format("#%06X", Integer.valueOf(16777215 and colorInt))
+        return hexCode
     }
 
-    companion object {
-        private val PI = Math.PI.toFloat()
+    /**
+     * 传入起始颜色 [startColor] 、终止颜色 [endColor]、渐变步长 [step]
+     * 获取渐变数组
+     * */
+    private fun gradientColor(startColor: Int, endColor: Int, step: Int): ArrayList<Int> {
+        //起始颜色
+        val startR = startColor and 0xff0000 shr 16
+        val startG = startColor and 0x00ff00 shr 8
+        val startB = startColor and 0x0000ff
+        //终止颜色
+        val endR = endColor and 0xff0000 shr 16
+        val endG = endColor and 0x00ff00 shr 8
+        val endB = endColor and 0x0000ff
+        //总差值
+        val sR = (endR - startR).toDouble() / step
+        val sG = (endG - startG).toDouble() / step
+        val sB = (endB - startB).toDouble() / step
+
+        var colorArr = arrayListOf<Int>()
+
+        for (i in 0 until step) {
+            //计算每一步的hex值
+            var hex =
+                    Color.rgb(
+                        (sR * i + startR).toInt(),
+                        (sG * i + startG).toInt(),
+                        (sB * i + startB).toInt()
+                    )
+
+            colorArr.add(hex)
+        }
+        return colorArr
+    }
+
+    interface OnChangeListener {
+        /**
+         * 进度改变
+         *
+         * @param seekBar
+         */
+        fun onProgressChanged(seekBar: ColorPickerView)
+
+        /**
+         * 开始拖动
+         *
+         * @param seekBar
+         */
+        fun onTrackingTouchStart(seekBar: ColorPickerView)
+
+        /**
+         * 拖动结束
+         *
+         * @param seekBar
+         */
+        fun onTrackingTouchFinish(seekBar: ColorPickerView)
+
+    }
+
+    interface OnDrawListener {
+        /**
+         * 开始绘制
+         *
+         * @param seekBar
+         */
+        fun onDrawStart(seekBar: ColorPickerView)
+
+        /**
+         * 绘制完成
+         *
+         * @param seekBar
+         */
+        fun onDrawFinish(seekBar: ColorPickerView)
+
     }
 }

@@ -20,10 +20,10 @@
             android:layout_height="wrap_content"
             android:format12Hour="HH:mm:ss"
             android:format24Hour="HH:mm:ss"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/widget_main_text"
             android:textSize="@dimen/widget_text_size"
             tools:text="17:25:33"
-            tools:textColor="@color/colorItemText" />
+            tools:textColor="@color/widget_main_text" />
 
         <TextClock
             android:id="@+id/appwidget_now_date"
@@ -32,10 +32,10 @@
             android:layout_below="@id/appwidget_now_time"
             android:format12Hour="yyyy年MM月dd日"
             android:format24Hour="yyyy年MM月dd日"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/widget_main_text"
             android:textSize="@dimen/item_smalltext_size"
             tools:text="2019年4月6日"
-            tools:textColor="@color/colorItemText" />
+            tools:textColor="@color/widget_main_text" />
 
     </LinearLayout>
 
@@ -72,10 +72,10 @@
                 android:id="@+id/appwidget_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/widget_main_text"
                 android:textSize="@dimen/widget_text_size"
                 tools:text="杭州"
-                tools:textColor="@color/colorItemText" />
+                tools:textColor="@color/widget_main_text" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -87,19 +87,19 @@
                     android:id="@+id/appwidget_wea"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/widget_main_text"
                     android:textSize="@dimen/item_smalltext_size"
                     tools:text="小雨"
-                    tools:textColor="@color/colorItemText" />
+                    tools:textColor="@color/widget_main_text" />
 
                 <TextView
                     android:id="@+id/appwidget_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/widget_main_text"
                     android:textSize="@dimen/item_smalltext_size"
                     tools:text="04/04"
-                    tools:textColor="@color/colorItemText" />
+                    tools:textColor="@color/widget_main_text" />
 
 
             </LinearLayout>
@@ -111,10 +111,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/rightCity"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/widget_main_text"
             android:textSize="@dimen/item_smalltext_size"
             tools:text="下雨天，记得带伞"
-            tools:textColor="@color/colorItemText" />
+            tools:textColor="@color/widget_main_text" />
 
     </RelativeLayout>
 

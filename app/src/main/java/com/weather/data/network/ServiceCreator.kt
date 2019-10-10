@@ -6,15 +6,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceCreator {
 
-    const val BASE_URL = "https://www.tianqiapi.com/api/"
-
-    private val builder = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
+    private const val WEATHER_URL = "https://www.tianqiapi.com/api/"
+    private const val QA_URL = "http://47.98.60.104:8080/api/"
 
 
-    private val retrofit = builder.build()
+    fun <T> create(serviceClass: Class<T>, type: Int): T {
+        val url = when(type){
+            0 -> WEATHER_URL
+            1 -> QA_URL
+            else -> ""
+        }
 
-    fun <T> create(serviceClass: Class<T>): T = retrofit.create(serviceClass)
+        val builder = Retrofit.Builder()
+            .baseUrl(url)
+            .addConverterFactory(GsonConverterFactory.create())
+
+        return builder.build().create(serviceClass)
+    }
 
 }

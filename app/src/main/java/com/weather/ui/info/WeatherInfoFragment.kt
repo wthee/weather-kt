@@ -1,10 +1,14 @@
 package com.weather.ui.info
 
 import android.graphics.*
-import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.DisplayMetrics
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -18,16 +22,13 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
-import com.weather.MainActivity
 import com.weather.R
-import com.weather.data.model.weather.Data
+import com.weather.data.model.Data
 import com.weather.databinding.WeatherInfoBinding
 import com.weather.util.DrawerUtil
 import com.weather.util.ShareUtil
+import skin.support.content.res.SkinCompatResources
 import java.text.DecimalFormat
-import android.provider.MediaStore
-import android.net.Uri
-import com.github.mikephil.charting.components.AxisBase
 
 
 class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
@@ -35,12 +36,13 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
     private lateinit var binding: WeatherInfoBinding
     private lateinit var lineChart: LineChart
     private lateinit var mPointValues: ArrayList<Entry>
-    private lateinit var mPointValues1: ArrayList<Entry>
     private lateinit var mLables: ArrayList<String>
-    private lateinit var dataSets: List<LineDataSet>
+    private lateinit var dataSet: LineDataSet
     private lateinit var lineData: LineData
     private var axisWidth: Float = 1f
-    private var axisColor: Int = Color.parseColor("#C0C0C0")
+    private var axisColor: Int = 0
+    private var gridColor: Int = 0
+    private var labColor: Int = 0
     private var item = itemBundle
 
     private lateinit var dm: DisplayMetrics
@@ -55,25 +57,30 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             data = item
         }
 
+        axisColor = SkinCompatResources.getColor(binding.root.context,R.color.theme)
+        gridColor = SkinCompatResources.getColor(binding.root.context,R.color.hr)
+        labColor = SkinCompatResources.getColor(binding.root.context,R.color.main_text)
         lineChart = binding.lineChart
 
-        initLineChart()//初始化
+        //初始化温度折线图
+        initLineChart()
 
         val air = binding.air
         val alarm = binding.alarm
 
-        if (item.alarm != null && item.alarm.alarm_type != "") {
-            alarm.visibility = View.VISIBLE
+        alarm.visibility = if (item.alarm != null && item.alarm.alarm_type != "") {
+            View.VISIBLE
         } else {
-            alarm.visibility = View.GONE
+            View.GONE
         }
 
-        if (item.air_tips != null && item.air_tips != "") {
-            air.visibility = View.VISIBLE
+        air.visibility = if (item.air_tips != null && item.air_tips != "") {
+            View.VISIBLE
         } else {
-            air.visibility = View.GONE
+            View.GONE
         }
 
+        //点击分享
         binding.weaDay.setOnClickListener {
             val sView = binding.root
             sView.isDrawingCacheEnabled = true
@@ -90,28 +97,14 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             ShareUtil.shareImg(uri,this.context!!)
         }
 
-        binding.root.setOnTouchListener(DrawerUtil.onTouch(binding.root,this))
+        DrawerUtil.bindAllViewOnTouchListener(binding.root,this)
 
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-
-        val dw = dialog?.window
-        dw!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) //一定要设置背景
-
-        dm = DisplayMetrics()
-        activity!!.windowManager.defaultDisplay.getMetrics(dm)
-
-        params = dw.attributes
-        //屏幕底部
-        params.gravity = Gravity.BOTTOM
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-        params.windowAnimations = R.style.BottomDialogAnimation
-        dw.attributes = params
+        DrawerUtil.setBottomDrawer(dialog, activity,ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private fun setStyle() {
@@ -124,58 +117,60 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         val m = Matrix()
         //两个参数分别是x,y轴的缩放比例。例如：将x轴的数据放大为之前的1.5倍
         m.postScale(item.hours.size / 8f * 2f,1f)
-
         lineChart.viewPortHandler.refresh(m, lineChart,false)//将图表动画显示之前进行缩放
         //x
-        val xAxis = lineChart.xAxis
-        xAxis.setDrawAxisLine(false)
-        xAxis.textSize = 12f
-        xAxis.valueFormatter = IndexAxisValueFormatter(mLables)
-        xAxis.gridColor = Color.parseColor("#33000000")
-        xAxis.axisLineWidth = axisWidth
-        xAxis.axisLineColor = axisColor
-        xAxis.textColor = axisColor
-        xAxis.granularity = 1f
-        xAxis.yOffset = -3f
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        //y
-        val yAxis = lineChart.axisLeft
-        val yAxis1 = lineChart.axisRight
-        yAxis.axisLineWidth = axisWidth
-        yAxis.setDrawGridLines(false)
-        yAxis1.setDrawGridLines(false)
-        yAxis.setDrawAxisLine(false)
-        yAxis1.setDrawAxisLine(false)
-        yAxis.textColor = Color.TRANSPARENT
-        yAxis1.textColor = Color.TRANSPARENT
-        yAxis.xOffset = 7f
-        yAxis1.xOffset = 7f
+        lineChart.xAxis.apply {
+            setDrawAxisLine(false)
+            setDrawGridLines(false)
+            valueFormatter = IndexAxisValueFormatter(mLables)
+            textSize = 12f
+            textColor = labColor
+            granularity = 1f
+            yOffset = -3f
+            position = XAxis.XAxisPosition.BOTTOM
+        }
+
+        lineChart.axisLeft.apply {
+            axisLineWidth = axisWidth
+            xOffset = 10f
+            setDrawGridLines(false)
+            setDrawAxisLine(false)
+            textColor = Color.TRANSPARENT
+        }
+
+        lineChart.axisRight.apply {
+            axisLineWidth = axisWidth
+            xOffset = 10f
+            setDrawGridLines(false)
+            setDrawAxisLine(false)
+            textColor = Color.TRANSPARENT
+        }
 
         //legend
         val legend = lineChart.legend
         legend.isEnabled = false
 
         //data
-        setData(dataSets)
+        setData(dataSet)
 
     }
 
-    private fun setData(datasets: List<LineDataSet>) {
-        datasets.forEach {
-            it.mode = LineDataSet.Mode.CUBIC_BEZIER
-            it.lineWidth = 4f
-            it.color = Color.parseColor("#2296eb")
-            it.setCircleColor(Color.parseColor("#2296eb"))
-            it.circleHoleRadius = 3f
-            it.circleRadius = 4f
-            it.isHighlightEnabled = true
-            it.highLightColor = Color.TRANSPARENT
-            it.valueTextSize = 14f
-            it.valueTextColor = Color.parseColor("#000000")
+    private fun setData(dataset: LineDataSet) {
+        dataset.apply {
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            lineWidth = 4f
+            color = axisColor
+            setCircleColor(axisColor)
+            circleHoleRadius = 3f
+            circleRadius = 4f
+            isHighlightEnabled = true
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 14f
+            valueTextColor = labColor
             val df = DecimalFormat("##0")
-            it.valueFormatter = object : ValueFormatter() {
+            valueFormatter = object : ValueFormatter() {
                 override fun getPointLabel(entry: Entry?): String {
-                    return df.format(entry!!.y) + "℃\n" + item.hours[entry!!.x.toInt()].wea
+                    return df.format(entry!!.y) + "℃\n" + item.hours[entry.x.toInt()].wea
                 }
             }
         }
@@ -184,7 +179,6 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
     private fun initLineChart() {
         //折线点上的值
         mPointValues = arrayListOf()
-        //mPointValues1 = arrayListOf()
         mLables = arrayListOf()
 
         item.hours.forEachIndexed { index, hour ->
@@ -192,10 +186,9 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             val y: Float = hour.tem.toFloat()
             mPointValues.add(Entry(index.toFloat(), y))
         }
-        val dataSet = LineDataSet(mPointValues, null)
+        dataSet = LineDataSet(mPointValues, null)
 
-        dataSets = listOf(dataSet)
-        lineData = LineData(dataSets)
+        lineData = LineData(dataSet)
         setStyle()
         setmarkView()
 
@@ -321,7 +314,6 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             draw(canvas)
             canvas.restoreToCount(saveId)
         }
-
 
     }
 
