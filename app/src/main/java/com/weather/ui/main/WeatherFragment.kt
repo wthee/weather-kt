@@ -45,7 +45,6 @@ class WeatherFragment : Fragment() {
     companion object {
         var lunarGone = false
         var styleType = 0
-        var lastCity = "ip"
 
 
         var weatherFragment = WeatherFragment()
@@ -53,7 +52,7 @@ class WeatherFragment : Fragment() {
         lateinit var adapter: WeatherAdapter
         lateinit var viewModel: WeatherViewModel
 
-        var cityIndex: Int = 0
+        var cityIndex: Int = 1
         var toUpdate = true
         var saveC1 = sharedPreferences.getString("city1", "ip")!!
         var saveC2 = sharedPreferences.getString("city2", "北京")!!
@@ -101,13 +100,12 @@ class WeatherFragment : Fragment() {
         styleType = sharedPreferences.getInt("type",
             styleType
         )
-        lastCity = sharedPreferences.getString("city",
-            lastCity
+        cityIndex = sharedPreferences.getInt("cityIndex",
+            cityIndex
         )!!
 
-        changeCityIndex(lastCity)
         toUpdate = true
-        viewModel.changeCity(lastCity)
+        swipToChangeCity(cityIndex)
 
         //返回两次退出应用
         view!!.isFocusableInTouchMode = true
@@ -139,12 +137,11 @@ class WeatherFragment : Fragment() {
             if (weather != null) {
                 binding.apply {
                     this.weather = weather
-                    this.now = WeatherViewModel.now
                     hint = "更新于 " + weather.update_time
                 }
 
-                title = weather.city
                 input.text = null
+                setting.text = weather.city
                 progressBar.visibility = View.GONE
                 //下次打开APP显示的city
                 sharedPreferences.edit {
@@ -172,11 +169,19 @@ class WeatherFragment : Fragment() {
                 MyApplication.context.sendBroadcast(intent)
             }
         })
-
+        //今日实时天气
+        viewModel.nowWeather.observe(viewLifecycleOwner, Observer { now ->
+            if(now!=null){
+                title = now.city
+                binding.apply {
+                    this.now = now
+                }
+            }
+        })
         //刷新判断
         viewModel.isRefresh.observe(viewLifecycleOwner, Observer {isRefresh ->
             if (!isRefresh){
-                refresh.finishRefresh(600)
+                refresh.finishRefresh()
             }
         })
     }
@@ -219,6 +224,7 @@ class WeatherFragment : Fragment() {
         }
 
         //下拉刷新
+        refresh.setHeaderMaxDragRate(1.5f)
         refresh.setOnRefreshListener {
             viewModel.changeCity(setting.text.toString())
         }
@@ -228,11 +234,9 @@ class WeatherFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 val input = s.toString()
                 if( input != ""&& viewModel.checkCity(input) != -1){
-                    lastCity = input
-                    sharedPreferences.edit{
-                        putString("city", lastCity)
+                    sharedPreferences.edit {
+                        putString("city$cityIndex", input)
                     }
-                    changeCityIndex(input)
                     toUpdate = true
                     viewModel.changeCity(input)
                 }
@@ -249,11 +253,11 @@ class WeatherFragment : Fragment() {
         })
 
         //点击关闭键盘
-        recyclerView.setOnTouchListener(View.OnTouchListener { _, _ ->
+        recyclerView.setOnTouchListener(View.OnTouchListener { _, ev ->
             hideAndClear()
             return@OnTouchListener false
         })
-        mainLayout.setOnTouchListener(View.OnTouchListener { _, _ ->
+        mainLayout.setOnTouchListener(View.OnTouchListener { _, ev->
             hideAndClear()
             return@OnTouchListener true
         })
@@ -265,26 +269,16 @@ class WeatherFragment : Fragment() {
         imm.hideSoftInputFromWindow(input.windowToken, 0)
     }
 
-    //定位滑动到的城市的下标
-    private fun changeCityIndex(city: String){
-        cityIndex = when (city) {
-            saveC1 -> 1
-            saveC2 -> 2
-            saveC3 -> 3
-            else -> 0
-        }
-    }
-
     //切换城市
     fun swipToChangeCity(cityIndex: Int){
         val city = when (cityIndex) {
             1 -> saveC1
             2 -> saveC2
             3 -> saveC3
-            else -> lastCity
+            else -> "ip"
         }
         sharedPreferences.edit{
-            putString("city", city)
+            putInt("cityIndex", cityIndex)
         }
         toUpdate = true
         viewModel.changeCity(city)

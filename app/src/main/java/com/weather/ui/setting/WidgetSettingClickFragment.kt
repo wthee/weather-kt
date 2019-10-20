@@ -5,13 +5,9 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.pm.ApplicationInfo
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.util.DisplayMetrics
 import android.view.*
-import android.widget.ProgressBar
-import android.widget.RadioGroup
+import android.widget.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
@@ -25,6 +21,7 @@ import com.weather.adapters.AppInfoAdapter
 import com.weather.data.model.AppInfo
 import com.weather.util.ActivityUtil
 import com.weather.util.DrawerUtil
+import org.w3c.dom.Text
 import skin.support.content.res.SkinCompatResources
 
 
@@ -41,88 +38,61 @@ class WidgetSettingClickFragment : DialogFragment() {
         }
 
         var pn = arrayListOf(
-            sharedPreferences.getString("appInfo1","com.weather"),
-            sharedPreferences.getString("appInfo2","com.weather"),
-            sharedPreferences.getString("appInfo3","com.weather")
+            sharedPreferences.getString("appInfo1", "com.weather"),
+            sharedPreferences.getString("appInfo2", "com.weather"),
+            sharedPreferences.getString("appInfo3", "com.weather")
         )
         var myAppIndex = 0
         var myAppIndexNoSys = 0
         var lastAdapter = 0
         var showSys = false
         var mSourceList = arrayListOf<AppInfo>()
-        var applist =  arrayListOf<AppInfo>()
-        var applistNoSys =  arrayListOf<AppInfo>()
+        var applist = arrayListOf<AppInfo>()
+        var applistNoSys = arrayListOf<AppInfo>()
     }
 
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: AppInfoAdapter
     private lateinit var groupCE: RadioGroup
+    private lateinit var groupSysApp: RadioGroup
     private lateinit var toolbar: Toolbar
     private lateinit var loading: ProgressBar
+    private lateinit var sysApp: TextView
     private var i = 0
     private var iNoSys = 0
-    private var mark = arrayListOf(0,0,0)
-    private var markNoSys = arrayListOf(0,0,0)
+    private var mark = arrayListOf(0, 0, 0)
+    private var markNoSys = arrayListOf(0, 0, 0)
     private val TITLE_SHOW_SYS = "显示系统应用"
     private val TITLE_HID_SYS = "隐藏系统应用"
     private val TEXT_SELECTAPP = "选择要打开的应用: "
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.setting_widget_click, container,false) as View
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.setting_widget_click, container, false) as View
 
         showSys = sharedPreferences.getBoolean("showSys", false)
 
         toolbar = view.findViewById(R.id.widgetToolbar)
         toolbar.title = TEXT_SELECTAPP
-        toolbar.setTitleTextColor(SkinCompatResources.getColor(context,R.color.main_text))
+        toolbar.setTitleTextColor(SkinCompatResources.getColor(context, R.color.main_text))
         ActivityUtil.instance.currentActivity!!.setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.app_info_list)
         loading = view.findViewById(R.id.loadingApp)
         groupCE = view.findViewById(R.id.groupCE)
+        groupSysApp = view.findViewById(R.id.groupSysApp)
         loading.visibility = View.VISIBLE
 
-        groupCE.forEachIndexed { index, v ->
-            v.setOnClickListener {
-                adapter.setWC(index)
-                recycler.scrollToPosition(if(showSys) mark[index] else markNoSys[index])
-                adapter.notifyDataSetChanged()
-            }
-        }
-
+        //执行完弹出动画，再加载
         view.postDelayed({
-            getAppList()
-            getMark()
+            initView()
+            bindListener()
+        }, resources.getInteger(R.integer.slide).toLong())
 
-            loading.visibility = View.GONE
-            adapter = AppInfoAdapter()
-            recycler.adapter = adapter
-
-            if(showSys){
-                toolbar.title = TEXT_SELECTAPP + i
-                adapter.submitList(applist)
-            }else{
-                toolbar.title = TEXT_SELECTAPP + iNoSys
-                adapter.submitList(applistNoSys)
-            }
-
-            adapter.notifyDataSetChanged()
-
-            when(adapter.wc){
-                0 -> {
-                    groupCE.check(R.id.ce1)
-                }
-                1 -> {
-                    groupCE.check(R.id.ce2)
-                }
-                2 -> {
-                    groupCE.check(R.id.ce3)
-                }
-            }
-
-        },300)
-
-        DrawerUtil.bindAllViewOnTouchListener(view,this)
+        DrawerUtil.bindAllViewOnTouchListener(view, this, arrayListOf(recycler))
 
         return view
     }
@@ -131,12 +101,12 @@ class WidgetSettingClickFragment : DialogFragment() {
         super.onStart()
         val dm = DisplayMetrics()
         activity!!.windowManager.defaultDisplay.getMetrics(dm)
-        DrawerUtil.setBottomDrawer(dialog, activity,(dm.heightPixels * 0.618).toInt())
+        DrawerUtil.setBottomDrawer(dialog, activity, (dm.heightPixels * 0.618).toInt())
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if(MyApplication().isForeground()){
+        if (MyApplication().isForeground()) {
             WidgetSettingFragment.getInstance()
                 .show(fragmentManager!!, "widget")
         }
@@ -146,17 +116,27 @@ class WidgetSettingClickFragment : DialogFragment() {
         activity!!.menuInflater.inflate(R.menu.widget_setting_menu, menu)
 
         val searchItem = menu.findItem(R.id.search)
-        val showSysItem = menu.findItem(R.id.show_sys)
         val searchView = searchItem.actionView as SearchView
+        val searchIcon =
+            searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_button)
+        val searchClose =
+            searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        val searchBack =
+            searchView.findViewById<LinearLayout>(androidx.appcompat.R.id.search_plate)
+        val searchInput =
+            searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
 
-        showSysItem.title = if(showSys) {
-            addColor(TITLE_HID_SYS,SkinCompatResources.getColor(context,R.color.main_text))
-        } else {
-            addColor(TITLE_SHOW_SYS,SkinCompatResources.getColor(context,R.color.main_text))
-        }
+        menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", java.lang.Boolean.TYPE)
+            .apply {
+                isAccessible = true
+                invoke(menu, true)
+            }
 
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchIcon.setColorFilter(SkinCompatResources.getColor(view!!.context, R.color.main_text))
+        searchClose.setColorFilter(SkinCompatResources.getColor(view!!.context, R.color.main_text))
+        searchBack.setBackgroundColor(SkinCompatResources.getColor(view!!.context, R.color.background))
+        searchInput.setTextColor(SkinCompatResources.getColor(view!!.context, R.color.main_text))
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
@@ -165,75 +145,91 @@ class WidgetSettingClickFragment : DialogFragment() {
                 adapter.filter.filter(newText)
                 return true
             }
-
         })
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.show_sys){
-            if(!showSys) {
-                item.title = TITLE_HID_SYS
+    private fun initView() {
+        getAppList()
+        getMark()
+
+        loading.visibility = View.GONE
+        adapter = AppInfoAdapter()
+        recycler.adapter = adapter
+
+        if (showSys) {
+            toolbar.title = TEXT_SELECTAPP + i
+            groupSysApp.check(R.id.sysApp_show)
+            adapter.submitList(applist)
+        } else {
+            toolbar.title = TEXT_SELECTAPP + iNoSys
+            groupSysApp.check(R.id.sysApp_hide)
+            adapter.submitList(applistNoSys)
+        }
+
+        when (adapter.wc) {
+            0 -> {
+                groupCE.check(R.id.ce1)
+            }
+            1 -> {
+                groupCE.check(R.id.ce2)
+            }
+            2 -> {
+                groupCE.check(R.id.ce3)
+            }
+        }
+    }
+
+    private fun bindListener() {
+        groupCE.forEachIndexed { index, v ->
+            v.setOnClickListener {
+                adapter.setWC(index)
+                recycler.scrollToPosition(if (showSys) mark[index] else markNoSys[index])
+                adapter.notifyDataSetChanged()
+            }
+        }
+        groupSysApp.setOnCheckedChangeListener { _, checkId ->
+            showSys = checkId == R.id.sysApp_show
+            if (showSys) {
                 adapter.submitList(applist)
                 toolbar.title = TEXT_SELECTAPP + i
-                showSys = true
-                mSourceList =
-                    applist
+                mSourceList = applist
             } else {
-                item.title = TITLE_SHOW_SYS
                 adapter.submitList(applistNoSys)
                 toolbar.title = TEXT_SELECTAPP + iNoSys
-                showSys = false
-                mSourceList =
-                    applistNoSys
+                mSourceList = applistNoSys
             }
-            sharedPreferences.edit{
-                putBoolean("showSys",showSys)
+            sharedPreferences.edit {
+                putBoolean("showSys", showSys)
             }
             getMark()
             adapter.notifyDataSetChanged()
         }
-        return true
-    }
-
-    /*
-         * Add color to a given text
-         */
-    private fun addColor(text: CharSequence, color: Int): SpannableStringBuilder {
-        val builder = SpannableStringBuilder(text)
-        if (color != 0) {
-            builder.setSpan(
-                ForegroundColorSpan(color), 0, text.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-        return builder
     }
 
     //当前选择的应用的下标
-    private fun getMark(){
-
-        if(showSys){
+    private fun getMark() {
+        if (showSys) {
             applist.forEachIndexed { index, appInfo ->
-                if(pn[0] == appInfo.packageName){
+                if (pn[0] == appInfo.packageName) {
                     mark[0] = index
                 }
-                if(pn[1] == appInfo.packageName){
+                if (pn[1] == appInfo.packageName) {
                     mark[1] = index
                 }
-                if(pn[2] == appInfo.packageName){
+                if (pn[2] == appInfo.packageName) {
                     mark[2] = index
                 }
             }
             mSourceList = applist
-        }else{
-            applistNoSys.forEachIndexed{ index, appInfo ->
-                if(pn[0] == appInfo.packageName){
+        } else {
+            applistNoSys.forEachIndexed { index, appInfo ->
+                if (pn[0] == appInfo.packageName) {
                     markNoSys[0] = index
                 }
-                if(pn[1] == appInfo.packageName){
+                if (pn[1] == appInfo.packageName) {
                     markNoSys[1] = index
                 }
-                if(pn[2] == appInfo.packageName){
+                if (pn[2] == appInfo.packageName) {
                     markNoSys[2] = index
                 }
             }
@@ -265,7 +261,7 @@ class WidgetSettingClickFragment : DialogFragment() {
                 iNoSys++
                 applistNoSys.add(appInfo)
             }
-            if(packageInfo.packageName =="com.weather"){
+            if (packageInfo.packageName == "com.weather") {
                 myAppIndex = i
                 myAppIndexNoSys = iNoSys
             }

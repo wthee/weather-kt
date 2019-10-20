@@ -36,7 +36,7 @@ class MyApplication : Application() {
         if (context != null) {
             val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             val cn = am.getRunningTasks(1)[0].topActivity
-            val currentPackageName = cn.packageName
+            val currentPackageName = cn?.packageName
             return !TextUtils.isEmpty(currentPackageName) && currentPackageName == context.packageName
         }
         return false

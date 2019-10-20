@@ -1,6 +1,7 @@
 package com.weather.data.network
 
-import com.weather.data.model.Weather
+import com.weather.data.model.weather.NowWeather
+import com.weather.data.model.weather.Weather
 import retrofit2.http.GET
 import retrofit2.http.QueryMap
 
@@ -13,5 +14,8 @@ interface WeatherService {
     */
     @GET(".")
     suspend fun getWeather(@QueryMap map:Map<String ,String>): Weather
+
+    @GET(".")
+    suspend fun getNowWeather(@QueryMap map:Map<String ,String>): NowWeather
 
 }

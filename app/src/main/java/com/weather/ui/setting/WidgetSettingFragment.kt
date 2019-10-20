@@ -59,7 +59,7 @@ class WidgetSettingFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var view = inflater.inflate(R.layout.setting_widget, container, false)
+        val view = inflater.inflate(R.layout.setting_widget, container, false)
 
         colorPicker = view.findViewById(R.id.colorPicker)
         colorGradient = view.findViewById(R.id.colorGradient)
@@ -71,9 +71,13 @@ class WidgetSettingFragment : DialogFragment() {
         editTip = view.findViewById(R.id.editTip)
         widgetText = view.findViewById(R.id.widgetText)
 
+        firstCursor = sharedPreferences.getInt("firstCursor",0)
+        secondCursor = sharedPreferences.getInt("secondCursor",50)
+
         initView()
+        bindListener()
         //滑动关闭
-        DrawerUtil.bindAllViewOnTouchListener(view, this)
+        DrawerUtil.bindAllViewOnTouchListener(view, this, arrayListOf(colorPicker,colorGradient))
 
         return view
     }
@@ -95,17 +99,7 @@ class WidgetSettingFragment : DialogFragment() {
         }
     }
 
-    private fun initView() {
-        firstCursor = sharedPreferences.getInt("firstCursor",0)
-        secondCursor = sharedPreferences.getInt("secondCursor",50)
-
-        //填充自定义提示内容
-        if (MainActivity.diyTips.isNotEmpty()) {
-            yourtip.hint = MainActivity.diyTips
-        } else {
-            yourtip.hint = "输入内容"
-        }
-        //设置渐变滑动条
+    private fun bindListener() {
         colorPicker.progress = firstCursor
         colorGradient.progress = secondCursor
 
@@ -126,6 +120,7 @@ class WidgetSettingFragment : DialogFragment() {
                 colorGradient.postInvalidate()
             }
         })
+
         colorGradient.setOnDrawListener(object : ColorPickerView.OnDrawListener {
             override fun onDrawStart(seekBar: ColorPickerView) {
             }
@@ -144,19 +139,6 @@ class WidgetSettingFragment : DialogFragment() {
             this.dismiss()
         }
 
-        //是否自定义提示
-        if (widgetTips) {
-            groupTips.check(R.id.tips_o)
-            editTip.visibility = View.VISIBLE
-        } else {
-            groupTips.check(R.id.tips_c)
-            editTip.visibility = View.GONE
-        }
-
-        //显示/隐藏输入框
-        if (isDiyTips) groupDiyTips.check(R.id.diytips_o) else groupDiyTips.check(R.id.diytips_c)
-        yourtipLayout.visibility = if (isDiyTips) View.VISIBLE else View.GONE
-
         //显示/隐藏桌面提示
         groupTips.setOnCheckedChangeListener { _, checkedId ->
             widgetTips = if (checkedId == R.id.tips_o) {
@@ -174,7 +156,7 @@ class WidgetSettingFragment : DialogFragment() {
         }
 
         //默认/自定义提示内容
-        groupDiyTips.setOnCheckedChangeListener { group, checkedId ->
+        groupDiyTips.setOnCheckedChangeListener { _, checkedId ->
             isDiyTips = checkedId == R.id.diytips_o
             sharedPreferences.edit {
                 putBoolean("isDiyTips", isDiyTips)
@@ -188,11 +170,10 @@ class WidgetSettingFragment : DialogFragment() {
             } else {
                 yourtip.clearFocus()
                 WeatherFragment.imm.hideSoftInputFromWindow(yourtip.windowToken, 0)
-                var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                 MyApplication.context.sendBroadcast(intent)
                 View.GONE
             }
-
         }
 
         //自定义内容
@@ -203,7 +184,7 @@ class WidgetSettingFragment : DialogFragment() {
                     sharedPreferences.edit {
                         putString("diyTips", MainActivity.diyTips)
                     }
-                    var intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                    val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
                 }
             }
@@ -218,6 +199,29 @@ class WidgetSettingFragment : DialogFragment() {
         })
     }
 
+    private fun initView(){
+        //填充自定义提示内容
+        if (MainActivity.diyTips.isNotEmpty()) {
+            yourtip.hint = MainActivity.diyTips
+        } else {
+            yourtip.hint = "输入内容"
+        }
+
+        //是否自定义提示
+        if (widgetTips) {
+            groupTips.check(R.id.tips_o)
+            editTip.visibility = View.VISIBLE
+        } else {
+            groupTips.check(R.id.tips_c)
+            editTip.visibility = View.GONE
+        }
+
+        //显示/隐藏输入框
+        if (isDiyTips) groupDiyTips.check(R.id.diytips_o) else groupDiyTips.check(R.id.diytips_c)
+        yourtipLayout.visibility = if (isDiyTips) View.VISIBLE else View.GONE
+    }
+
+    //改变颜色
     private fun changeWidgetTextColor(){
         val textColor = colorGradient.getThumbColor()
         widgetText.setTextColor(textColor)

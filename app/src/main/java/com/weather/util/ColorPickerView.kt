@@ -12,7 +12,6 @@ import android.util.Log
 import android.widget.SeekBar
 import com.weather.R
 import skin.support.content.res.SkinCompatResources
-import kotlin.math.ceil
 
 
 class ColorPickerView : SeekBar {
@@ -25,22 +24,22 @@ class ColorPickerView : SeekBar {
     /**
      * 背景画笔
      */
-    private var mBackgroundPaint: Paint? = null
+    private lateinit var mBackgroundPaint: Paint
 
     /**
      * 进度画笔
      */
-    private var mProgressPaint: Paint? = null
+    private lateinit var mProgressPaint: Paint
 
     /**
      * 第二进度画笔
      */
-    private var mSecondProgressPaint: Paint? = null
+    private lateinit var mSecondProgressPaint: Paint
 
     /**
      * 游标画笔
      */
-    private var mThumbPaint: Paint? = null
+    private lateinit var mThumbPaint: Paint
 
     /**
      * 默认

@@ -22,12 +22,20 @@ object DrawerUtil {
     private var lastY: Int = 0
 
     /**
-     * 传入页面对应的 View [rootView] 和 DialogFragment [df]
+     * 传入页面对应的 View [rootView] 和 DialogFragment [df]、不想绑定的view [notBind]
      * 为页面所有布局和控件添加 OnTouchListener
     **/
-    fun bindAllViewOnTouchListener(rootView: View,df: DialogFragment){
+    fun bindAllViewOnTouchListener(
+        rootView: View,
+        df: DialogFragment, notBind: ArrayList<View>?
+    ){
         val views = getAllChildViews(rootView)
         views.add(rootView)
+        //不绑定
+        notBind?.forEach {
+            views.remove(it)
+        }
+
         views.forEach {
             it.setOnTouchListener { _, event ->
                 val y = event.rawY.toInt()

@@ -1,7 +1,8 @@
 package com.weather.data.network
 
 import com.weather.data.model.QA
-import com.weather.data.model.Weather
+import com.weather.data.model.weather.NowWeather
+import com.weather.data.model.weather.Weather
 
 class WeatherNetWork {
 
@@ -11,6 +12,10 @@ class WeatherNetWork {
     suspend fun fetchWeather(map:MutableMap<String,String>): Weather {
         addAppKey(map,"v9")
         return weatherService.getWeather(map)
+    }
+    suspend fun fetchNowWeather(map:MutableMap<String,String>): NowWeather {
+        addAppKey(map,"v6")
+        return weatherService.getNowWeather(map)
     }
 
     suspend fun fetchQa():List<QA>{

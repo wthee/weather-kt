@@ -1,13 +1,16 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/main_text</item>
         <item name="colorPrimaryDark">@color/main_text</item>
         <item name="colorAccent">@color/theme</item>
     </style>
 
+    <style name="GalaxyZooThemeToolbarDarkOverflow" parent="Theme.AppCompat.Light">
+
+    </style>
 
     <style name="BottomDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>

@@ -1,6 +1,6 @@
 package com.weather.util
 
-import com.weather.data.model.Weather
+import com.weather.data.model.weather.Weather
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,7 +14,6 @@ object RainFilterUtil {
                 //温度范围
                 weather.tems = weather.tem2 + "-" + weather.tem1 + "℃"
                 //日期
-
                 val day = weather.day.substring(0, weather.day.indexOfFirst { it == '（' })
                 val after = getDay(weather.date)
                 weather.day = day
@@ -52,7 +51,6 @@ object RainFilterUtil {
                     else -> "天气多变，照顾好自己"
                 }
             }
-
         }
     }
 
@@ -61,11 +59,9 @@ object RainFilterUtil {
     */
     private fun getDay(date: String): Long {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-        var days = 0L
         val currentTime = dateFormat.parse(dateFormat.format(Date()))//现在系统当前时间
         val futureTime = dateFormat.parse(date)//未来时间
-        val diff = futureTime.time - System.currentTimeMillis()
-        days = diff / (1000 * 60 * 60 * 24)
-        return days
+        val diff = futureTime.time - currentTime.time
+        return diff / (1000 * 60 * 60 * 24)
     }
 }

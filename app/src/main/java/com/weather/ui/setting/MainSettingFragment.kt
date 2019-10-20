@@ -63,8 +63,9 @@ class MainSettingFragment : DialogFragment() {
         groupDN = view.findViewById(R.id.groupDN)
 
         initView()
-        resumeAllView()
-        DrawerUtil.bindAllViewOnTouchListener(view, this)
+        bindingListener()
+
+        DrawerUtil.bindAllViewOnTouchListener(view, this,null)
         //取消输入框焦点
         mainView.setOnClickListener {
             modify.clearFocus()
@@ -93,18 +94,24 @@ class MainSettingFragment : DialogFragment() {
         DrawerUtil.setBottomDrawer(dialog, activity,ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    private fun initView() {
+    private fun bindingListener() {
         //切换&修改城市
-        groupCity.forEachIndexed { index, view ->
-            var cityView = view as RadioButton
-            //点击切换城市
-            cityView.setOnClickListener {
-                cityIndex = index + 1
-                toUpdate = true
-                viewModel.changeCity(cityView.text.toString())
+        groupCity.setOnCheckedChangeListener { group, checkedId ->
+            val v = group.findViewById<RadioButton>(checkedId)
+            when(checkedId){
+                R.id.city1 -> cityIndex = 1
+                R.id.city2 -> cityIndex = 2
+                R.id.city3 -> cityIndex = 3
             }
-            //长按显示修改城市输入框
+            toUpdate = true
+            viewModel.changeCity(v.text.toString())
+        }
+
+        //长按显示修改城市输入框
+        groupCity.forEachIndexed { _, view ->
+            val cityView = view as RadioButton
             cityView.setOnLongClickListener {
+                cityView.isChecked = true
                 modifyLayout.visibility = View.VISIBLE
                 modify.text = null
                 modify.requestFocus()
@@ -116,14 +123,12 @@ class MainSettingFragment : DialogFragment() {
         }
 
         // 夜间模式
-        groupDN.forEachIndexed { _, view ->
-            view.setOnClickListener {
-                onNight = !onNight
-                sharedPreferences.edit {
-                    putBoolean("onNight", onNight)
-                }
-                NightModelUtil.initNightModel(onNight)
+        groupDN.setOnCheckedChangeListener { _, checkedId ->
+            onNight = checkedId == R.id.nightModelOpen
+            sharedPreferences.edit {
+                putBoolean("onNight", onNight)
             }
+            NightModelUtil.initNightModel(onNight)
         }
 
         //小部件设置
@@ -135,7 +140,7 @@ class MainSettingFragment : DialogFragment() {
 
         //显示风格
         othersetting.setOnClickListener {
-            OtherSettingFragment.getInstance()
+            StyleSettingFragment.getInstance()
                 .show(fragmentManager!!, "other")
             this.dismiss()
         }
@@ -178,7 +183,7 @@ class MainSettingFragment : DialogFragment() {
     }
 
     //打开设置页面时，显示已选择城市
-    private fun resumeAllView() {
+    private fun initView() {
 
         saveC1 = sharedPreferences.getString("city1", saveC1)!!
         saveC2 = sharedPreferences.getString("city2", saveC2)!!

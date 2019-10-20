@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_small"
                     android:button="@null"
-                    android:text="时间"
+                    android:text="@string/time"
                     android:textColor="@drawable/radio_text_click"
                     android:textSize="@dimen/setting_title_size" />
 
@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_small"
                     android:button="@null"
-                    android:text="日期"
+                    android:text="@string/date"
                     android:textColor="@drawable/radio_text_click"
                     android:textSize="@dimen/setting_title_size" />
 
@@ -59,7 +59,44 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_small"
                     android:button="@null"
-                    android:text="天气"
+                    android:text="@string/weather"
+                    android:textColor="@drawable/radio_text_click"
+                    android:textSize="@dimen/setting_title_size" />
+
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="@string/sysApp"
+                android:textColor="@color/main_text"
+                android:textSize="@dimen/setting_title_size" />
+
+            <RadioGroup
+                android:id="@+id/groupSysApp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/sysApp_hide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:button="@null"
+                    android:text="@string/hide"
+                    android:textColor="@drawable/radio_text_click"
+                    android:textSize="@dimen/setting_title_size" />
+
+                <RadioButton
+                    android:id="@+id/sysApp_show"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:button="@null"
+                    android:text="@string/show"
                     android:textColor="@drawable/radio_text_click"
                     android:textSize="@dimen/setting_title_size" />
 
@@ -72,7 +109,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/widgetToolbar"

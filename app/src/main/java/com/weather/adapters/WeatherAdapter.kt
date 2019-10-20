@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.weather.R
-import com.weather.data.model.Data
+import com.weather.data.model.weather.Data
+import com.weather.databinding.ItemWeather1Binding
 import com.weather.databinding.ItemWeatherBinding
 import com.weather.ui.info.WeatherInfoFragment
 import com.weather.ui.main.WeatherFragment
@@ -20,10 +22,17 @@ class WeatherAdapter : ListAdapter<Data, WeatherAdapter.ViewHolder>(WeatherDiffC
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
+
+        var layoutId = R.layout.item_weather
+        when(WeatherFragment.styleType){
+            0 -> layoutId = R.layout.item_weather
+            1 -> layoutId = R.layout.item_weather1
+        }
+
         return ViewHolder(
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.item_weather, parent, false
+                layoutId, parent, false
             )
         )
     }
@@ -45,20 +54,36 @@ class WeatherAdapter : ListAdapter<Data, WeatherAdapter.ViewHolder>(WeatherDiffC
 
 
     class ViewHolder(
-        private val binding: ItemWeatherBinding
+        private val binding: ViewDataBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Data, listener: View.OnClickListener) {
-            binding.apply {
-                data = item
-                onClick = listener
-                isGone = if (WeatherFragment.lunarGone) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
+            when(WeatherFragment.styleType){
+                0 -> {
+                    binding as ItemWeatherBinding
+                    binding.apply {
+                        data = item
+                        onClick = listener
+                        isGone = if (WeatherFragment.lunarGone) {
+                            View.GONE
+                        } else {
+                            View.VISIBLE
+                        }
+                    }
                 }
-                bjtype = WeatherFragment.styleType == 0
-                executePendingBindings()
+                1 -> {
+                    binding as ItemWeather1Binding
+                    binding.apply {
+                        data = item
+                        onClick = listener
+                        isGone = if (WeatherFragment.lunarGone) {
+                            View.GONE
+                        } else {
+                            View.VISIBLE
+                        }
+                    }
+                }
             }
+            binding.executePendingBindings()
         }
     }
 }

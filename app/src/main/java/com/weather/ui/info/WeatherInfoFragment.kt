@@ -23,7 +23,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import com.weather.R
-import com.weather.data.model.Data
+import com.weather.data.model.weather.Data
 import com.weather.databinding.WeatherInfoBinding
 import com.weather.util.DrawerUtil
 import com.weather.util.ShareUtil
@@ -68,13 +68,13 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         val air = binding.air
         val alarm = binding.alarm
 
-        alarm.visibility = if (item.alarm != null && item.alarm.alarm_type != "") {
+        alarm.visibility = if ( item.alarm.alarm_type != "") {
             View.VISIBLE
         } else {
             View.GONE
         }
 
-        air.visibility = if (item.air_tips != null && item.air_tips != "") {
+        air.visibility = if (item.air_tips != "") {
             View.VISIBLE
         } else {
             View.GONE
@@ -97,7 +97,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             ShareUtil.shareImg(uri,this.context!!)
         }
 
-        DrawerUtil.bindAllViewOnTouchListener(binding.root,this)
+        DrawerUtil.bindAllViewOnTouchListener(binding.root,this, arrayListOf(lineChart))
 
         return binding.root
     }

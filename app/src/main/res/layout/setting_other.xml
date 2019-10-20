@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="隐藏" />
+                    android:text="@string/hide" />
 
                 <RadioButton
                     android:id="@+id/lunarOpen"
@@ -89,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="显示" />
+                    android:text="@string/show" />
 
             </RadioGroup>
         </LinearLayout>

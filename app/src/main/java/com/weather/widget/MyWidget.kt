@@ -80,6 +80,7 @@ class MyWidget : AppWidgetProvider() {
                 if(wea.data.size>0){
                     views.setTextViewText(R.id.appwidget_city, wea.city)
                     views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
+                    views.setViewVisibility(R.id.center,View.VISIBLE)
                     views.setTextViewText(R.id.center, "┃┃┃")
                     views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
                     views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)

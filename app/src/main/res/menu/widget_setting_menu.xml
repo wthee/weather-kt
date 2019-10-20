@@ -8,8 +8,4 @@
         android:title=""
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/show_sys"
-        android:title="显示系统应用"
-        app:showAsAction="never"/>
 </menu>

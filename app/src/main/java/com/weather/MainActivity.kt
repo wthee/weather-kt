@@ -21,6 +21,7 @@ import com.weather.ui.main.WeatherFragment.Companion.weatherFragment
 import com.weather.widget.WidgetUpdateService
 import java.util.*
 import com.weather.util.*
+import skin.support.content.res.SkinCompatResources
 
 
 class MainActivity : AppCompatActivity() {
@@ -53,11 +54,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         initSharedPreferences()
-
+        changeStatusBar()
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
 
         ActivityUtil.instance.currentActivity = this
-        changeStatusBar(onNight)
         NightModelUtil.initNightModel(onNight)
         startService()
         getAuthority()
@@ -73,15 +73,22 @@ class MainActivity : AppCompatActivity() {
             MotionEvent.ACTION_DOWN -> TouchUtil.setDownXY(ev.x,ev.y)
             MotionEvent.ACTION_MOVE -> TouchUtil.setMoveXY(ev.x,ev.y)
             MotionEvent.ACTION_UP -> {
+                TouchUtil.setUpXY(ev.x,ev.y)
                 if(TouchUtil.actionUp() == -1){
                     //左
                     cityIndex = if((cityIndex + 1) % 3 == 0) 3 else (cityIndex + 1) % 3
                     weatherFragment.swipToChangeCity(cityIndex)
+                    return true
                 }
                 if(TouchUtil.actionUp() == 1){
                     //右
                     cityIndex = if(cityIndex - 1 == 0) 3 else cityIndex - 1
                     weatherFragment.swipToChangeCity(cityIndex)
+                    return true
+                }
+                if(TouchUtil.actionUp() == 0){
+                    //点击
+                    return super.dispatchTouchEvent(ev)
                 }
             }
         }
@@ -100,10 +107,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     //状态栏颜色适配
-    private fun changeStatusBar(onNight: Boolean){
+    private fun changeStatusBar(){
         StatusBarUtil.setRootViewFitsSystemWindows(this,true);
         StatusBarUtil.setTranslucentStatus(this)
-
         if (!StatusBarUtil.setStatusBarDarkTheme(this, true)) {
             //如果不支持设置深色风格 为了兼容总不能让状态栏白白的看不清, 于是设置一个状态栏颜色为半透明,
             //这样半透明+白=灰, 状态栏的文字能看得清

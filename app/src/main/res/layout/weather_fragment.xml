@@ -7,11 +7,11 @@
 
         <variable
             name="weather"
-            type="com.weather.data.model.Weather" />
+            type="com.weather.data.model.weather.Weather" />
 
         <variable
             name="now"
-            type="com.weather.data.model.Hour" />
+            type="com.weather.data.model.weather.NowWeather" />
 
         <variable
             name="hint"
@@ -42,7 +42,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_small"
                     android:clickable="true"
-                    android:text="@{weather.city}"
                     android:textColor="@drawable/title_text_click"
                     android:textSize="@dimen/title_text_size"
                     tools:text="杭州" />
@@ -97,17 +96,18 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/tips_norain"
+                android:layout_marginTop="@dimen/margin_small"
                 android:textColor="@color/theme"
                 app:isGone="@{weather!=null? weather.data.size>0 : true}"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <com.scwang.smartrefresh.layout.SmartRefreshLayout
                 android:id="@+id/refresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="@dimen/padding_small">
+                android:layout_marginTop="@dimen/margin_small">
 
-                <com.scwang.smartrefresh.header.DeliveryHeader
+                <com.weather.util.RainHeader
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
@@ -115,10 +115,8 @@
                     android:id="@+id/recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_weather"
-                    tools:visibility="invisible"/>
+                    tools:listitem="@layout/item_weather"/>
 
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>
         </LinearLayout>

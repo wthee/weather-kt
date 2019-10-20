@@ -12,6 +12,10 @@ class WeatherRepository(
         netWork.fetchWeather(map)
     }
 
+    suspend fun getNowWeather(map:MutableMap<String,String>) = withContext(IO) {
+        netWork.fetchNowWeather(map)
+    }
+
     companion object {
         @Volatile
         private var instance: WeatherRepository? = null
