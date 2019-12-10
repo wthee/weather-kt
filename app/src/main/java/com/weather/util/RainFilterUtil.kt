@@ -12,7 +12,7 @@ object RainFilterUtil {
                 weatherTemp.data.remove(weather)
             } else {
                 //温度范围
-                weather.tems = weather.tem2 + "-" + weather.tem1 + "℃"
+                weather.tems = weather.tem2 + "~" + weather.tem1 + "℃"
                 //日期
                 val day = weather.day.substring(0, weather.day.indexOfFirst { it == '（' })
                 val after = getDay(weather.date)

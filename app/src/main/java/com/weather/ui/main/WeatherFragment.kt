@@ -94,6 +94,10 @@ class WeatherFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+        saveC1 = sharedPreferences.getString("city1", saveC1)!!
+        saveC2 = sharedPreferences.getString("city2", saveC2)!!
+        saveC3 = sharedPreferences.getString("city3", saveC3)!!
+
         lunarGone = sharedPreferences.getBoolean("nl",
             lunarGone
         )
@@ -272,9 +276,9 @@ class WeatherFragment : Fragment() {
     //切换城市
     fun swipToChangeCity(cityIndex: Int){
         val city = when (cityIndex) {
-            1 -> saveC1
-            2 -> saveC2
-            3 -> saveC3
+            1 -> sharedPreferences.getString("city1", saveC1)!!
+            2 -> sharedPreferences.getString("city2", saveC2)!!
+            3 -> sharedPreferences.getString("city3", saveC3)!!
             else -> "ip"
         }
         sharedPreferences.edit{
