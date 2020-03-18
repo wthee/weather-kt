@@ -8,7 +8,6 @@ https://www.coolapk.com/apk/com.weather
 - 实时天气
 - 桌面插件
 ## 应用截图
-![Image text](screenshot/main_1.jpg)
 ![Image text](screenshot/main_2.jpg)
 ![Image text](screenshot/info.jpg)
 ![Image text](screenshot/setting.jpg)
