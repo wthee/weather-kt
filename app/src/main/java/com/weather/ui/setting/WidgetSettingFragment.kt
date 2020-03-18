@@ -25,7 +25,7 @@ import com.weather.MainActivity.Companion.widgetTips
 import com.weather.MyApplication
 import com.weather.R
 import com.weather.ui.main.WeatherFragment
-import com.weather.util.ColorPickerView
+import com.weather.util.ColorSeekBar
 import com.weather.util.DrawerUtil
 
 
@@ -41,8 +41,8 @@ class WidgetSettingFragment : DialogFragment() {
         }
     }
 
-    private lateinit var colorPicker: ColorPickerView
-    private lateinit var colorGradient: ColorPickerView
+    private lateinit var colorPicker: ColorSeekBar
+    private lateinit var colorGradient: ColorSeekBar
     private lateinit var groupTips: RadioGroup
     private lateinit var groupDiyTips: RadioGroup
     private lateinit var yourtip: TextInputEditText
@@ -103,12 +103,12 @@ class WidgetSettingFragment : DialogFragment() {
         colorPicker.progress = firstCursor
         colorGradient.progress = secondCursor
 
-        colorPicker.setOnDrawListener(object : ColorPickerView.OnDrawListener {
-            override fun onDrawStart(seekBar: ColorPickerView) {
-                colorPicker.setBackgroundGradientColors(ColorPickerView.DEFAULT_COLORS)
+        colorPicker.setOnDrawListener(object : ColorSeekBar.OnDrawListener {
+            override fun onDrawStart(seekBar: ColorSeekBar) {
+                colorPicker.setBackgroundGradientColors(ColorSeekBar.DEFAULT_COLORS)
             }
 
-            override fun onDrawFinish(seekBar: ColorPickerView) {
+            override fun onDrawFinish(seekBar: ColorSeekBar) {
                 //绘制结束，设置渐变中间色
                 colorGradient.setBackgroundGradientColors(
                     arrayListOf(
@@ -121,11 +121,11 @@ class WidgetSettingFragment : DialogFragment() {
             }
         })
 
-        colorGradient.setOnDrawListener(object : ColorPickerView.OnDrawListener {
-            override fun onDrawStart(seekBar: ColorPickerView) {
+        colorGradient.setOnDrawListener(object : ColorSeekBar.OnDrawListener {
+            override fun onDrawStart(seekBar: ColorSeekBar) {
             }
 
-            override fun onDrawFinish(seekBar: ColorPickerView) {
+            override fun onDrawFinish(seekBar: ColorSeekBar) {
                 //改变字体颜色
                 changeWidgetTextColor()
             }

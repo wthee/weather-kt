@@ -36,21 +36,21 @@
                 android:textColor="@color/main_text"
                 android:textSize="@dimen/setting_title_size" />
 
-            <com.weather.util.ColorPickerView
+            <com.weather.util.ColorSeekBar
                 android:id="@+id/colorPicker"
                 android:layout_margin="@dimen/margin_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/seekbar_height">
-            </com.weather.util.ColorPickerView>
+            </com.weather.util.ColorSeekBar>
 
-            <com.weather.util.ColorPickerView
+            <com.weather.util.ColorSeekBar
                 android:id="@+id/colorGradient"
                 android:layout_margin="@dimen/margin_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/seekbar_height">
-            </com.weather.util.ColorPickerView>
+            </com.weather.util.ColorSeekBar>
 
 
         </LinearLayout>

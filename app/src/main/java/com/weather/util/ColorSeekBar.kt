@@ -8,53 +8,41 @@ import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.os.Handler
 import android.util.AttributeSet
-import android.util.Log
 import android.widget.SeekBar
+import androidx.appcompat.widget.AppCompatSeekBar
 import com.weather.R
 import skin.support.content.res.SkinCompatResources
 
 
-class ColorPickerView : SeekBar {
+class ColorSeekBar : AppCompatSeekBar {
 
     companion object{
         val DEFAULT_COLORS = arrayListOf(0x000000, 0xFF0000, 0xFF00FF,
             0x0000FF, 0x00FFFF, 0x00FF00, 0xFFFF00, 0xFFFFFF)
     }
 
-    /**
-     * 背景画笔
-     */
+    //背景画笔
     private lateinit var mBackgroundPaint: Paint
 
-    /**
-     * 进度画笔
-     */
+    //进度画笔
     private lateinit var mProgressPaint: Paint
 
-    /**
-     * 第二进度画笔
-     */
+    //第二进度画笔
     private lateinit var mSecondProgressPaint: Paint
 
-    /**
-     * 游标画笔
-     */
+    //游标画笔
     private lateinit var mThumbPaint: Paint
 
-    /**
-     * 默认
-     */
+    //默认
     private val TRACKTOUCH_NONE = -1
-    /**
-     * 开始拖动
-     */
+    //开始拖动
     private val TRACKTOUCH_START = 0
     private var mTrackTouch = TRACKTOUCH_NONE
 
     private var mOnChangeListener: OnChangeListener? = null
     private var mOnDrawListener: OnDrawListener? = null
 
-    //TrackingTouch
+
     private var isTrackingTouch = false
     private var mTrackingTouchSleepTime = 0L
     private val mHandler = Handler()
@@ -72,44 +60,39 @@ class ColorPickerView : SeekBar {
         init(context)
     }
 
-    /**
-     * 初始化
-     */
+    //初始化
     private fun init(context: Context) {
 
         setBackgroundColor(Color.TRANSPARENT)
 
         //背景画笔
         mBackgroundPaint = Paint()
-        mBackgroundPaint!!.isDither = true
-        mBackgroundPaint!!.isAntiAlias = true
-        mBackgroundPaint!!.color = SkinCompatResources.getColor(context, R.color.hr)
+        mBackgroundPaint.isDither = true
+        mBackgroundPaint.isAntiAlias = true
+        mBackgroundPaint.color = SkinCompatResources.getColor(context, R.color.hr)
 
-        //
         mProgressPaint = Paint()
-        mProgressPaint!!.isDither = true
-        mProgressPaint!!.isAntiAlias = true
-        mProgressPaint!!.color = SkinCompatResources.getColor(context, R.color.hr)
+        mProgressPaint.isDither = true
+        mProgressPaint.isAntiAlias = true
+        mProgressPaint.color = SkinCompatResources.getColor(context, R.color.hr)
 
-        //
         mSecondProgressPaint = Paint()
-        mSecondProgressPaint!!.isDither = true
-        mSecondProgressPaint!!.isAntiAlias = true
-        mSecondProgressPaint!!.color = SkinCompatResources.getColor(context, R.color.alpha)
+        mSecondProgressPaint.isDither = true
+        mSecondProgressPaint.isAntiAlias = true
+        mSecondProgressPaint.color = SkinCompatResources.getColor(context, R.color.alpha)
 
-        //
         mThumbPaint = Paint()
-        mThumbPaint!!.isDither = true
-        mThumbPaint!!.isAntiAlias = true
-        mThumbPaint!!.color = SkinCompatResources.getColor(context, R.color.theme)
+        mThumbPaint.isDither = true
+        mThumbPaint.isAntiAlias = true
+        mThumbPaint.color = SkinCompatResources.getColor(context, R.color.theme)
 
-        //
+
         thumb = BitmapDrawable()
         setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 if (mTrackTouch == TRACKTOUCH_START) {
                     if (mOnChangeListener != null) {
-                        mOnChangeListener!!.onProgressChanged(this@ColorPickerView)
+                        mOnChangeListener!!.onProgressChanged(this@ColorSeekBar)
                     }
                 }
             }
@@ -120,7 +103,7 @@ class ColorPickerView : SeekBar {
                 if (mTrackTouch == TRACKTOUCH_NONE) {
                     setTrackTouch(TRACKTOUCH_START)
                     if (mOnChangeListener != null) {
-                        mOnChangeListener!!.onTrackingTouchStart(this@ColorPickerView)
+                        mOnChangeListener!!.onTrackingTouchStart(this@ColorSeekBar)
                     }
                 }
             }
@@ -129,7 +112,7 @@ class ColorPickerView : SeekBar {
                 isTrackingTouch = false
                 if (mTrackTouch == TRACKTOUCH_START) {
                     if (mOnChangeListener != null) {
-                        mOnChangeListener!!.onTrackingTouchFinish(this@ColorPickerView)
+                        mOnChangeListener!!.onTrackingTouchFinish(this@ColorSeekBar)
                     }
                     mHandler.postDelayed(mRunnable, mTrackingTouchSleepTime)
                 }
@@ -141,7 +124,7 @@ class ColorPickerView : SeekBar {
     override fun onDraw(canvas: Canvas) {
         //绘制开始回调
         if (mOnDrawListener != null) {
-            mOnDrawListener!!.onDrawStart(this@ColorPickerView)
+            mOnDrawListener!!.onDrawStart(this@ColorSeekBar)
         }
 
         var rSize = height / 4f
@@ -180,7 +163,7 @@ class ColorPickerView : SeekBar {
             canvas.drawRoundRect(secondProgressRect, rSize, rSize, mSecondProgressPaint)
 
 
-            mThumbPaint!!.color = backgroundColors[progress]
+            mThumbPaint.color = backgroundColors[progress]
 
 
             var cx = progress.toFloat() / max * width
@@ -195,7 +178,7 @@ class ColorPickerView : SeekBar {
 
         //绘制完成回调
         if (mOnDrawListener != null) {
-            mOnDrawListener!!.onDrawFinish(this@ColorPickerView)
+            mOnDrawListener!!.onDrawFinish(this@ColorSeekBar)
         }
     }
 
@@ -234,38 +217,15 @@ class ColorPickerView : SeekBar {
         postInvalidate()
     }
 
-    /**
-     * 设置进度颜色
-     *
-     * @param progressColor
-     */
-    fun setProgressColor(progressColor: Int) {
-        mProgressPaint!!.setColor(progressColor)
-        postInvalidate()
-    }
-
-    /**
-     * 设置第二进度颜色
-     *
-     * @param secondProgressColor
-     */
-    fun setSecondProgressColor(secondProgressColor: Int) {
-        mSecondProgressPaint!!.setColor(secondProgressColor)
-        postInvalidate()
-    }
-
-    /**
-     * 设置游标颜色
-     *
-     * @param thumbColor
-     */
+    //设置游标颜色
     fun setThumbColor(thumbColor: Int) {
-        mThumbPaint!!.color = thumbColor
+        mThumbPaint.color = thumbColor
         postInvalidate()
     }
 
+    //获取游标颜色
     fun getThumbColor(): Int {
-        return mThumbPaint!!.color
+        return mThumbPaint.color
     }
 
     fun setOnChangeListener(onChangeListener: OnChangeListener) {
@@ -276,13 +236,10 @@ class ColorPickerView : SeekBar {
         this.mOnDrawListener = onDrawListener
     }
 
-    fun setTrackingTouchSleepTime(mTrackingTouchSleepTime: Long) {
-        this.mTrackingTouchSleepTime = mTrackingTouchSleepTime
-    }
 
     fun setBackgroundGradientColors(colorArray: ArrayList<Int>){
         backgroundColors = arrayListOf()
-        var colorSize = colorArray.size - 1
+        val colorSize = colorArray.size - 1
         colorArray.forEachIndexed { index, i ->
             if(index != colorSize){
                 backgroundColors.addAll(gradientColor(colorArray[index],colorArray[index+1], max / colorSize))
@@ -291,13 +248,6 @@ class ColorPickerView : SeekBar {
         for( i in backgroundColors.size .. max){
             backgroundColors.add(backgroundColors.last())
         }
-    }
-
-    //Color的Int整型转Color的16进制颜色值
-    private fun int2Hex(colorInt: Int): String {
-        var hexCode = ""
-        hexCode = String.format("#%06X", Integer.valueOf(16777215 and colorInt))
-        return hexCode
     }
 
     /**
@@ -318,60 +268,37 @@ class ColorPickerView : SeekBar {
         val sG = (endG - startG).toDouble() / step
         val sB = (endB - startB).toDouble() / step
 
-        var colorArr = arrayListOf<Int>()
+        val colorArr = arrayListOf<Int>()
 
         for (i in 0 until step) {
             //计算每一步的hex值
-            var hex =
+            val hex =
                     Color.rgb(
                         (sR * i + startR).toInt(),
                         (sG * i + startG).toInt(),
                         (sB * i + startB).toInt()
                     )
-
             colorArr.add(hex)
         }
         return colorArr
     }
 
     interface OnChangeListener {
-        /**
-         * 进度改变
-         *
-         * @param seekBar
-         */
-        fun onProgressChanged(seekBar: ColorPickerView)
+        // 进度改变
+        fun onProgressChanged(seekBar: ColorSeekBar)
 
-        /**
-         * 开始拖动
-         *
-         * @param seekBar
-         */
-        fun onTrackingTouchStart(seekBar: ColorPickerView)
+        //开始拖动
+        fun onTrackingTouchStart(seekBar: ColorSeekBar)
 
-        /**
-         * 拖动结束
-         *
-         * @param seekBar
-         */
-        fun onTrackingTouchFinish(seekBar: ColorPickerView)
+        //拖动结束
+        fun onTrackingTouchFinish(seekBar: ColorSeekBar)
 
     }
 
     interface OnDrawListener {
-        /**
-         * 开始绘制
-         *
-         * @param seekBar
-         */
-        fun onDrawStart(seekBar: ColorPickerView)
-
-        /**
-         * 绘制完成
-         *
-         * @param seekBar
-         */
-        fun onDrawFinish(seekBar: ColorPickerView)
-
+        //开始绘制
+        fun onDrawStart(seekBar: ColorSeekBar)
+        //绘制完成
+        fun onDrawFinish(seekBar: ColorSeekBar)
     }
 }
