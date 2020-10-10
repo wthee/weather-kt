@@ -9,11 +9,9 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.edit
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.weather.MainActivity
 import com.weather.MainActivity.Companion.sharedPreferences
 import com.weather.MyApplication
 import com.weather.R
@@ -80,9 +78,8 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
         viewType: Int
     ): ViewHolder {
         return ViewHolder(
-            DataBindingUtil.inflate(
-                LayoutInflater.from(parent.context),
-                R.layout.item_appinfo, parent, false
+            ItemAppinfoBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
             )
         )
     }
@@ -123,9 +120,10 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
 
         fun bind(appInfo: AppInfo, listener: View.OnClickListener) {
             binding.apply {
-                info = appInfo
-                onClick = listener
-                executePendingBindings()
+                appName.text = appInfo.appName
+                packageName.text = appInfo.packageName
+                appIcon.background = appInfo.appIcon
+                root.setOnClickListener(listener)
             }
         }
     }

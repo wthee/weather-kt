@@ -76,30 +76,30 @@ class MyWidget : AppWidgetProvider() {
                     getPI(context, appInfo3)
                 )
 
-
-                if(wea.data.size>0){
-                    views.setTextViewText(R.id.appwidget_city, wea.city)
-                    views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
-                    views.setViewVisibility(R.id.center,View.VISIBLE)
-                    views.setTextViewText(R.id.center, "┃┃┃")
-                    views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
-                    views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
-                }
-
-                if(isDiyTips){
-                    views.setTextViewText(R.id.appwidget_tip, diyTips)
-                }
-
-                if(widgetTips&&wea.data.size>0) {
-                    views.setViewVisibility(R.id.appwidget_tip, View.VISIBLE)
-                } else{
-                    views.setViewVisibility(R.id.appwidget_tip, View.GONE)
-                }
-
-                views.setViewVisibility(R.id.appwidget_city,if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.center, if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
+//TODO
+//                if(wea.data.size>0){
+//                    views.setTextViewText(R.id.appwidget_city, wea.city)
+//                    views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
+//                    views.setViewVisibility(R.id.center,View.VISIBLE)
+//                    views.setTextViewText(R.id.center, "┃┃┃")
+//                    views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
+//                    views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
+//                }
+//
+//                if(isDiyTips){
+//                    views.setTextViewText(R.id.appwidget_tip, diyTips)
+//                }
+//
+//                if(widgetTips&&wea.data.size>0) {
+//                    views.setViewVisibility(R.id.appwidget_tip, View.VISIBLE)
+//                } else{
+//                    views.setViewVisibility(R.id.appwidget_tip, View.GONE)
+//                }
+//
+//                views.setViewVisibility(R.id.appwidget_city,if(wea.data.size>0) View.VISIBLE else View.GONE)
+//                views.setViewVisibility(R.id.appwidget_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
+//                views.setViewVisibility(R.id.center, if(wea.data.size>0) View.VISIBLE else View.GONE)
+//                views.setViewVisibility(R.id.appwidget_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
 
 
                 views.setTextColor(R.id.appwidget_now_time, widgetTextColor)

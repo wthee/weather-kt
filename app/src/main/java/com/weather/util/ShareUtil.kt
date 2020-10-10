@@ -21,7 +21,7 @@ object ShareUtil{
 
     @Suppress("DEPRECATION")
     fun shareImg(uri: Uri, context: Context){
-        val shareIntent = ShareCompat.IntentBuilder.from(ActivityUtil.instance.currentActivity)
+        val shareIntent = ShareCompat.IntentBuilder.from(ActivityUtil.instance.currentActivity!!)
             .setStream(uri)
             .setType("image/plain")
             .createChooserIntent()
@@ -41,7 +41,7 @@ object ShareUtil{
 
     @Suppress("DEPRECATION")
     fun shareText(text: String, context: Context){
-        val shareIntent = ShareCompat.IntentBuilder.from(ActivityUtil.instance.currentActivity)
+        val shareIntent = ShareCompat.IntentBuilder.from(ActivityUtil.instance.currentActivity!!)
             .setText(text)
             .setType("text/plain")
             .createChooserIntent()

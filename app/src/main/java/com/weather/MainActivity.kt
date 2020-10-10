@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.SkinAppCompatDelegateImpl
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import com.weather.databinding.MainActivityBinding
 import com.weather.ui.main.WeatherFragment.Companion.cityIndex
 import com.weather.ui.main.WeatherFragment.Companion.weatherFragment
@@ -55,7 +54,8 @@ class MainActivity : AppCompatActivity() {
 
         initSharedPreferences()
         changeStatusBar()
-        binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
+        binding = MainActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         ActivityUtil.instance.currentActivity = this
         NightModelUtil.initNightModel(onNight)

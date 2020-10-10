@@ -148,7 +148,7 @@ class MainSettingFragment : DialogFragment() {
         //修改城市名
         modify.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (viewModel.checkCity(s.toString()) != -1) {
+                if (viewModel.checkCity(s.toString()) != "0") {
                     groupCity.forEachIndexed { index, view ->
                         if ((view as RadioButton).isChecked) {
                             view.text = s

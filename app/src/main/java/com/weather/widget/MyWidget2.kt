@@ -70,20 +70,20 @@ class MyWidget2 : AppWidgetProvider() {
                     MyWidget.getPI(context, appInfo3)
                 )
 
-
-                if(wea.data.size>0){
-                    views.setTextViewText(R.id.appwidget2_date, wea.data[0].m + wea.data[0].d)
-                    views.setTextViewText(R.id.appwidget2_city, wea.city)
-                    views.setTextViewText(R.id.appwidget2_wea, wea.data[0].wea)
-                    val tips = wea.data[0].tip.split("，")
-                    if(tips.size>1){
-                        views.setTextViewText(R.id.appwidget2_tip, tips[0])
-                        views.setTextViewText(R.id.appwidget2_tip2, tips[1])
-                    }
-                    else{
-                        views.setTextViewText(R.id.appwidget2_tip, wea.data[0].tip)
-                    }
-                }
+//TODO
+//                if(wea.data.size>0){
+//                    views.setTextViewText(R.id.appwidget2_date, wea.data[0].m + wea.data[0].d)
+//                    views.setTextViewText(R.id.appwidget2_city, wea.city)
+//                    views.setTextViewText(R.id.appwidget2_wea, wea.data[0].wea)
+//                    val tips = wea.data[0].tip.split("，")
+//                    if(tips.size>1){
+//                        views.setTextViewText(R.id.appwidget2_tip, tips[0])
+//                        views.setTextViewText(R.id.appwidget2_tip2, tips[1])
+//                    }
+//                    else{
+//                        views.setTextViewText(R.id.appwidget2_tip, wea.data[0].tip)
+//                    }
+//                }
 
                 if(isDiyTips){
                     val tips = diyTips.split("，")
@@ -105,10 +105,10 @@ class MyWidget2 : AppWidgetProvider() {
                     views.setViewVisibility(R.id.appwidget2_tip2, View.GONE)
                 }
 
-                views.setViewVisibility(R.id.appwidget2_city,if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget2_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.center2, if(wea.data.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget2_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
+//                views.setViewVisibility(R.id.appwidget2_city,if(wea.data.size>0) View.VISIBLE else View.GONE)
+//                views.setViewVisibility(R.id.appwidget2_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
+//                views.setViewVisibility(R.id.center2, if(wea.data.size>0) View.VISIBLE else View.GONE)
+//                views.setViewVisibility(R.id.appwidget2_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
 
                 views.setTextColor(R.id.appwidget2_now_time, widgetTextColor)
                 views.setTextColor(R.id.appwidget2_now_date, widgetTextColor)

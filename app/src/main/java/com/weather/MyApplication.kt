@@ -7,6 +7,8 @@ import android.content.Context
 import android.text.TextUtils
 import androidx.multidex.MultiDex
 import com.weather.util.Logger
+import interfaces.heweather.com.interfacesmodule.view.HeConfig
+import interfaces.heweather.com.interfacesmodule.view.HeWeather
 import skin.support.SkinCompatManager
 import skin.support.app.SkinAppCompatViewInflater
 import skin.support.constraint.SkinCompatConstraintLayout
@@ -30,6 +32,8 @@ class MyApplication : Application() {
             .loadSkin()
         context = this
         Logger.init(this)
+        HeConfig.init("HE2010101543431425","08e54876334d4a61a44bf2dcf4bc7383")
+        HeConfig.switchToDevService()
     }
 
     fun isForeground(): Boolean {

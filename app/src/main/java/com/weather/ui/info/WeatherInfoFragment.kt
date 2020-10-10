@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
@@ -50,12 +49,8 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
 
     @Suppress("DEPRECATION")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater,
-            R.layout.weather_info,container,false)
+        binding = WeatherInfoBinding.inflate(inflater,container,false)
 
-        binding.apply{
-            data = item
-        }
 
         axisColor = SkinCompatResources.getColor(binding.root.context,R.color.theme)
         gridColor = SkinCompatResources.getColor(binding.root.context,R.color.hr)

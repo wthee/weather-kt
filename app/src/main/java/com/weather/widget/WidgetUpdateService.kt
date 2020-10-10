@@ -47,10 +47,11 @@ class WidgetUpdateService : Service() {
             override fun run() {
                 val city = sharedPreferences.getString("city" ,"ip")
                 GlobalScope.launch {
-                    WeatherViewModel.weatherTemp = WeatherNetWork.getInstance().fetchWeather(mutableMapOf(
-                        "version" to "v1",
-                        "city" to city!!))
-                    RainFilterUtil.getRainInfo(WeatherViewModel.weatherTemp)
+                    //TODO 获取天气
+//                    WeatherViewModel.weatherTemp = WeatherNetWork.getInstance().fetchWeather(mutableMapOf(
+//                        "version" to "v1",
+//                        "city" to city!!))
+//                    RainFilterUtil.getRainInfo(WeatherViewModel.weatherTemp)
                     val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     MyApplication.context.sendBroadcast(intent)
                 }

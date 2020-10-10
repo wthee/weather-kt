@@ -1,29 +1,28 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-kapt'
-
-
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.weather"
         minSdkVersion 17
-        targetSdkVersion 29
-        versionCode 201
-        versionName "2.0.1"
+        targetSdkVersion 30
+        versionCode 300
+        versionName "3.0.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        viewBinding = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = 1.8
     }
     packagingOptions {
         pickFirst 'META-INF/*'
@@ -36,22 +35,23 @@ android {
     }
     sourceSets {
         main {
-            res.srcDirs = ['src/main/res','src/main/res-dark']
+            res.srcDirs = ['src/main/res', 'src/main/res-dark']
         }
     }
     buildToolsVersion = '28.0.3'
 }
 
 dependencies {
-    def lifecycle_version = "2.1.0-beta01"
+    implementation files('libs\\HeWeather_Public_Android_V4.1.jar')
+    def lifecycle_version = "2.2.0"
     def multidex_version = "2.0.1"
-    def coroutines_version = "1.2.0"
+    def coroutines_version = "1.3.9"
     def skin_version = "4.0.4"
-    def core_ktx_version = "1.0.1"
-    def appcompat_version = "1.1.0"
-    def constraintlayout_version = "1.1.3"
-    def gson_version = "2.8.5"
-    def retrofit_version = "2.6.0"
+    def core_ktx_version = "1.3.2"
+    def appcompat_version = "1.2.0"
+    def constraintlayout_version = "2.0.2"
+    def gson_version = "2.8.6"
+    def retrofit_version = "2.9.0"
     def mysql_version = "5.1.46"
     def smart_refresh_version = "1.1.0"
 
@@ -65,9 +65,9 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation "com.google.code.gson:gson:$gson_version"
-    implementation 'com.squareup.okhttp3:okhttp:3.12.x'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
     implementation 'com.jrummyapps:colorpicker:2.1.7'
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
@@ -75,15 +75,14 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation "mysql:mysql-connector-java:$mysql_version"
     implementation "skin.support:skin-support:$skin_version"                 // skin-support
-    implementation "skin.support:skin-support-appcompat:$skin_version"         // skin-support 基础控件支持
-    implementation "skin.support:skin-support-design:$skin_version"            // skin-support-design material design 控件支持[可选]
+    implementation "skin.support:skin-support-appcompat:$skin_version"
+    // skin-support 基础控件支持
+    implementation "skin.support:skin-support-design:$skin_version"
+    // skin-support-design material design 控件支持[可选]
     implementation "skin.support:skin-support-constraint-layout:$skin_version"
     implementation "com.scwang.smartrefresh:SmartRefreshLayout:$smart_refresh_version"
     implementation "com.scwang.smartrefresh:SmartRefreshHeader:$smart_refresh_version"
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
     implementation 'android.arch.navigation:navigation-fragment:1.0.0'
     implementation files('libs/nineoldandroids-2.4.0.jar')
 }

@@ -1,107 +1,85 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-
-        <variable
-            name="data"
-            type="com.weather.data.model.weather.Data" />
-
-        <variable
-            name="onClick"
-            type="android.view.View.OnClickListener" />
-
-        <variable
-            name="isGone"
-            type="int" />
-
-    </data>
-
-    <FrameLayout
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <!--布局1-->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <!--布局1-->
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:onClick="@{onClick}"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:text="@{data.date}"
-                    android:textColor="@color/main_text"
-                    android:textSize="@dimen/item_text_size"
-                    tools:text="2019-04-04" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:text="@{data.date_nl}"
-                    android:textColor="@color/main_text"
-                    android:textSize="@dimen/item_text_size"
-                    android:visibility="@{isGone}"
-                    tools:text="初一" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{data.week}"
-                    android:textColor="@color/main_text"
-                    android:textSize="@dimen/item_text_size"
-                    tools:text="星期一" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:text="@{data.tems}"
-                    android:textColor="@color/main_text"
-                    android:textSize="@dimen/item_text_size"
-                    tools:text="10-15C" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{data.wea}"
-                    android:textColor="@color/main_text"
-                    android:textSize="@dimen/item_text_size"
-                    tools:text="小雨" />
-            </LinearLayout>
+            android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{data.tip}"
+                android:layout_marginRight="@dimen/margin_small"
                 android:textColor="@color/main_text"
                 android:textSize="@dimen/item_text_size"
-                tools:text="顶顶顶顶顶顶" />
+                tools:text="2019-04-04" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/date_nl"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" "
-                android:textSize="@dimen/item_text_size" />
+                android:layout_marginRight="@dimen/margin_small"
+                android:text="@{data.date_nl}"
+                android:textColor="@color/main_text"
+                android:textSize="@dimen/item_text_size"
+                tools:text="初一" />
+
+            <TextView
+                android:id="@+id/week"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/main_text"
+                android:textSize="@dimen/item_text_size"
+                tools:text="星期一" />
 
         </LinearLayout>
 
-    </FrameLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-</layout>
+            <TextView
+                android:id="@+id/tems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/margin_small"
+                android:textColor="@color/main_text"
+                android:textSize="@dimen/item_text_size"
+                tools:text="10-15C" />
+
+            <TextView
+                android:id="@+id/wea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/main_text"
+                android:textSize="@dimen/item_text_size"
+                tools:text="小雨" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/main_text"
+            android:textSize="@dimen/item_text_size"
+            tools:text="顶顶顶顶顶顶" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=" "
+            android:textSize="@dimen/item_text_size" />
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,5 +1,6 @@
 package com.weather.ui.main
 
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,11 +9,15 @@ import com.weather.MyApplication
 import com.weather.data.WeatherRepository
 import com.weather.data.model.weather.Data
 import com.weather.data.model.weather.NowWeather
-import com.weather.data.model.weather.Weather
 import com.weather.data.network.WeatherNetWork
 import com.weather.ui.main.WeatherFragment.Companion.toUpdate
 import com.weather.util.GetAllCity
 import com.weather.util.RainFilterUtil
+import interfaces.heweather.com.interfacesmodule.bean.base.Code
+import interfaces.heweather.com.interfacesmodule.bean.base.Lang
+import interfaces.heweather.com.interfacesmodule.bean.base.Unit
+import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
+import interfaces.heweather.com.interfacesmodule.view.HeWeather
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
@@ -21,12 +26,14 @@ class WeatherViewModel(
     private val repository: WeatherRepository
 ) : ViewModel() {
 
-    var weather = MutableLiveData<Weather>()
+    var weather = MutableLiveData<WeatherDailyBean>()
     var nowWeather = MutableLiveData<NowWeather>()
     var isRefresh = MutableLiveData<Boolean>()
 
+    private val unit = Unit.METRIC
+
     companion object {
-        lateinit var weatherTemp: Weather
+        lateinit var weatherTemp: WeatherDailyBean
         lateinit var nowWeatherTemp: NowWeather
         lateinit var today: Data
         var lastUpdateTime: Long = 0
@@ -38,19 +45,31 @@ class WeatherViewModel(
     private fun getWeather(city: String) {
         viewModelScope.launch {
             lastApiUpdateTime =
-                if (weather.value != null) weatherTemp.update_time else lastApiUpdateTime
+                if (weather.value != null && Companion::weatherTemp.isLateinit) weatherTemp.basic.updateTime else lastApiUpdateTime
             if (isUpdate(lastApiUpdateTime) || weather.value == null || toUpdate) {
-                when (checkCity(city)) {
-                    1 -> {
-                        weatherTemp =
-                            formatWeather(repository.getWeather(mutableMapOf("city" to city)))
-                    }
-                    0 -> {
-                        weatherTemp = formatWeather(repository.getWeather(mutableMapOf("ip" to "")))
-                    }
+                if(checkCity(city) != "0"){
+                    HeWeather.getWeather7D(MyApplication.context, checkCity(city), Lang.ZH_HANS, unit,
+                        object : HeWeather.OnResultWeatherDailyListener {
+                            override fun onError(p0: Throwable?) {
+
+                            }
+
+                            override fun onSuccess(p0: WeatherDailyBean?) {
+                                if (Code.OK.code.equals(p0?.code, ignoreCase = true)) {
+                                    lastUpdateTime = nowTime
+                                    RainFilterUtil.getRainInfo(p0)
+                                    weather.postValue(p0)
+                                } else {
+                                    //在此查看返回数据失败的原因
+                                    val status: String = p0?.code!!
+                                    val code = Code.toEnum(status)
+                                    Log.i("log", "failed code: $code")
+                                }
+
+                            }
+                        }
+                    )
                 }
-                lastUpdateTime = nowTime
-                weather.postValue(weatherTemp)
             }
             toUpdate = false
             isRefresh.postValue(false)
@@ -58,17 +77,17 @@ class WeatherViewModel(
     }
 
     private fun getNowWeather(city: String) {
-        viewModelScope.launch {
-            when (checkCity(city)) {
-                1 -> {
-                    nowWeatherTemp = repository.getNowWeather(mutableMapOf("city" to city))
-                }
-                0 -> {
-                    nowWeatherTemp = repository.getNowWeather(mutableMapOf("ip" to ""))
-                }
-            }
-            nowWeather.postValue(formatNowWeather(nowWeatherTemp, city))
-        }
+//        viewModelScope.launch {
+//            when (checkCity(city)) {
+//                1 -> {
+//                    nowWeatherTemp = repository.getNowWeather(mutableMapOf("city" to city))
+//                }
+//                0 -> {
+//                    nowWeatherTemp = repository.getNowWeather(mutableMapOf("ip" to ""))
+//                }
+//            }
+//            nowWeather.postValue(formatNowWeather(nowWeatherTemp, city))
+//        }
     }
 
     //获取当前城市的天气信息
@@ -81,7 +100,7 @@ class WeatherViewModel(
         weather.postValue(weatherTemp)
     }
 
-    fun checkCity(city: String): Int {
+    fun checkCity(city: String): String {
         questions.forEachIndexed { index, it ->
             if (city.toLowerCase() == it.toLowerCase()) {
                 Toast.makeText(MyApplication.context, answers[index], Toast.LENGTH_LONG).show()
@@ -90,42 +109,17 @@ class WeatherViewModel(
         if (city.length > 1) {
             GetAllCity.getInstance().citys.forEach {
                 if (city == it.cityZh) {
-                    return 1
+                    return "CN" + it.id
                 }
             }
             if (city == "ip") {
-                return 0
+                //TODO 经纬
+                return "CN101010100"
             }
         }
-        return -1
+        return "0"
     }
 
-    private suspend fun formatWeather(weatherTemp: Weather): Weather {
-        today = weatherTemp.data[0]
-        viewModelScope.launch {
-            if (today.air == "0") {
-                var leader = " "
-                GetAllCity.getInstance().citys.forEach {
-                    if (weatherTemp.city == it.cityZh) {
-                        leader = it.leaderZh
-                        return@forEach
-                    }
-                }
-                var wea = repository.getWeather(mutableMapOf("version" to "v9", "city" to leader))
-                today.air = wea.data[0].air
-                today.air_level = wea.data[0].air_level
-                today.air_tips = wea.data[0].air_tips
-            }
-        }
-        RainFilterUtil.getRainInfo(weatherTemp)
-        return weatherTemp
-    }
-
-    private fun formatNowWeather(nowWeatherTemp: NowWeather, city: String): NowWeather {
-        nowWeatherTemp.tem = nowWeatherTemp.tem + "℃"
-        nowWeatherTemp.city = city
-        return nowWeatherTemp
-    }
 
     private fun isUpdate(updateTime: String): Boolean {
         val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

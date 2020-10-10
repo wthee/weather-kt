@@ -1,61 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/margin_small"
+    android:orientation="horizontal">
 
-    <data>
-        <variable
-            name="info"
-            type="com.weather.data.model.AppInfo" />
-
-        <variable
-            name="onClick"
-            type="android.view.View.OnClickListener" />
-
-    </data>
+    <ImageView
+        android:id="@+id/app_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        tools:background="@drawable/weather" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:onClick="@{onClick}"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@{info.appIcon}"
-            tools:background="@drawable/weather"/>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/appName"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/theme"
+            android:textSize="@dimen/setting_title_size"
+            tools:text="444343" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="@dimen/setting_title_size"
-                android:textColor="@color/theme"
-                android:text="@{info.appName}"
-                android:maxLines="1"
-                android:ellipsize="end"
-                tools:text="444343"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/secondary_text"
-                android:textSize="@dimen/item_text_size"
-                android:text="@{info.packageName}"
-                android:maxLines="1"
-                android:ellipsize="end"
-                tools:text="444343"/>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/package_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/secondary_text"
+            android:textSize="@dimen/item_text_size"
+            tools:text="444343" />
 
     </LinearLayout>
 
-</layout>
+</LinearLayout>
+

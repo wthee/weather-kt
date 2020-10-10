@@ -3,44 +3,45 @@ package com.weather.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.weather.R
+import androidx.viewbinding.ViewBinding
 import com.weather.data.model.weather.Data
 import com.weather.databinding.ItemWeather1Binding
 import com.weather.databinding.ItemWeatherBinding
 import com.weather.ui.info.WeatherInfoFragment
 import com.weather.ui.main.WeatherFragment
 import com.weather.util.ActivityUtil
+import com.weather.util.LunarUtil
+import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
+import java.text.SimpleDateFormat
+import java.util.*
 
-class WeatherAdapter : ListAdapter<Data, WeatherAdapter.ViewHolder>(WeatherDiffCallback()) {
+class WeatherAdapter :
+    ListAdapter<WeatherDailyBean.DailyBean, WeatherAdapter.ViewHolder>(WeatherDiffCallback()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
 
-        var layoutId = R.layout.item_weather
-        when(WeatherFragment.styleType){
-            0 -> layoutId = R.layout.item_weather
-            1 -> layoutId = R.layout.item_weather1
-        }
-
         return ViewHolder(
-            DataBindingUtil.inflate(
-                LayoutInflater.from(parent.context),
-                layoutId, parent, false
-            )
+            if (WeatherFragment.styleType == 0)
+                ItemWeatherBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            else
+                ItemWeather1Binding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
-    private fun createOnClickListener(item: Data): View.OnClickListener {
+    private fun createOnClickListener(item: WeatherDailyBean.DailyBean): View.OnClickListener {
         return View.OnClickListener {
-            var wf = WeatherInfoFragment(item)
-            wf.show(ActivityUtil.instance.currentActivity!!.supportFragmentManager.beginTransaction(),"123")
+            //TODO
+//            val wf = WeatherInfoFragment(item)
+//            wf.show(
+//                ActivityUtil.instance.currentActivity!!.supportFragmentManager.beginTransaction(),
+//                "123"
+//            )
         }
     }
 
@@ -54,16 +55,26 @@ class WeatherAdapter : ListAdapter<Data, WeatherAdapter.ViewHolder>(WeatherDiffC
 
 
     class ViewHolder(
-        private val binding: ViewDataBinding
+        private val binding: ViewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Data, listener: View.OnClickListener) {
-            when(WeatherFragment.styleType){
+        fun bind(item: WeatherDailyBean.DailyBean, listener: View.OnClickListener) {
+            val today = Calendar.getInstance()
+            today.time =
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(item.fxDate + " 00:00:00")
+            val dateNlText = LunarUtil(today).toString()
+            when (WeatherFragment.styleType) {
                 0 -> {
                     binding as ItemWeatherBinding
                     binding.apply {
-                        data = item
-                        onClick = listener
-                        isGone = if (WeatherFragment.lunarGone) {
+                        date.text = item.fxDate
+                        dateNl.text = dateNlText
+                        //TODO 星期
+//                        week.text = item.week
+                        tems.text = "${item.tempMin}℃ ~ ${item.tempMax}℃"
+                        wea.text = item.textDay
+                        tip.text = formatTip(item)
+                        root.setOnClickListener(listener)
+                        dateNl.visibility = if (WeatherFragment.lunarGone) {
                             View.GONE
                         } else {
                             View.VISIBLE
@@ -73,9 +84,16 @@ class WeatherAdapter : ListAdapter<Data, WeatherAdapter.ViewHolder>(WeatherDiffC
                 1 -> {
                     binding as ItemWeather1Binding
                     binding.apply {
-                        data = item
-                        onClick = listener
-                        isGone = if (WeatherFragment.lunarGone) {
+                        //TODO
+//                        day.text = item.d
+//                        month.text = item.m
+//                        dateNl.text = dateNlText
+//                        week.text = item.week
+//                        tems.text = item.tems
+//                        wea.text = item.wea
+                        tip.text = formatTip(item)
+                        root.setOnClickListener(listener)
+                        dateNl.visibility = if (WeatherFragment.lunarGone) {
                             View.GONE
                         } else {
                             View.VISIBLE
@@ -83,20 +101,43 @@ class WeatherAdapter : ListAdapter<Data, WeatherAdapter.ViewHolder>(WeatherDiffC
                     }
                 }
             }
-            binding.executePendingBindings()
         }
+
+        private fun formatTip(dailyBean: WeatherDailyBean.DailyBean) =
+            when (dailyBean.textDay.length) {
+                1 -> "下雨天，记得带伞"
+                2 -> when (dailyBean.textDay) {
+                    "小雨" -> "雨虽小，注意别感冒"
+                    "中雨" -> "记得随身携带雨伞"
+                    "大雨" -> "出门最好穿雨衣"
+                    "阵雨" -> "阵雨来袭，记得带伞"
+                    "暴雨" -> "尽量避免户外活动"
+                    else -> "没有你的天气"
+                }
+                3 -> {
+                    if (dailyBean.textDay.contains("转"))
+                        "天气多变，照顾好自己"
+                    else
+                        when (dailyBean.textDay) {
+                            "雷阵雨" -> "尽量减少户外活动"
+                            "大暴雨" -> "尽量避免户外活动"
+                            "雨夹雪" -> "道路湿滑，出行要谨慎"
+                            else -> "没有你的天气"
+                        }
+                }
+                else -> "天气多变，照顾好自己"
+            }
     }
 }
 
 
+class WeatherDiffCallback : DiffUtil.ItemCallback<WeatherDailyBean.DailyBean>() {
 
-class WeatherDiffCallback : DiffUtil.ItemCallback<Data>() {
-
-    override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
+    override fun areItemsTheSame(oldItem: WeatherDailyBean.DailyBean, newItem: WeatherDailyBean.DailyBean): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: Data, newItem: Data): Boolean {
-        return oldItem.date == newItem.date
+    override fun areContentsTheSame(oldItem: WeatherDailyBean.DailyBean, newItem: WeatherDailyBean.DailyBean): Boolean {
+        return oldItem.fxDate == newItem.fxDate
     }
 }

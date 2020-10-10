@@ -82,8 +82,7 @@ class WeatherFragment : Fragment() {
 
         binding = WeatherFragmentBinding.inflate(inflater, container, false)
         val factory = InjectorUtil.getWeatherViewModelFactory()
-        viewModel = ViewModelProviders.of(this, factory).get(
-            WeatherViewModel::class.java)
+        viewModel = factory.create(WeatherViewModel::class.java)
         imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         initView()
         //为livedata设置observe
@@ -140,22 +139,22 @@ class WeatherFragment : Fragment() {
         viewModel.weather.observe(viewLifecycleOwner, Observer { weather ->
             if (weather != null) {
                 binding.apply {
-                    this.weather = weather
-                    hint = "更新于 " + weather.update_time
+                    input.hint = "更新于 " + weather.basic.updateTime
                 }
 
                 input.text = null
-                setting.text = weather.city
+                //TODO
+//                setting.text = weather.city
                 progressBar.visibility = View.GONE
                 //下次打开APP显示的city
                 sharedPreferences.edit {
-                    putString("city", weather.city)
+                    putString("city", setting.text.toString())
                 }
 
                 binding.recycler.layoutAnimation = controller
                 adapter = WeatherAdapter()
                 binding.recycler.adapter = adapter
-                adapter.submitList(weather.data)
+                adapter.submitList(weather.daily)
 
                 //操作引导
                 if(isFirstOpen){
@@ -178,7 +177,8 @@ class WeatherFragment : Fragment() {
             if(now!=null){
                 title = now.city
                 binding.apply {
-                    this.now = now
+                    //TODO
+//                    this.now = now
                 }
             }
         })
@@ -237,7 +237,7 @@ class WeatherFragment : Fragment() {
         input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val input = s.toString()
-                if( input != ""&& viewModel.checkCity(input) != -1){
+                if( input != ""&& viewModel.checkCity(input) != "0"){
                     sharedPreferences.edit {
                         putString("city$cityIndex", input)
                     }
