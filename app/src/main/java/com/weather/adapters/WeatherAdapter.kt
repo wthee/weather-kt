@@ -103,6 +103,7 @@ class WeatherAdapter :
             }
         }
 
+        //TODO 优化 https://dev.heweather.com/docs/start/icons
         private fun formatTip(dailyBean: WeatherDailyBean.DailyBean) =
             when (dailyBean.textDay.length) {
                 1 -> "下雨天，记得带伞"
