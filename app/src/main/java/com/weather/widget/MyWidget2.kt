@@ -56,9 +56,9 @@ class MyWidget2 : AppWidgetProvider() {
 
                 val views: RemoteViews = RemoteViews(context.packageName, R.layout.widget_2)
 
-                val appInfo1 = MainActivity.sharedPreferences.getString("appInfo1", "com.weather")!!
-                val appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")!!
-                val appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")!!
+                val appInfo1 = MainActivity.sp.getString("appInfo1", "com.weather")!!
+                val appInfo2 = MainActivity.sp.getString("appInfo2", "com.weather")!!
+                val appInfo3 = MainActivity.sp.getString("appInfo3", "com.weather")!!
 
                 views.setOnClickPendingIntent(R.id.appwidget2_now_time,
                     MyWidget.getPI(context, appInfo1)

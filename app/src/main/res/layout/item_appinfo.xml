@@ -18,7 +18,7 @@
         android:layout_marginLeft="@dimen/margin_small"
         android:orientation="vertical">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/appName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             android:textSize="@dimen/setting_title_size"
             tools:text="444343" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/package_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

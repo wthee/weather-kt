@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weaDay"
                 tools:text="18日"
                 android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weaDayAfter"
                 tools:text="（今天）"
                 android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/alarm_type"
                             tools:text="大风预警："
                             android:layout_width="match_parent"
@@ -91,7 +91,7 @@
                             android:textColor="@color/theme"
                             android:textSize="@dimen/setting_title_size" />
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/alarm_lv"
                             tools:text="黄色"
                             android:layout_width="match_parent"
@@ -102,7 +102,7 @@
 
                     </LinearLayout>
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/alarm_content"
                         tools:text="空气质量还行"
                         android:layout_width="match_parent"
@@ -128,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             tools:text="空气质量："
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -136,7 +136,7 @@
                             android:textColor="@color/theme"
                             android:textSize="@dimen/setting_title_size" />
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/air_lv"
                             tools:text="45 优"
                             android:layout_width="match_parent"
@@ -146,7 +146,7 @@
 
                     </LinearLayout>
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/air_tips"
                         tools:text="空气质量asfdagsas："
                         android:layout_width="match_parent"
@@ -174,7 +174,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             tools:text="穿衣指数："
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -182,7 +182,7 @@
                             android:textColor="@color/theme"
                             android:textSize="@dimen/setting_title_size" />
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/chuanyi_title"
                             tools:text="热"
                             android:layout_width="match_parent"
@@ -193,7 +193,7 @@
                     </LinearLayout>
 
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/chuanyi_tip"
                         tools:text="穿衣："
                         android:layout_width="match_parent"

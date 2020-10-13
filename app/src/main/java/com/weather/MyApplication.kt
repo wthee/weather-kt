@@ -8,12 +8,6 @@ import android.text.TextUtils
 import androidx.multidex.MultiDex
 import com.weather.util.Logger
 import interfaces.heweather.com.interfacesmodule.view.HeConfig
-import interfaces.heweather.com.interfacesmodule.view.HeWeather
-import skin.support.SkinCompatManager
-import skin.support.app.SkinAppCompatViewInflater
-import skin.support.constraint.SkinCompatConstraintLayout
-import skin.support.constraint.app.SkinConstraintViewInflater
-import skin.support.design.app.SkinMaterialViewInflater
 
 
 class MyApplication : Application() {
@@ -25,11 +19,6 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        SkinCompatManager.withoutActivity(this)
-            .addInflater(SkinAppCompatViewInflater())           // 基础控件换肤初始化
-            .addInflater( SkinMaterialViewInflater())            // material design 控件换肤初始化[可选]
-            .addInflater(SkinConstraintViewInflater())
-            .loadSkin()
         context = this
         Logger.init(this)
         HeConfig.init("HE2010101543431425","08e54876334d4a61a44bf2dcf4bc7383")
@@ -37,13 +26,10 @@ class MyApplication : Application() {
     }
 
     fun isForeground(): Boolean {
-        if (context != null) {
-            val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            val cn = am.getRunningTasks(1)[0].topActivity
-            val currentPackageName = cn?.packageName
-            return !TextUtils.isEmpty(currentPackageName) && currentPackageName == context.packageName
-        }
-        return false
+        val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val cn = am.getRunningTasks(1)[0].topActivity
+        val currentPackageName = cn?.packageName
+        return !TextUtils.isEmpty(currentPackageName) && currentPackageName == context.packageName
     }
 
     companion object {

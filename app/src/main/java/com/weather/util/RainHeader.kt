@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.core.content.res.ResourcesCompat
 import com.nineoldandroids.view.ViewHelper
 import com.scwang.smartrefresh.header.internal.pathview.PathsView
 import com.scwang.smartrefresh.layout.api.RefreshHeader
@@ -20,7 +21,6 @@ import com.scwang.smartrefresh.layout.constant.RefreshState
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.util.SmartUtil
 import com.weather.R
-import skin.support.content.res.SkinCompatResources
 
 
 class RainHeader @JvmOverloads constructor(
@@ -43,12 +43,12 @@ class RainHeader @JvmOverloads constructor(
     private fun initView(context: Context) {
         gravity = Gravity.CENTER
         mHeaderText = TextView(context)
-        mHeaderText.setTextColor(SkinCompatResources.getColor(context, R.color.main_text))
+        mHeaderText.setTextColor(ResourcesCompat.getColor(resources, R.color.main_text, null))
         mArrowView = PathsView(context)
         mProgressView = ImageView(context)
-        mProgressView.setImageDrawable(SkinCompatResources.getDrawable(context, R.drawable.weather))
+        mProgressView.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.weather, null))
         mArrowView.parserPaths("M20,12l-1.41,-1.41L13,16.17V4h-2v12.17l-5.58,-5.59L4,12l8,8 8,-8z")
-        mArrowView.background = SkinCompatResources.getDrawable(context, R.drawable.down)
+        mArrowView.background = ResourcesCompat.getDrawable(resources, R.drawable.down, null)
 
         //Header布局开始
         addView(View(context), SmartUtil.dp2px(10f), SmartUtil.dp2px(10f))

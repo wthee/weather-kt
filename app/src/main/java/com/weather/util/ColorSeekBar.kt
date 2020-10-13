@@ -10,8 +10,8 @@ import android.os.Handler
 import android.util.AttributeSet
 import android.widget.SeekBar
 import androidx.appcompat.widget.AppCompatSeekBar
+import androidx.core.content.res.ResourcesCompat
 import com.weather.R
-import skin.support.content.res.SkinCompatResources
 
 
 class ColorSeekBar : AppCompatSeekBar {
@@ -69,22 +69,22 @@ class ColorSeekBar : AppCompatSeekBar {
         mBackgroundPaint = Paint()
         mBackgroundPaint.isDither = true
         mBackgroundPaint.isAntiAlias = true
-        mBackgroundPaint.color = SkinCompatResources.getColor(context, R.color.hr)
+        mBackgroundPaint.color = ResourcesCompat.getColor(resources, R.color.hr, null)
 
         mProgressPaint = Paint()
         mProgressPaint.isDither = true
         mProgressPaint.isAntiAlias = true
-        mProgressPaint.color = SkinCompatResources.getColor(context, R.color.hr)
+        mProgressPaint.color = ResourcesCompat.getColor(resources, R.color.hr, null)
 
         mSecondProgressPaint = Paint()
         mSecondProgressPaint.isDither = true
         mSecondProgressPaint.isAntiAlias = true
-        mSecondProgressPaint.color = SkinCompatResources.getColor(context, R.color.alpha)
+        mSecondProgressPaint.color = ResourcesCompat.getColor(resources, R.color.alpha, null)
 
         mThumbPaint = Paint()
         mThumbPaint.isDither = true
         mThumbPaint.isAntiAlias = true
-        mThumbPaint.color = SkinCompatResources.getColor(context, R.color.theme)
+        mThumbPaint.color = ResourcesCompat.getColor(resources, R.color.theme, null)
 
 
         thumb = BitmapDrawable()

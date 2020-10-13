@@ -30,4 +30,5 @@
     <string name="change_style">切换布局</string>
     <string name="default_style">默认</string>
     <string name="classical_style">经典</string>
+    <string name="show_nl">显示农历</string>
 </resources>

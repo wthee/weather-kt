@@ -9,10 +9,11 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.MainActivity.Companion.sp
 import com.weather.MyApplication
 import com.weather.R
 import com.weather.data.model.AppInfo
@@ -20,7 +21,6 @@ import com.weather.databinding.ItemAppinfoBinding
 import com.weather.ui.setting.WidgetSettingClickFragment
 import com.weather.ui.setting.WidgetSettingClickFragment.Companion.mSourceList
 import com.weather.ui.setting.WidgetSettingClickFragment.Companion.pn
-import skin.support.content.res.SkinCompatResources
 
 //应用列表
 class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDiffCallback()), Filterable {
@@ -62,13 +62,13 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
         }
     }
 
-    var wc = sharedPreferences.getInt("lastAdapter",
+    var wc = sp.getInt("lastAdapter",
         WidgetSettingClickFragment.lastAdapter)
 
 
     fun setWC(value: Int) {
         wc = value
-        sharedPreferences.edit {
+        sp.edit {
             putInt("lastAdapter",wc)
         }
     }
@@ -87,7 +87,7 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
     private fun createOnClickListener(appInfo: AppInfo): View.OnClickListener {
         return View.OnClickListener {
             pn[wc] = appInfo.packageName
-            sharedPreferences.edit{
+            sp.edit{
                 putString("appInfo1",pn[0])
                 putString("appInfo2",pn[1])
                 putString("appInfo3",pn[2])
@@ -106,9 +106,9 @@ class AppInfoAdapter : ListAdapter<AppInfo, AppInfoAdapter.ViewHolder>(AppInfoDi
             bind(info, createOnClickListener(info))
             itemView.tag = info
             if(info.packageName == pn[wc]){
-                itemView.setBackgroundColor(SkinCompatResources.getColor(MyApplication.context,R.color.placeholder_text))
+                itemView.setBackgroundColor(ResourcesCompat.getColor(MyApplication.context.resources,R.color.placeholder_text, null))
             }else{
-                itemView.setBackgroundColor(SkinCompatResources.getColor(MyApplication.context,R.color.background))
+                itemView.setBackgroundColor(ResourcesCompat.getColor(MyApplication.context.resources,R.color.background, null))
             }
         }
     }

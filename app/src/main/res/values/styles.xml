@@ -1,20 +1,21 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/main_text</item>
-        <item name="colorPrimaryDark">@color/main_text</item>
+        <item name="colorPrimary">@color/theme</item>
+        <item name="colorPrimaryDark">@color/theme_dark</item>
         <item name="colorAccent">@color/theme</item>
+<!--        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>-->
     </style>
 
-    <style name="GalaxyZooThemeToolbarDarkOverflow" parent="Theme.AppCompat.Light">
-
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
-    <style name="BottomDialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
-        <item name="android:windowExitAnimation">@anim/dialog_slide_down</item>
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/rounded_dialog</item>
     </style>
-
 </resources>

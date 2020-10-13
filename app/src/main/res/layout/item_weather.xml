@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
                 android:textSize="@dimen/item_text_size"
                 tools:text="2019-04-04" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/date_nl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
                 android:textSize="@dimen/item_text_size"
                 tools:text="初一" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/week"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tems"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                 android:textSize="@dimen/item_text_size"
                 tools:text="10-15C" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/wea"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                 tools:text="小雨" />
         </LinearLayout>
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
             android:textSize="@dimen/item_text_size"
             tools:text="顶顶顶顶顶顶" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=" "

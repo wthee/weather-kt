@@ -11,21 +11,19 @@ import android.widget.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.forEachIndexed
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
-import com.weather.MainActivity.Companion.sharedPreferences
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.weather.MainActivity.Companion.sp
 import com.weather.MyApplication
 import com.weather.R
 import com.weather.adapters.AppInfoAdapter
 import com.weather.data.model.AppInfo
 import com.weather.util.ActivityUtil
-import com.weather.util.DrawerUtil
-import org.w3c.dom.Text
-import skin.support.content.res.SkinCompatResources
 
 
-class WidgetSettingClickFragment : DialogFragment() {
+class WidgetSettingClickFragment : BottomSheetDialogFragment() {
 
     companion object {
         @SuppressLint("StaticFieldLeak")
@@ -38,9 +36,9 @@ class WidgetSettingClickFragment : DialogFragment() {
         }
 
         var pn = arrayListOf(
-            sharedPreferences.getString("appInfo1", "com.weather"),
-            sharedPreferences.getString("appInfo2", "com.weather"),
-            sharedPreferences.getString("appInfo3", "com.weather")
+            sp.getString("appInfo1", "com.weather"),
+            sp.getString("appInfo2", "com.weather"),
+            sp.getString("appInfo3", "com.weather")
         )
         var myAppIndex = 0
         var myAppIndexNoSys = 0
@@ -70,13 +68,13 @@ class WidgetSettingClickFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.setting_widget_click, container, false) as View
+        val view = inflater.inflate(R.layout.fragment_setting_widget_clickevent, container, false) as View
 
-        showSys = sharedPreferences.getBoolean("showSys", false)
+        showSys = sp.getBoolean("showSys", false)
 
         toolbar = view.findViewById(R.id.widgetToolbar)
         toolbar.title = TEXT_SELECTAPP
-        toolbar.setTitleTextColor(SkinCompatResources.getColor(context, R.color.main_text))
+        toolbar.setTitleTextColor(ResourcesCompat.getColor(resources, R.color.main_text, null))
         ActivityUtil.instance.currentActivity!!.setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
 
@@ -92,8 +90,6 @@ class WidgetSettingClickFragment : DialogFragment() {
             bindListener()
         }, resources.getInteger(R.integer.slide).toLong())
 
-        DrawerUtil.bindAllViewOnTouchListener(view, this, arrayListOf(recycler))
-
         return view
     }
 
@@ -101,14 +97,13 @@ class WidgetSettingClickFragment : DialogFragment() {
         super.onStart()
         val dm = DisplayMetrics()
         activity!!.windowManager.defaultDisplay.getMetrics(dm)
-        DrawerUtil.setBottomDrawer(dialog, activity, (dm.heightPixels * 0.618).toInt())
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         if (MyApplication().isForeground()) {
             WidgetSettingFragment.getInstance()
-                .show(fragmentManager!!, "widget")
+                .show(parentFragmentManager, "widget")
         }
     }
 
@@ -124,7 +119,7 @@ class WidgetSettingClickFragment : DialogFragment() {
         val searchBack =
             searchView.findViewById<LinearLayout>(androidx.appcompat.R.id.search_plate)
         val searchInput =
-            searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+            searchView.findViewById<com.google.android.material.textview.MaterialTextView>(androidx.appcompat.R.id.search_src_text)
 
         menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", java.lang.Boolean.TYPE)
             .apply {
@@ -132,10 +127,10 @@ class WidgetSettingClickFragment : DialogFragment() {
                 invoke(menu, true)
             }
 
-        searchIcon.setColorFilter(SkinCompatResources.getColor(view!!.context, R.color.main_text))
-        searchClose.setColorFilter(SkinCompatResources.getColor(view!!.context, R.color.main_text))
-        searchBack.setBackgroundColor(SkinCompatResources.getColor(view!!.context, R.color.background))
-        searchInput.setTextColor(SkinCompatResources.getColor(view!!.context, R.color.main_text))
+        searchIcon.setColorFilter(ResourcesCompat.getColor(resources, R.color.main_text, null))
+        searchClose.setColorFilter(ResourcesCompat.getColor(resources, R.color.main_text, null))
+        searchBack.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.background, null))
+        searchInput.setTextColor(ResourcesCompat.getColor(resources, R.color.main_text, null))
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -198,7 +193,7 @@ class WidgetSettingClickFragment : DialogFragment() {
                 toolbar.title = TEXT_SELECTAPP + iNoSys
                 mSourceList = applistNoSys
             }
-            sharedPreferences.edit {
+            sp.edit {
                 putBoolean("showSys", showSys)
             }
             getMark()

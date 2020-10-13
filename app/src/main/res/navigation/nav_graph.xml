@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.weather.ui.main.WeatherFragment"
-        tools:layout="@layout/weather_fragment">
+        tools:layout="@layout/fragment_main_weather">
 
     </fragment>
 

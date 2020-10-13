@@ -6,21 +6,19 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.SkinAppCompatDelegateImpl
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.weather.databinding.MainActivityBinding
-import com.weather.ui.main.WeatherFragment.Companion.cityIndex
-import com.weather.ui.main.WeatherFragment.Companion.weatherFragment
+import com.weather.util.ActivityUtil
+import com.weather.util.Constant
+import com.weather.util.NightModelUtil
+import com.weather.util.StatusBarUtil
 import com.weather.widget.WidgetUpdateService
-import java.util.*
-import com.weather.util.*
-import skin.support.content.res.SkinCompatResources
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,8 +31,11 @@ class MainActivity : AppCompatActivity() {
         var diyTips = ""
         var isFirstOpen = true
         var isFirstOpenSetting = true
-        lateinit var sharedPreferences: SharedPreferences
+        lateinit var sp: SharedPreferences
+        var citys = Constant.defaultCitys
+        var cityIndex = 0
     }
+
     private lateinit var binding: MainActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,57 +64,31 @@ class MainActivity : AppCompatActivity() {
         getAuthority()
     }
 
-    override fun getDelegate(): AppCompatDelegate {
-        return SkinAppCompatDelegateImpl.get(this, this)
-    }
-
-    //全局滑动监听
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        when (ev.action) {
-            MotionEvent.ACTION_DOWN -> TouchUtil.setDownXY(ev.x,ev.y)
-            MotionEvent.ACTION_MOVE -> TouchUtil.setMoveXY(ev.x,ev.y)
-            MotionEvent.ACTION_UP -> {
-                TouchUtil.setUpXY(ev.x,ev.y)
-                if(TouchUtil.actionUp() == -1){
-                    //左
-                    cityIndex = if((cityIndex + 1) % 3 == 0) 3 else (cityIndex + 1) % 3
-                    weatherFragment.swipToChangeCity(cityIndex)
-                    return true
-                }
-                if(TouchUtil.actionUp() == 1){
-                    //右
-                    cityIndex = if(cityIndex - 1 == 0) 3 else cityIndex - 1
-                    weatherFragment.swipToChangeCity(cityIndex)
-                    return true
-                }
-                if(TouchUtil.actionUp() == 0){
-                    //点击
-                    return super.dispatchTouchEvent(ev)
-                }
-            }
-        }
-        return super.dispatchTouchEvent(ev)
-    }
-
-    private fun initSharedPreferences(){
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-        widgetTextColor = sharedPreferences.getInt("widgetColor", widgetTextColor)
-        widgetTips = sharedPreferences.getBoolean("widgetTips", widgetTips)
-        isDiyTips = sharedPreferences.getBoolean("isDiyTips", isDiyTips)
-        diyTips = sharedPreferences.getString("diyTips", diyTips)!!
-        onNight = sharedPreferences.getBoolean("onNight",false)
-        isFirstOpen = sharedPreferences.getBoolean("isFirstOpen",true)
-        isFirstOpenSetting = sharedPreferences.getBoolean("isFirstOpenSetting",true)
+    private fun initSharedPreferences() {
+        sp = getSharedPreferences("setting", MODE_PRIVATE)
+        //城市集合
+        citys = Gson().fromJson(
+            sp.getString(Constant.CITYS, Constant.CITYS_DEFAULT),
+            object : TypeToken<ArrayList<String>>() {}.type
+        )
+        cityIndex = sp.getInt(Constant.CITY_INDEX, 0)
+        widgetTextColor = sp.getInt(Constant.WIDGET_TEXT_COLOR, widgetTextColor)
+        widgetTips = sp.getBoolean(Constant.WIDGET_TIP_SHOW, widgetTips)
+        isDiyTips = sp.getBoolean("isDiyTips", isDiyTips)
+        diyTips = sp.getString("diyTips", diyTips)!!
+        onNight = sp.getBoolean("onNight", false)
+        isFirstOpen = sp.getBoolean("isFirstOpen", true)
+        isFirstOpenSetting = sp.getBoolean("isFirstOpenSetting", true)
     }
 
     //状态栏颜色适配
-    private fun changeStatusBar(){
-        StatusBarUtil.setRootViewFitsSystemWindows(this,true);
+    private fun changeStatusBar() {
+        StatusBarUtil.setRootViewFitsSystemWindows(this, true);
         StatusBarUtil.setTranslucentStatus(this)
         if (!StatusBarUtil.setStatusBarDarkTheme(this, true)) {
             //如果不支持设置深色风格 为了兼容总不能让状态栏白白的看不清, 于是设置一个状态栏颜色为半透明,
             //这样半透明+白=灰, 状态栏的文字能看得清
-            StatusBarUtil.setStatusBarColor(this,0x55000000);
+            StatusBarUtil.setStatusBarColor(this, 0x55000000);
         }
     }
 
@@ -125,22 +100,26 @@ class MainActivity : AppCompatActivity() {
         )
         val mPermissions = ArrayList<String>()
         for (string in permissions) {
-            if (ContextCompat.checkSelfPermission(this@MainActivity, string) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this@MainActivity,
+                    string
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 mPermissions.add(string)
             }
         }
         if (mPermissions.size > 0) {
-            Toast.makeText(this,"分享功能需要读写权限",Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "分享功能需要读写权限", Toast.LENGTH_LONG).show()
             ActivityCompat.requestPermissions(this, permissions, 1)
         }
     }
 
     //启动后台服务
-    private fun startService(){
+    private fun startService() {
         val service = Intent(this@MainActivity, WidgetUpdateService::class.java)
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O ){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
             startForegroundService(service)
-        }else{
+        } else {
             startService(service)
         }
     }

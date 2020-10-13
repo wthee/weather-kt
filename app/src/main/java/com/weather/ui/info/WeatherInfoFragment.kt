@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
@@ -23,16 +24,14 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import com.weather.R
 import com.weather.data.model.weather.Data
-import com.weather.databinding.WeatherInfoBinding
-import com.weather.util.DrawerUtil
+import com.weather.databinding.FragmentWeatherInfoBinding
 import com.weather.util.ShareUtil
-import skin.support.content.res.SkinCompatResources
 import java.text.DecimalFormat
 
 
 class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
 
-    private lateinit var binding: WeatherInfoBinding
+    private lateinit var binding: FragmentWeatherInfoBinding
     private lateinit var lineChart: LineChart
     private lateinit var mPointValues: ArrayList<Entry>
     private lateinit var mLables: ArrayList<String>
@@ -49,12 +48,12 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
 
     @Suppress("DEPRECATION")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = WeatherInfoBinding.inflate(inflater,container,false)
+        binding = FragmentWeatherInfoBinding.inflate(inflater,container,false)
 
 
-        axisColor = SkinCompatResources.getColor(binding.root.context,R.color.theme)
-        gridColor = SkinCompatResources.getColor(binding.root.context,R.color.hr)
-        labColor = SkinCompatResources.getColor(binding.root.context,R.color.main_text)
+        axisColor = ResourcesCompat.getColor(resources,R.color.theme, null)
+        gridColor = ResourcesCompat.getColor(resources,R.color.hr, null)
+        labColor = ResourcesCompat.getColor(resources,R.color.main_text, null)
         lineChart = binding.lineChart
 
         //初始化温度折线图
@@ -92,15 +91,11 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             ShareUtil.shareImg(uri,this.context!!)
         }
 
-        DrawerUtil.bindAllViewOnTouchListener(binding.root,this, arrayListOf(lineChart))
 
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        DrawerUtil.setBottomDrawer(dialog, activity,ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
+
 
     private fun setStyle() {
 

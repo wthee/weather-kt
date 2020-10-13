@@ -107,9 +107,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 Toast.makeText(mCurrentActivity, "无法运行，建议截图当前日志并反馈", Toast.LENGTH_LONG)
                         .show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(mCurrentActivity);
-                builder.setTitle("App Crash,Log:");
+                builder.setTitle("错误日志:");
                 builder.setMessage(spanned);
-                builder.setPositiveButton("关闭app", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("关闭应用", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mDefaultHandler.uncaughtException(t, e);

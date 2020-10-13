@@ -7,13 +7,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.view.View
 import android.widget.RemoteViews
 import com.weather.MainActivity
-import com.weather.MainActivity.Companion.diyTips
-import com.weather.MainActivity.Companion.isDiyTips
 import com.weather.MainActivity.Companion.widgetTextColor
-import com.weather.MainActivity.Companion.widgetTips
 import com.weather.R
 import com.weather.ui.main.WeatherViewModel
 
@@ -62,9 +58,9 @@ class MyWidget : AppWidgetProvider() {
                 val wea = WeatherViewModel.weatherTemp
                 val views = RemoteViews(context.packageName, R.layout.widget_1)
 
-                val appInfo1 = MainActivity.sharedPreferences.getString("appInfo1", "com.weather")!!
-                val appInfo2 = MainActivity.sharedPreferences.getString("appInfo2", "com.weather")!!
-                val appInfo3 = MainActivity.sharedPreferences.getString("appInfo3", "com.weather")!!
+                val appInfo1 = MainActivity.sp.getString("appInfo1", "com.weather")!!
+                val appInfo2 = MainActivity.sp.getString("appInfo2", "com.weather")!!
+                val appInfo3 = MainActivity.sp.getString("appInfo3", "com.weather")!!
 
                 views.setOnClickPendingIntent(R.id.appwidget_now_time,
                     getPI(context, appInfo1)

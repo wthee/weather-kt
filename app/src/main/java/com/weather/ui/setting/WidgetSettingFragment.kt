@@ -14,22 +14,22 @@ import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.core.content.edit
-import androidx.fragment.app.DialogFragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.isDiyTips
-import com.weather.MainActivity.Companion.sharedPreferences
+import com.weather.MainActivity.Companion.sp
 import com.weather.MainActivity.Companion.widgetTextColor
 import com.weather.MainActivity.Companion.widgetTips
 import com.weather.MyApplication
 import com.weather.R
 import com.weather.ui.main.WeatherFragment
 import com.weather.util.ColorSeekBar
-import com.weather.util.DrawerUtil
+import com.weather.util.Constant
 
 
-class WidgetSettingFragment : DialogFragment() {
+class WidgetSettingFragment : BottomSheetDialogFragment() {
 
     companion object {
         @Volatile
@@ -59,7 +59,7 @@ class WidgetSettingFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.setting_widget, container, false)
+        val view = inflater.inflate(R.layout.fragment_setting_widget, container, false)
 
         colorPicker = view.findViewById(R.id.colorPicker)
         colorGradient = view.findViewById(R.id.colorGradient)
@@ -71,22 +71,16 @@ class WidgetSettingFragment : DialogFragment() {
         editTip = view.findViewById(R.id.editTip)
         widgetText = view.findViewById(R.id.widgetText)
 
-        firstCursor = sharedPreferences.getInt("firstCursor",0)
-        secondCursor = sharedPreferences.getInt("secondCursor",50)
+        firstCursor = sp.getInt("firstCursor",0)
+        secondCursor = sp.getInt("secondCursor",50)
 
         initView()
         bindListener()
-        //滑动关闭
-        DrawerUtil.bindAllViewOnTouchListener(view, this, arrayListOf(colorPicker,colorGradient))
 
         return view
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        DrawerUtil.setBottomDrawer(dialog, activity, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
@@ -148,8 +142,8 @@ class WidgetSettingFragment : DialogFragment() {
                 editTip.visibility = View.GONE
                 false
             }
-            sharedPreferences.edit {
-                putBoolean("widgetTips", widgetTips)
+            sp.edit {
+                putBoolean(Constant.WIDGET_TIP_SHOW, widgetTips)
             }
             val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
             MyApplication.context.sendBroadcast(intent)
@@ -158,7 +152,7 @@ class WidgetSettingFragment : DialogFragment() {
         //默认/自定义提示内容
         groupDiyTips.setOnCheckedChangeListener { _, checkedId ->
             isDiyTips = checkedId == R.id.diytips_o
-            sharedPreferences.edit {
+            sp.edit {
                 putBoolean("isDiyTips", isDiyTips)
             }
 
@@ -181,7 +175,7 @@ class WidgetSettingFragment : DialogFragment() {
             override fun afterTextChanged(s: Editable?) {
                 if (s!!.isNotEmpty()) {
                     MainActivity.diyTips = s.toString()
-                    sharedPreferences.edit {
+                    sp.edit {
                         putString("diyTips", MainActivity.diyTips)
                     }
                     val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
@@ -225,8 +219,8 @@ class WidgetSettingFragment : DialogFragment() {
     private fun changeWidgetTextColor(){
         val textColor = colorGradient.getThumbColor()
         widgetText.setTextColor(textColor)
-        sharedPreferences.edit {
-            putInt("widgetColor", textColor)
+        sp.edit {
+            putInt(Constant.WIDGET_TEXT_COLOR, textColor)
             putInt("firstCursor",colorPicker.progress)
             putInt("secondCursor",colorGradient.progress)
         }

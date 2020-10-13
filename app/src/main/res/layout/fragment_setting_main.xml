@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_city"
+            android:textColor="@color/main_text"
+            android:textSize="@dimen/setting_title_size" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/groupCity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/modifyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/modify"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background"
+                android:hint="@string/input_hint"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColor="@color/main_text"
+                android:textSize="@dimen/item_text_size" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/padding_small">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/night_model"
+            android:textColor="@color/main_text"
+            android:textSize="@dimen/setting_title_size" />
+
+        <RadioGroup
+            android:id="@+id/groupDN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/nightModelClose"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/nightModelClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:button="@null"
+                android:text="@string/close"
+                android:textColor="@drawable/radio_text_click" />
+
+            <RadioButton
+                android:id="@+id/nightModelOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:button="@null"
+                android:text="@string/open"
+                android:textColor="@drawable/radio_text_click" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/padding_small">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/widgetsetting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/widgetset"
+            android:textColor="@drawable/other_text_click"
+            android:textSize="@dimen/setting_title_size" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/padding_small">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_style"
+            android:textColor="@color/main_text"
+            android:textSize="@dimen/setting_title_size" />
+
+        <RadioGroup
+            android:id="@+id/groupStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/styleDefault"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/styleDefault"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:button="@null"
+                android:text="@string/default_style"
+                android:textColor="@drawable/radio_text_click" />
+
+            <RadioButton
+                android:id="@+id/styleClassical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:button="@null"
+                android:text="@string/classical_style"
+                android:textColor="@drawable/radio_text_click" />
+
+        </RadioGroup>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/padding_small">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="显示农历"
+            android:textColor="@color/main_text"
+            android:textSize="@dimen/setting_title_size" />
+
+        <RadioGroup
+            android:id="@+id/groupNL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/lunarClose"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/lunarClose"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:text="@string/hide"
+                android:textColor="@drawable/radio_text_click" />
+
+            <RadioButton
+                android:id="@+id/lunarOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:text="@string/show"
+                android:textColor="@drawable/radio_text_click" />
+
+        </RadioGroup>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:padding="@dimen/padding_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/show_nl" />
+    </LinearLayout>
+
+</LinearLayout>

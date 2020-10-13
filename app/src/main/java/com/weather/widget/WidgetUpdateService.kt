@@ -45,7 +45,7 @@ class WidgetUpdateService : Service() {
         val timer = Timer()
         timer.schedule(object : TimerTask() {
             override fun run() {
-                val city = sharedPreferences.getString("city" ,"ip")
+                val city = sharedPreferences.getString("city" ,"杭州")
                 GlobalScope.launch {
                     //TODO 获取天气
 //                    WeatherViewModel.weatherTemp = WeatherNetWork.getInstance().fetchWeather(mutableMapOf(

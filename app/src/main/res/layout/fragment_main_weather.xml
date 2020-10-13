@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -29,22 +29,30 @@
                 android:textSize="@dimen/title_text_size"
                 tools:text="杭州" />
 
-            <TextView
-                android:id="@+id/now_wea"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:textColor="@color/secondary_text"
-                tools:text="小雨" />
-
-            <TextView
-                android:id="@+id/now_tem"
+            <LinearLayout
+                android:id="@+id/now"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:textColor="@color/secondary_text"
-                tools:text="15℃" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/now_wea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_small"
+                    android:layout_gravity="center"
+                    android:textColor="@color/secondary_text"
+                    tools:text="小雨" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/now_tem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_small"
+                    android:layout_gravity="center"
+                    android:textColor="@color/secondary_text"
+                    tools:text="15℃" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -52,25 +60,26 @@
             android:id="@+id/textInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_margin="0dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:focusable="true"
             android:focusableInTouchMode="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
                 android:background="@color/background"
                 android:inputType="text"
                 android:singleLine="true"
                 android:textColor="@color/main_text"
                 android:textColorHint="@color/placeholder_text"
-                android:textSize="@dimen/item_text_size"
-                tools:hint="更新时间" />
+                android:textSize="@dimen/item_text_size" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/noWea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,6 +87,7 @@
             android:gravity="center"
             android:text="@string/tips_norain"
             android:textColor="@color/theme"
+            android:visibility="gone"
             tools:visibility="gone" />
 
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -111,7 +121,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

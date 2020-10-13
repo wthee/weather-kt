@@ -29,7 +29,7 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/day"
                         tools:text="04"
                         android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
                         android:textColor="@color/theme"
                         android:textSize="32sp" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/month"
                         tools:text="11"
                         android:layout_width="wrap_content"
@@ -56,7 +56,7 @@
                     android:orientation="vertical"
                     android:padding="@dimen/margin_small">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/date_nl"
                         tools:text="初一"
                         android:layout_width="match_parent"
@@ -65,7 +65,7 @@
                         android:textColor="@color/main_text"
                         android:textSize="@dimen/item_smalltext_size" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/week"
                         tools:text="星期一"
                         android:layout_width="wrap_content"
@@ -90,7 +90,7 @@
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/padding_small">
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tems"
                     tools:text="10-15C"
                     android:layout_width="wrap_content"
@@ -100,7 +100,7 @@
                     android:textColor="@color/main_text"
                     android:textSize="@dimen/item_text_size" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/wea"
                     tools:text="小雨"
                     android:layout_width="wrap_content"
@@ -109,7 +109,7 @@
                     android:textColor="@color/main_text"
                     android:textSize="@dimen/item_text_size" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tip"
                     tools:text="顶顶顶顶顶顶"
                     android:layout_width="wrap_content"

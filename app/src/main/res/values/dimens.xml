@@ -6,7 +6,7 @@
     <dimen name="title_text_size">24sp</dimen>
     <dimen name="widget_text_size">24sp</dimen>
     <dimen name="margin_small">10dp</dimen>
-    <dimen name="padding_small">18dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
     <dimen name="lineHeight">1dp</dimen>
 
     <!--
