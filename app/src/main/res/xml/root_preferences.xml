@@ -7,12 +7,10 @@
         <Preference
             app:iconSpaceReserved="false"
             app:title="@string/change_style"
-            app:summary="@string/app_name"
             app:key="change_style"/>
 
         <SwitchPreferenceCompat
             app:iconSpaceReserved="false"
-            app:summary="@string/app_name"
             app:key="show_nl"
             app:title="@string/show_nl" />
 

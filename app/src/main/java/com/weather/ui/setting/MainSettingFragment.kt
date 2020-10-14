@@ -2,7 +2,6 @@ package com.weather.ui.setting
 
 import android.appwidget.AppWidgetManager
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,9 +12,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.weather.MainActivity
 import com.weather.MyApplication
 import com.weather.R
-import com.weather.data.model.AppInfo
 import com.weather.databinding.FragmentSettingMainBinding
 import com.weather.databinding.LayoutChipBinding
+import com.weather.databinding.LayoutChipEditableBinding
 import com.weather.util.ColorSeekBar
 import com.weather.util.Constant
 
@@ -52,12 +51,19 @@ class MainSettingFragment : BottomSheetDialogFragment() {
             MainActivity.citys.forEachIndexed { index, city ->
                 val chip = LayoutChipBinding.inflate(layoutInflater).root
                 chip.text = city
-                chip.isCheckable = true
-                chip.isClickable = true
-                binding.groupCity.addView(chip)
+                groupCity.addView(chip)
                 if (index == MainActivity.cityIndex) {
                     chip.isChecked = true
                 }
+                //可编辑城市
+                val chipEdit = LayoutChipEditableBinding.inflate(layoutInflater).root
+                chipEdit.text = city
+                groupCityEdit.addView(chipEdit)
+            }
+            //管理城市
+            editCity.setOnClickListener {
+                groupCityEdit.visibility = View.VISIBLE
+                groupCity.visibility = View.GONE
             }
             //颜色监听
             colorPicker.progress = firstCursor

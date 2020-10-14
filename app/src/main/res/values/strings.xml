@@ -22,7 +22,7 @@
     <string name="hide">隐藏</string>
     <string name="tips_norain">未来7天，无雨</string>
     <string name="noword">隐约雷鸣 阴霾天空 但盼风雨来 能留你在此</string>
-    <string name="change_city">切换城市</string>
+    <string name="change_city">城市管理</string>
     <string name="input_hint">输入城市名</string>
     <string name="night_model">夜间模式</string>
     <string name="close">关闭</string>
