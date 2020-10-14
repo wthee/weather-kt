@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_toLeftOf="@id/center"
-        android:gravity="right"
+        android:layout_toStartOf="@id/center"
+        android:gravity="start"
         android:orientation="vertical">
 
         <TextClock
@@ -39,28 +39,23 @@
 
     </LinearLayout>
 
-
-    <com.google.android.material.textview.MaterialTextView
+    <TextView
         android:id="@+id/center"
-        android:layout_width="10dp"
-        android:layout_height="wrap_content"
+        android:layout_width="1dp"
+        android:layout_height="32dp"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:ems="1"
-        android:gravity="center"
-        android:lineSpacingMultiplier="0.7"
-        android:visibility="gone"
-        android:text="┃┃┃" />
-
+        android:layout_margin="@dimen/margin_small"
+        android:background="@color/main_text"
+        android:gravity="center" />
 
     <RelativeLayout
         android:id="@+id/rightView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/center"
         android:clickable="true"
-        android:layout_toRightOf="@id/center"
+        android:focusable="true"
         android:orientation="vertical">
 
         <LinearLayout
@@ -69,7 +64,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:id="@+id/appwidget_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,10 +76,10 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/lineHeight"
+                android:layout_marginStart="@dimen/lineHeight"
                 android:orientation="vertical">
 
-                <com.google.android.material.textview.MaterialTextView
+                <TextView
                     android:id="@+id/appwidget_wea"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,7 +88,7 @@
                     tools:text="小雨"
                     tools:textColor="@color/widget_main_text" />
 
-                <com.google.android.material.textview.MaterialTextView
+                <TextView
                     android:id="@+id/appwidget_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -107,7 +102,7 @@
 
         </LinearLayout>
 
-        <com.google.android.material.textview.MaterialTextView
+        <TextView
             android:id="@+id/appwidget_tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

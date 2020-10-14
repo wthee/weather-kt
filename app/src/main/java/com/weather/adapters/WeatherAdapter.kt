@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.weather.MainActivity
 import com.weather.MyApplication
 import com.weather.R
 import com.weather.databinding.ItemWeather1Binding
 import com.weather.databinding.ItemWeatherBinding
-import com.weather.ui.main.WeatherFragment
 import com.weather.util.LunarUtil
 import com.weather.util.WeatherUtil.dateToWeek
 import com.weather.util.WeatherUtil.formatTip
@@ -20,7 +20,9 @@ import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
 import java.text.SimpleDateFormat
 import java.util.*
 
-class WeatherAdapter :
+class WeatherAdapter(
+    private val style: Int
+) :
     ListAdapter<WeatherDailyBean.DailyBean, WeatherAdapter.ViewHolder>(WeatherDiffCallback()) {
 
     override fun onCreateViewHolder(
@@ -29,7 +31,7 @@ class WeatherAdapter :
     ): ViewHolder {
 
         return ViewHolder(
-            if (WeatherFragment.styleType == 0)
+            if (style == 0)
                 ItemWeatherBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             else
                 ItemWeather1Binding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -50,7 +52,7 @@ class WeatherAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = getItem(position)
         holder.apply {
-            bind(data, createOnClickListener(data))
+            bind(data, createOnClickListener(data), style)
             itemView.tag = data
         }
     }
@@ -59,7 +61,11 @@ class WeatherAdapter :
     class ViewHolder(
         private val binding: ViewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: WeatherDailyBean.DailyBean, listener: View.OnClickListener) {
+        fun bind(
+            item: WeatherDailyBean.DailyBean,
+            listener: View.OnClickListener,
+            style: Int
+        ) {
             binding.root.animation =
                 AnimationUtils.loadAnimation(MyApplication.context, R.anim.item_load)
             //农历
@@ -67,7 +73,9 @@ class WeatherAdapter :
             today.time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
                 .parse(item.fxDate + " 00:00:00") ?: Date()
             val dateNlText = LunarUtil(today).toString()
-            when (WeatherFragment.styleType) {
+            //是否显示农历
+            val showNL = MainActivity.spSetting.getBoolean("show_nl", true)
+            when (style) {
                 0 -> {
                     binding as ItemWeatherBinding
                     binding.apply {
@@ -78,17 +86,12 @@ class WeatherAdapter :
                         wea.text = item.textDay
                         tip.text = formatTip(item)
                         root.setOnClickListener(listener)
-                        dateNl.visibility = if (WeatherFragment.lunarGone) {
-                            View.GONE
-                        } else {
-                            View.VISIBLE
-                        }
+                        dateNl.visibility = if (showNL) View.VISIBLE else View.GONE
                     }
                 }
                 1 -> {
                     binding as ItemWeather1Binding
                     binding.apply {
-                        //TODO
                         month.text = item.fxDate.substring(5, 7)
                         day.text = item.fxDate.substring(8, 10)
                         dateNl.text = dateNlText
@@ -97,16 +100,11 @@ class WeatherAdapter :
                         wea.text = item.textDay
                         tip.text = formatTip(item)
                         root.setOnClickListener(listener)
-                        dateNl.visibility = if (WeatherFragment.lunarGone) {
-                            View.GONE
-                        } else {
-                            View.VISIBLE
-                        }
+                        dateNl.visibility = if (showNL) View.VISIBLE else View.GONE
                     }
                 }
             }
         }
-
 
     }
 }

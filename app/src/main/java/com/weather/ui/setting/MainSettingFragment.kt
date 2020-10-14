@@ -1,27 +1,23 @@
 package com.weather.ui.setting
 
+import android.appwidget.AppWidgetManager
+import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
 import androidx.core.content.edit
-import androidx.core.view.forEachIndexed
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.chip.Chip
 import com.weather.MainActivity
-import com.weather.MainActivity.Companion.onNight
-import com.weather.MainActivity.Companion.sp
+import com.weather.MyApplication
 import com.weather.R
+import com.weather.data.model.AppInfo
 import com.weather.databinding.FragmentSettingMainBinding
 import com.weather.databinding.LayoutChipBinding
-import com.weather.ui.main.WeatherFragment
-import com.weather.ui.main.WeatherFragment.Companion.imm
-import com.weather.ui.main.WeatherFragment.Companion.toUpdate
-import com.weather.ui.main.WeatherFragment.Companion.viewModel
-import com.weather.util.NightModelUtil
+import com.weather.util.ColorSeekBar
+import com.weather.util.Constant
 
 class MainSettingFragment : BottomSheetDialogFragment() {
 
@@ -31,8 +27,9 @@ class MainSettingFragment : BottomSheetDialogFragment() {
         }
     }
 
-
-    private lateinit var binding : FragmentSettingMainBinding
+    private lateinit var binding: FragmentSettingMainBinding
+    private var firstCursor = 0
+    private var secondCursor = 50
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,9 +37,18 @@ class MainSettingFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSettingMainBinding.inflate(inflater, container, false)
-        bindingListener()
+
+        //显示设置页面
+        childFragmentManager.beginTransaction()
+            .replace(R.id.setting_test, SettingsFragment())
+            .commit()
+
+        //seekbar 初始游标位置
+        firstCursor = MainActivity.sp.getInt("firstCursor", 0)
+        secondCursor = MainActivity.sp.getInt("secondCursor", 50)
+
         binding.apply {
-            //城市
+            //加载城市
             MainActivity.citys.forEachIndexed { index, city ->
                 val chip = LayoutChipBinding.inflate(layoutInflater).root
                 chip.text = city
@@ -53,39 +59,35 @@ class MainSettingFragment : BottomSheetDialogFragment() {
                     chip.isChecked = true
                 }
             }
-            //恢复选择
-            if (WeatherFragment.styleType == 0) groupStyle.check(R.id.styleDefault) else groupStyle.check(
-                R.id.styleClassical
-            )
-            if (WeatherFragment.lunarGone) groupNL.check(R.id.lunarClose) else groupNL.check(
-                R.id.lunarOpen
-            )
-            //取消输入框焦点
-            mainView.setOnClickListener {
-                modify.clearFocus()
-                modifyLayout.visibility = View.GONE
-                groupCity.visibility = View.VISIBLE
-                imm.hideSoftInputFromWindow(modify.windowToken, 0)
-            }
-            //点击切换布局
-            groupStyle.setOnCheckedChangeListener { _, checkedId ->
-                when(checkedId){
-                    R.id.styleDefault -> WeatherFragment.styleType =  0
-                    R.id.styleClassical -> WeatherFragment.styleType = 1
+            //颜色监听
+            colorPicker.progress = firstCursor
+            colorGradient.progress = secondCursor
+            colorPicker.setOnDrawListener(object : ColorSeekBar.OnDrawListener {
+                override fun onDrawStart(seekBar: ColorSeekBar) {
+                    colorPicker.setBackgroundGradientColors(ColorSeekBar.DEFAULT_COLORS)
                 }
-                sp.edit {
-                    putInt("type", WeatherFragment.styleType)
+
+                override fun onDrawFinish(seekBar: ColorSeekBar) {
+                    //绘制结束，设置渐变中间色
+                    colorGradient.setBackgroundGradientColors(
+                        arrayListOf(
+                            Color.BLACK,
+                            colorPicker.getThumbColor(),
+                            Color.WHITE
+                        )
+                    )
+                    colorGradient.postInvalidate()
                 }
-                viewModel.changeType()
-            }
-            //点击切换农历显示
-            groupNL.setOnCheckedChangeListener { _, checkedId ->
-                WeatherFragment.lunarGone = checkedId == R.id.lunarClose
-                sp.edit {
-                    putBoolean("nl", WeatherFragment.lunarGone)
+            })
+            colorGradient.setOnDrawListener(object : ColorSeekBar.OnDrawListener {
+                override fun onDrawStart(seekBar: ColorSeekBar) {
                 }
-                WeatherFragment.adapter.notifyDataSetChanged()
-            }
+
+                override fun onDrawFinish(seekBar: ColorSeekBar) {
+                    //改变字体颜色
+                    changeWidgetTextColor()
+                }
+            })
         }
 
         return binding.root
@@ -101,59 +103,23 @@ class MainSettingFragment : BottomSheetDialogFragment() {
 //                viewModel.changeCity(v.text.toString())
             }
 
-            //长按显示修改城市输入框
-            groupCity.forEachIndexed  { _, view ->
-                val cityView = view as Chip
-                cityView.setOnLongClickListener {
-                    cityView.isChecked = true
-                    modifyLayout.visibility = View.VISIBLE
-                    modify.text = null
-                    modify.requestFocus()
-                    imm.showSoftInput(modify, 0)
-                    groupCity.visibility =
-                        if (groupCity.visibility == View.GONE) View.VISIBLE else View.GONE
-                    return@setOnLongClickListener false
-                }
-            }
-
-            // 夜间模式
-            groupDN.setOnCheckedChangeListener { _, checkedId ->
-                onNight = checkedId == R.id.nightModelOpen
-                sp.edit {
-                    putBoolean("onNight", onNight)
-                }
-                NightModelUtil.initNightModel(onNight)
-            }
-
-            //小部件设置
-            widgetsetting.setOnClickListener {
-                WidgetSettingFragment.getInstance()
-                    .show(parentFragmentManager, "widget")
-                dialog?.dismiss()
-            }
-
-            //修改城市名
-            modify.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    if (viewModel.checkCity(s.toString()) != "0") {
-                        modifyLayout.visibility = View.GONE
-                        groupCity.visibility = View.VISIBLE
-                        modify.text = null
-                        toUpdate = true
-                        viewModel.changeCity(s.toString())
-                    }
-                }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                    return
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    return
-                }
-
-            })
         }
     }
+
+    //改变颜色
+    private fun changeWidgetTextColor() {
+        val textColor = binding.colorGradient.getThumbColor()
+        binding.widgetText.setTextColor(textColor)
+        MainActivity.sp.edit {
+            putInt(Constant.WIDGET_TEXT_COLOR, textColor)
+            putInt("firstCursor", binding.colorPicker.progress)
+            putInt("secondCursor", binding.colorGradient.progress)
+        }
+        MainActivity.widgetTextColor = textColor
+        //通知桌面小部件更新
+        val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+        MyApplication.context.sendBroadcast(intent)
+    }
+
 
 }

@@ -90,15 +90,12 @@
             android:visibility="gone"
             tools:visibility="gone" />
 
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/margin_small">
-
-            <com.weather.util.RainHeader
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
@@ -106,8 +103,8 @@
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_weather" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     </LinearLayout>
 
     <ProgressBar

@@ -1,10 +1,17 @@
 package com.weather.util
 
+import com.weather.MainActivity
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
 import java.text.SimpleDateFormat
 import java.util.*
 
 object WeatherUtil {
+
+    fun getCity() =  MainActivity.citys[MainActivity.cityIndex]
+    fun setCity(city: String) {
+        MainActivity.citys[MainActivity.cityIndex] = city
+    }
+
     //TODO 优化 https://dev.heweather.com/docs/start/icons
     fun formatTip(dailyBean: WeatherDailyBean.DailyBean) =
         when (dailyBean.textDay.length) {

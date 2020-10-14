@@ -8,12 +8,8 @@
     <dimen name="margin_small">10dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="lineHeight">1dp</dimen>
-
-    <!--
-Refer to App Widget Documentation for margin information
-http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
-    -->
+    <dimen name="icon">24dp</dimen>
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="cardRadius">8dp</dimen>
-    <dimen name="seekbar_height">15dp</dimen>
+    <dimen name="seekbar_height">25dp</dimen>
 </resources>

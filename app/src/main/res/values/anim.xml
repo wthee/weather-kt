@@ -3,7 +3,7 @@
 <!-- Values used for animations -->
 <resources>
     <!-- Duration (in milliseconds) for slide transition animation -->
-    <integer name="slide">500</integer>
+    <integer name="slide">700</integer>
     <integer name="refresh">800</integer>
     <integer name="refresh_repeat">400</integer>
 </resources>

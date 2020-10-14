@@ -5,10 +5,10 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.weather.MainActivity
 import com.weather.MyApplication
 import com.weather.data.WeatherRepository
 import com.weather.data.model.weather.Data
-import com.weather.data.model.weather.NowWeather
 import com.weather.data.network.WeatherNetWork
 import com.weather.ui.main.WeatherFragment.Companion.toUpdate
 import com.weather.util.GetAllCity
@@ -31,6 +31,8 @@ class WeatherViewModel(
     var weather = MutableLiveData<WeatherDailyBean>()
     var nowWeather = MutableLiveData<WeatherNowBean>()
     var isRefresh = MutableLiveData<Boolean>()
+    var changeStyle = MutableLiveData<Int>()
+    var changeNl = MutableLiveData<Boolean>()
 
     private val unit = Unit.METRIC
 
@@ -41,6 +43,7 @@ class WeatherViewModel(
         var lastUpdateTime: Long = 0
         var lastApiUpdateTime: String = "2000-01-01 00:00:00"
         var nowTime: Long = 0
+
     }
 
 
@@ -62,7 +65,8 @@ class WeatherViewModel(
                         unit,
                         object : HeWeather.OnResultWeatherDailyListener {
                             override fun onError(p0: Throwable?) {
-
+                                toUpdate = false
+                                isRefresh.postValue(false)
                             }
 
                             override fun onSuccess(p0: WeatherDailyBean?) {
@@ -77,13 +81,14 @@ class WeatherViewModel(
                                     val code = Code.toEnum(status)
                                     Log.i("log", "failed code: $code")
                                 }
+                                toUpdate = false
+                                isRefresh.postValue(false)
                             }
                         }
                     )
                 }
             }
-            toUpdate = false
-            isRefresh.postValue(false)
+
         }
     }
 
@@ -94,7 +99,7 @@ class WeatherViewModel(
                 checkCity(city),
                 Lang.ZH_HANS,
                 unit,
-                object : HeWeather.OnResultWeatherNowListener{
+                object : HeWeather.OnResultWeatherNowListener {
                     override fun onError(p0: Throwable?) {
 
                     }
@@ -121,8 +126,8 @@ class WeatherViewModel(
         getNowWeather(city)
     }
 
-    fun changeType() {
-        weather.postValue(weatherTemp)
+    suspend fun getWidgetWeather(city: String){
+        getWeather(city)
     }
 
     fun checkCity(city: String): String {

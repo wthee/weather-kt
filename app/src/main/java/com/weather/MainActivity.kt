@@ -1,37 +1,38 @@
 package com.weather
 
 import android.Manifest
+import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.weather.data.model.AppInfo
 import com.weather.databinding.MainActivityBinding
+import com.weather.ui.main.WeatherFragment
 import com.weather.util.ActivityUtil
 import com.weather.util.Constant
-import com.weather.util.NightModelUtil
 import com.weather.util.StatusBarUtil
 import com.weather.widget.WidgetUpdateService
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        var onNight = true
         var widgetTextColor: Int = -16777216
-        var widgetTips = true
-        var isDiyTips = false
-        var diyTips = ""
-        var isFirstOpen = true
-        var isFirstOpenSetting = true
         lateinit var sp: SharedPreferences
+        lateinit var spSetting: SharedPreferences
         var citys = Constant.defaultCitys
         var cityIndex = 0
     }
@@ -59,13 +60,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         ActivityUtil.instance.currentActivity = this
-        NightModelUtil.initNightModel(onNight)
         startService()
         getAuthority()
+        MainScope().launch {
+            getAppList()
+            //通知桌面小部件更新
+            val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            MyApplication.context.sendBroadcast(intent)
+        }
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.mainLayout, WeatherFragment())
+            .commit()
     }
 
     private fun initSharedPreferences() {
         sp = getSharedPreferences("setting", MODE_PRIVATE)
+        spSetting = PreferenceManager.getDefaultSharedPreferences(this)
         //城市集合
         citys = Gson().fromJson(
             sp.getString(Constant.CITYS, Constant.CITYS_DEFAULT),
@@ -73,12 +84,6 @@ class MainActivity : AppCompatActivity() {
         )
         cityIndex = sp.getInt(Constant.CITY_INDEX, 0)
         widgetTextColor = sp.getInt(Constant.WIDGET_TEXT_COLOR, widgetTextColor)
-        widgetTips = sp.getBoolean(Constant.WIDGET_TIP_SHOW, widgetTips)
-        isDiyTips = sp.getBoolean("isDiyTips", isDiyTips)
-        diyTips = sp.getString("diyTips", diyTips)!!
-        onNight = sp.getBoolean("onNight", false)
-        isFirstOpen = sp.getBoolean("isFirstOpen", true)
-        isFirstOpenSetting = sp.getBoolean("isFirstOpenSetting", true)
     }
 
     //状态栏颜色适配
@@ -121,6 +126,33 @@ class MainActivity : AppCompatActivity() {
             startForegroundService(service)
         } else {
             startService(service)
+        }
+    }
+
+    //获取应用列表
+    private fun getAppList() {
+        val pm = this.packageManager
+        // Return a List of all packages that are installed on the device.
+        val packages = pm.getInstalledPackages(0)
+
+        for (packageInfo in packages) {
+            val appName = packageInfo.applicationInfo.loadLabel(pm).toString()
+            val packageName = packageInfo.packageName
+            if (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 1) {
+                //时钟
+                if(appName.contains("时") && packageName.toLowerCase().contains("clock")){
+                    MainActivity.sp.edit {
+                        putString("appInfo1", packageName)
+                    }
+                }
+                //日历
+                if(appName.contains("日")  && packageName.toLowerCase().contains("calendar")){
+                    MainActivity.sp.edit {
+                        putString("appInfo2", packageName)
+                    }
+                }
+            }
+
         }
     }
 }

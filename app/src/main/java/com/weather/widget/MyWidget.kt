@@ -7,11 +7,13 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.view.View
 import android.widget.RemoteViews
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.widgetTextColor
 import com.weather.R
 import com.weather.ui.main.WeatherViewModel
+import com.weather.util.WeatherUtil
 
 class MyWidget : AppWidgetProvider() {
 
@@ -55,12 +57,12 @@ class MyWidget : AppWidgetProvider() {
         ) {
             try {
 
-                val wea = WeatherViewModel.weatherTemp
+                val wea = WeatherViewModel.weatherTemp.daily
                 val views = RemoteViews(context.packageName, R.layout.widget_1)
 
                 val appInfo1 = MainActivity.sp.getString("appInfo1", "com.weather")!!
                 val appInfo2 = MainActivity.sp.getString("appInfo2", "com.weather")!!
-                val appInfo3 = MainActivity.sp.getString("appInfo3", "com.weather")!!
+                val appInfo3 = "com.weather"
 
                 views.setOnClickPendingIntent(R.id.appwidget_now_time,
                     getPI(context, appInfo1)
@@ -72,31 +74,18 @@ class MyWidget : AppWidgetProvider() {
                     getPI(context, appInfo3)
                 )
 
-//TODO
-//                if(wea.data.size>0){
-//                    views.setTextViewText(R.id.appwidget_city, wea.city)
-//                    views.setTextViewText(R.id.appwidget_date, wea.data[0].m + "/" + wea.data[0].d)
-//                    views.setViewVisibility(R.id.center,View.VISIBLE)
-//                    views.setTextViewText(R.id.center, "┃┃┃")
-//                    views.setTextViewText(R.id.appwidget_wea, wea.data[0].wea)
-//                    views.setTextViewText(R.id.appwidget_tip, wea.data[0].tip)
-//                }
-//
-//                if(isDiyTips){
-//                    views.setTextViewText(R.id.appwidget_tip, diyTips)
-//                }
-//
-//                if(widgetTips&&wea.data.size>0) {
-//                    views.setViewVisibility(R.id.appwidget_tip, View.VISIBLE)
-//                } else{
-//                    views.setViewVisibility(R.id.appwidget_tip, View.GONE)
-//                }
-//
-//                views.setViewVisibility(R.id.appwidget_city,if(wea.data.size>0) View.VISIBLE else View.GONE)
-//                views.setViewVisibility(R.id.appwidget_date, if(wea.data.size>0) View.VISIBLE else View.GONE)
-//                views.setViewVisibility(R.id.center, if(wea.data.size>0) View.VISIBLE else View.GONE)
-//                views.setViewVisibility(R.id.appwidget_wea, if(wea.data.size>0) View.VISIBLE else View.GONE)
+                if(wea.size>0){
+                    views.setTextViewText(R.id.appwidget_city, WeatherUtil.getCity())
+                    views.setTextViewText(R.id.appwidget_date, wea[0].fxDate.substring(5, 7) + "/" + wea[0].fxDate.substring(8, 10))
+                    views.setViewVisibility(R.id.center, View.VISIBLE)
+                    views.setTextViewText(R.id.appwidget_wea, wea[0].textDay)
+                    views.setTextViewText(R.id.appwidget_tip, WeatherUtil.formatTip(wea[0]))
+                }
 
+                views.setViewVisibility(R.id.appwidget_city,if(wea.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget_date, if(wea.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.center, if(wea.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.appwidget_wea, if(wea.size>0) View.VISIBLE else View.GONE)
 
                 views.setTextColor(R.id.appwidget_now_time, widgetTextColor)
                 views.setTextColor(R.id.appwidget_now_date, widgetTextColor)
@@ -106,7 +95,6 @@ class MyWidget : AppWidgetProvider() {
                 views.setTextColor(R.id.appwidget_wea, widgetTextColor)
                 views.setTextColor(R.id.appwidget_tip, widgetTextColor)
 
-                // Instruct the widget manager to update the widget
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }catch (e: Exception){
                 Log.e("exception","")
