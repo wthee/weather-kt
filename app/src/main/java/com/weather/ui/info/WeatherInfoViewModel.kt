@@ -28,17 +28,12 @@ import java.util.*
 
 class WeatherInfoViewModel() : ViewModel() {
 
-
     val hourlyInfos = MutableLiveData<WeatherHourlyBean>()
-    private val unit = Unit.METRIC
-
 
     //获取当前城市7天天气
     fun getHourlyWeather(city: String) {
-        HeWeather.getWeather168Hourly(MyApplication.context,
+        HeWeather.getWeather24Hourly(MyApplication.context,
             WeatherUtil.checkCity(city),
-            Lang.ZH_HANS,
-            unit,
             object : HeWeather.OnResultWeatherHourlyListener {
                 override fun onError(p0: Throwable?) {
                 }

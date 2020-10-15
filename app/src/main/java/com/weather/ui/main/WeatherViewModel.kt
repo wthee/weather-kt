@@ -34,7 +34,6 @@ class WeatherViewModel(
     var changeStyle = MutableLiveData<Int>()
     var changeNl = MutableLiveData<Boolean>()
 
-    private val unit = Unit.METRIC
 
     companion object {
         lateinit var weatherTemp: WeatherDailyBean
@@ -56,10 +55,8 @@ class WeatherViewModel(
                 //输入校验
                 if (WeatherUtil.checkCity(city) != "0") {
                     Log.i("city", "上次接口数据更新时间：${lastApiUpdateTime}, 正在获取${city}数据...")
-                    HeWeather.getWeather7D(MyApplication.context,
+                    HeWeather.getWeather15D(MyApplication.context,
                         WeatherUtil.checkCity(city),
-                        Lang.ZH_HANS,
-                        unit,
                         object : HeWeather.OnResultWeatherDailyListener {
                             override fun onError(p0: Throwable?) {
                                 toUpdate = false
@@ -101,8 +98,6 @@ class WeatherViewModel(
             HeWeather.getWeatherNow(
                 MyApplication.context,
                 WeatherUtil.checkCity(city),
-                Lang.ZH_HANS,
-                unit,
                 object : HeWeather.OnResultWeatherNowListener {
                     override fun onError(p0: Throwable?) {
 

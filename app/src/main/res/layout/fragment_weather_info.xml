@@ -24,23 +24,12 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/padding_small"
                 android:paddingTop="@dimen/padding_small"
-                android:text="@{data.day}"
                 android:textColor="@drawable/other_text_click"
                 android:textSize="@dimen/setting_title_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/weaDayAfter"
-                tools:text="（今天）"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{data.day_after}"
-                android:textColor="@drawable/other_text_click"
-                android:textSize="@dimen/item_text_size"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/weaDay" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -50,9 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_marginBottom="@dimen/padding_small"
-            android:clipChildren="false">
-
-        </com.github.mikephil.charting.charts.LineChart>
+            android:clipChildren="false"/>
 
         <View
             android:layout_width="match_parent"

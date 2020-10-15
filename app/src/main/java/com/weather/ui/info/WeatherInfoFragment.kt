@@ -9,10 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.components.XAxis
@@ -23,17 +21,19 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.weather.R
-import com.weather.data.model.weather.Data
 import com.weather.databinding.FragmentWeatherInfoBinding
 import com.weather.util.InjectorUtil
 import com.weather.util.ShareUtil
 import com.weather.util.WeatherUtil
+import com.weather.util.formatDate
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherHourlyBean
+import kotlinx.android.synthetic.main.fragment_weather_info.*
 import java.text.DecimalFormat
 
 
-class WeatherInfoFragment(date: String) : DialogFragment() {
+class WeatherInfoFragment() : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentWeatherInfoBinding
     private lateinit var lineChart: LineChart
@@ -45,13 +45,11 @@ class WeatherInfoFragment(date: String) : DialogFragment() {
     private var axisColor: Int = 0
     private var gridColor: Int = 0
     private var labColor: Int = 0
-    private var nowDate = date
 
     private val viewModel by activityViewModels<WeatherInfoViewModel> {
         InjectorUtil.getWeatherInfoViewModelFactory()
     }
 
-    @Suppress("DEPRECATION")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,9 +63,10 @@ class WeatherInfoFragment(date: String) : DialogFragment() {
         labColor = ResourcesCompat.getColor(resources, R.color.main_text, null)
         lineChart = binding.lineChart
 
-        //TODO 获取小时预警
+        //获取小时预警
         viewModel.getHourlyWeather(WeatherUtil.getCity())
         viewModel.hourlyInfos.observe(this, Observer {
+            weaDay.text = it.hourly[0].fxTime.formatDate().substring(0,11)
             //初始化温度折线图
             initLineChart(it)
         })
@@ -75,7 +74,7 @@ class WeatherInfoFragment(date: String) : DialogFragment() {
 
         //TODO 获取预警信息
 
-        //点击分享
+        //TODO 点击分享
         binding.weaDay.setOnClickListener {
             val sView = binding.root
             sView.isDrawingCacheEnabled = true
@@ -141,11 +140,11 @@ class WeatherInfoFragment(date: String) : DialogFragment() {
         legend.isEnabled = false
 
         //data
-        setData(dataSet)
+        setData(dataSet, hourlyBean)
 
     }
 
-    private fun setData(dataset: LineDataSet) {
+    private fun setData(dataset: LineDataSet, hourlyBean: WeatherHourlyBean) {
         dataset.apply {
             mode = LineDataSet.Mode.CUBIC_BEZIER
             lineWidth = 4f
@@ -158,12 +157,12 @@ class WeatherInfoFragment(date: String) : DialogFragment() {
             valueTextSize = 14f
             valueTextColor = labColor
             //TODO format
-//            val df = DecimalFormat("##0")
-//            valueFormatter = object : ValueFormatter() {
-//                override fun getPointLabel(entry: Entry?): String {
-//                    return df.format(entry!!.y) + "℃\n" + item.hours[entry.x.toInt()].wea
-//                }
-//            }
+            val df = DecimalFormat("##0")
+            valueFormatter = object : ValueFormatter() {
+                override fun getPointLabel(entry: Entry?): String {
+                    return df.format(entry!!.y) + "℃\n" + hourlyBean.hourly[entry.x.toInt()].text
+                }
+            }
         }
     }
 
@@ -172,11 +171,9 @@ class WeatherInfoFragment(date: String) : DialogFragment() {
         mPointValues = arrayListOf()
         mLables = arrayListOf()
 
-        val toShowData = data.hourly.filter {
-            it.fxTime.substring(0, 12) == nowDate
-        }
-        toShowData.forEachIndexed { index, hour ->
-            mLables.add(hour.fxTime.substring(11, 15))
+        //x轴时间
+        data.hourly.forEachIndexed { index, hour ->
+            mLables.add(hour.fxTime.formatDate().substring(11, 16))
             val y: Float = hour.temp.toFloat()
             mPointValues.add(Entry(index.toFloat(), y))
         }

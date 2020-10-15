@@ -43,11 +43,7 @@ class WeatherAdapter(
     private fun createOnClickListener(item: WeatherDailyBean.DailyBean): View.OnClickListener {
         return View.OnClickListener {
             //TODO
-            val wf = WeatherInfoFragment(item.fxDate)
-            wf.show(
-                ActivityUtil.instance.currentActivity!!.supportFragmentManager.beginTransaction(),
-                "123"
-            )
+
         }
     }
 

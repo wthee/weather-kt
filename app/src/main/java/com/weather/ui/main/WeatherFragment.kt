@@ -23,12 +23,14 @@ import com.weather.MyApplication
 import com.weather.adapters.WeatherAdapter
 import com.weather.databinding.FragmentMainWeatherBinding
 import com.weather.ui.info.WeatherInfoFragment
-import com.weather.ui.main.WeatherViewModel.Companion.today
 import com.weather.ui.main.WeatherViewModel.Companion.weatherTemp
 import com.weather.ui.setting.MainSettingFragment
-import com.weather.util.*
-import kotlinx.android.synthetic.main.fragment_main_weather.*
+import com.weather.util.InjectorUtil
+import com.weather.util.WeatherUtil
+import com.weather.util.formatDate
 import kotlinx.android.synthetic.main.item_weather.*
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.system.exitProcess
 
 class WeatherFragment : Fragment() {
@@ -93,7 +95,7 @@ class WeatherFragment : Fragment() {
         viewModel.weather.observe(viewLifecycleOwner, Observer { weather ->
             if (weather != null) {
                 binding.apply {
-                    noWea.visibility = if(weather.daily.size == 0)  View.VISIBLE else View.GONE
+                    noWea.visibility = if (weather.daily.size == 0) View.VISIBLE else View.GONE
                     setting.text = WeatherUtil.getCity()
                     input.hint = "更新于 " + weather.basic.updateTime.formatDate().substring(5, 16)
                     input.text = null
@@ -156,7 +158,7 @@ class WeatherFragment : Fragment() {
 
             //今日天气
             now.setOnClickListener {
-                WeatherInfoFragment(weatherTemp).show(
+                WeatherInfoFragment().show(
                     requireActivity()
                         .supportFragmentManager
                         .beginTransaction(), "setting"
@@ -174,7 +176,7 @@ class WeatherFragment : Fragment() {
             input.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                     val input = s.toString()
-                    if (input != "" && viewModel.checkCity(input) != "0") {
+                    if (input != "" && WeatherUtil.checkCity(input) != "0") {
                         WeatherUtil.setCity(input)
                         toUpdate = true
                         viewModel.changeCity(input)

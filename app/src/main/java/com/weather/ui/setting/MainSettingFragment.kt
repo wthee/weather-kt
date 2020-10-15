@@ -149,7 +149,7 @@ class MainSettingFragment : BottomSheetDialogFragment() {
             //添加城市名
             addCityEditText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    if (viewModel.checkCity(s.toString()) != "0") {
+                    if (WeatherUtil.checkCity(s.toString()) != "0") {
                         addCityInputLayout.visibility = View.GONE
                         groupCity.visibility = View.VISIBLE
                         addCityEditText.text = null
