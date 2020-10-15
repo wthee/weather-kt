@@ -52,7 +52,7 @@ class WidgetUpdateService : Service() {
                 GlobalScope.launch {
                     try {
                         WeatherFragment.companionViewModel.getWidgetWeather(WeatherUtil.getCity())
-                        delay(20 * 1000)
+                        delay(10 * 1000)
                         val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                         MyApplication.context.sendBroadcast(intent)
                     }catch (e: Exception){

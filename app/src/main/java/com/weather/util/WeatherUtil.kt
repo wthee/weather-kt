@@ -1,16 +1,68 @@
 package com.weather.util
 
+import android.widget.Toast
+import androidx.core.content.edit
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.weather.MainActivity
+import com.weather.MainActivity.Companion.answers
+import com.weather.MainActivity.Companion.questions
+import com.weather.MyApplication
+import interfaces.heweather.com.interfacesmodule.bean.base.Code
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
 import java.text.SimpleDateFormat
 import java.util.*
 
 object WeatherUtil {
 
-    fun getCity() =  MainActivity.citys[MainActivity.cityIndex]
-    fun setCity(city: String) {
-        MainActivity.citys[MainActivity.cityIndex] = city
+    //获取当前显示城市名
+    fun getCity() = getAllCity()[getCityIndex()]
+
+    //获取所有城市
+    fun getAllCity(): ArrayList<String> {
+        val citys: ArrayList<String> = Gson().fromJson(
+            MainActivity.sp.getString(Constant.CITYS, Constant.CITYS_DEFAULT),
+            object : TypeToken<ArrayList<String>>() {}.type
+        )
+        return if (citys.size == 0) Constant.defaultCitys else citys
     }
+
+    //修改当前城市名
+    fun setCity(city: String) {
+        getAllCity().apply {
+            this[getCityIndex()] = city
+            MainActivity.sp.edit {
+                putString(Constant.CITYS, this@apply.ListoJson())
+            }
+        }
+    }
+
+    //删除城市名
+    fun deleteCity(city: String) {
+        getAllCity().apply {
+            this.remove(city)
+            MainActivity.sp.edit {
+                putString(Constant.CITYS, this@apply.ListoJson())
+                putInt(Constant.CITY_INDEX, 0)
+            }
+        }
+    }
+
+    //添加城市名
+    fun addCity(city: String) {
+        getAllCity().apply {
+            this.add(city)
+            MainActivity.sp.edit {
+                putInt(Constant.CITY_INDEX, this@apply.size - 1)
+                putString(Constant.CITYS, this@apply.ListoJson())
+            }
+        }
+    }
+
+
+    //获取城市下标
+    fun getCityIndex() = MainActivity.sp.getInt(Constant.CITY_INDEX, 0)
+
 
     //TODO 优化 https://dev.heweather.com/docs/start/icons
     fun formatTip(dailyBean: WeatherDailyBean.DailyBean) =
@@ -53,6 +105,37 @@ object WeatherUtil {
         var w: Int = cal.get(Calendar.DAY_OF_WEEK) - 1
         if (w < 0) w = 0
         return weekDays[w]
+    }
+
+    //检查城市
+    fun checkCity(city: String): String {
+        questions.forEachIndexed { index, it ->
+            if (city.toLowerCase(Locale.ROOT) == it.toLowerCase(Locale.ROOT)) {
+                Toast.makeText(MyApplication.context, answers[index], Toast.LENGTH_LONG).show()
+            }
+        }
+        if (city.length > 1) {
+            GetAllCity.getInstance().citys.forEach {
+                if (city == it.cityZh) {
+                    return "CN" + it.id
+                }
+            }
+            if (city == "杭州") {
+                //TODO 经纬
+                return "CN101010100"
+            }
+        }
+        return "0"
+    }
+
+    //返回接口错误信息
+    fun toastError(status: String) {
+        val code = Code.toEnum(status)
+        Toast.makeText(
+            MyApplication.context,
+            code.txt,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }
 

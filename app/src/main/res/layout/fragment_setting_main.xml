@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,12 +27,13 @@
                 android:textColor="@color/main_text"
                 android:textSize="@dimen/setting_title_size" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/edit_city"
                 android:layout_width="@dimen/icon"
                 android:layout_height="@dimen/icon"
                 android:layout_marginStart="@dimen/margin_small"
-                android:background="@drawable/ic_edit" />
+                android:background="@drawable/ic_edit"
+                android:foreground="?selectableItemBackground" />
         </LinearLayout>
 
 
@@ -45,17 +48,33 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/groupCityEdit"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_small"
-            android:layout_marginEnd="@dimen/margin_small" />
+            android:layout_marginEnd="@dimen/margin_small"
+            android:visibility="gone" />
 
-        <View
-            android:layout_width="20dp"
-            android:layout_height="@dimen/lineHeight"
-            android:layout_gravity="center"
-            android:background="@color/theme" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_city_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/add_city_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="@string/input_hint"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColor="@color/theme"
+                android:textSize="@dimen/item_smalltext_size" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <FrameLayout
             android:id="@+id/setting_test"
@@ -87,14 +106,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:minHeight="@dimen/seekbar_height"></com.weather.util.ColorSeekBar>
+                    android:minHeight="@dimen/seekbar_height" />
 
                 <com.weather.util.ColorSeekBar
                     android:id="@+id/colorGradient"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:minHeight="@dimen/seekbar_height"></com.weather.util.ColorSeekBar>
+                    android:minHeight="@dimen/seekbar_height" />
 
             </LinearLayout>
 

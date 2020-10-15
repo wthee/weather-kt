@@ -13,6 +13,8 @@ import com.weather.MyApplication
 import com.weather.R
 import com.weather.databinding.ItemWeather1Binding
 import com.weather.databinding.ItemWeatherBinding
+import com.weather.ui.info.WeatherInfoFragment
+import com.weather.util.ActivityUtil
 import com.weather.util.LunarUtil
 import com.weather.util.WeatherUtil.dateToWeek
 import com.weather.util.WeatherUtil.formatTip
@@ -41,11 +43,11 @@ class WeatherAdapter(
     private fun createOnClickListener(item: WeatherDailyBean.DailyBean): View.OnClickListener {
         return View.OnClickListener {
             //TODO
-//            val wf = WeatherInfoFragment(item)
-//            wf.show(
-//                ActivityUtil.instance.currentActivity!!.supportFragmentManager.beginTransaction(),
-//                "123"
-//            )
+            val wf = WeatherInfoFragment(item.fxDate)
+            wf.show(
+                ActivityUtil.instance.currentActivity!!.supportFragmentManager.beginTransaction(),
+                "123"
+            )
         }
     }
 

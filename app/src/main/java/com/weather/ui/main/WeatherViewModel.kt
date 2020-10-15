@@ -2,6 +2,7 @@ package com.weather.ui.main
 
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,9 +12,7 @@ import com.weather.data.WeatherRepository
 import com.weather.data.model.weather.Data
 import com.weather.data.network.WeatherNetWork
 import com.weather.ui.main.WeatherFragment.Companion.toUpdate
-import com.weather.util.GetAllCity
-import com.weather.util.RainFilterUtil
-import com.weather.util.formatDate
+import com.weather.util.*
 import interfaces.heweather.com.interfacesmodule.bean.base.Code
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang
 import interfaces.heweather.com.interfacesmodule.bean.base.Unit
@@ -22,6 +21,7 @@ import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherNowBean
 import interfaces.heweather.com.interfacesmodule.view.HeWeather
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 class WeatherViewModel(
@@ -40,27 +40,24 @@ class WeatherViewModel(
         lateinit var weatherTemp: WeatherDailyBean
         lateinit var nowWeatherTemp: WeatherNowBean
         lateinit var today: Data
-        var lastUpdateTime: Long = 0
-        var lastApiUpdateTime: String = "2000-01-01 00:00:00"
         var nowTime: Long = 0
 
     }
 
-
+    //获取当前城市7天天气
     private fun getWeather(city: String) {
         viewModelScope.launch {
-            lastApiUpdateTime = (
-                    if (weather.value != null && Companion::weatherTemp.isLateinit)
-                        weatherTemp.basic.updateTime
-                    else
-                        lastApiUpdateTime
-                    ).formatDate()
-            //更新判断
+            val lastApiUpdateTime = (MainActivity.sp
+                .getString(Constant.LAST_API_UPDATE_TIME, "2000-01-01 00:00:00")
+                ?: "2000-01-01 00:00:00").formatDate()
+
+            //更新判断：强制更新or数据为空or距离上次更新时间大于多少？
             if (isUpdate(lastApiUpdateTime) || weather.value == null || toUpdate) {
                 //输入校验
-                if (checkCity(city) != "0") {
+                if (WeatherUtil.checkCity(city) != "0") {
+                    Log.i("city", "上次接口数据更新时间：${lastApiUpdateTime}, 正在获取${city}数据...")
                     HeWeather.getWeather7D(MyApplication.context,
-                        checkCity(city),
+                        WeatherUtil.checkCity(city),
                         Lang.ZH_HANS,
                         unit,
                         object : HeWeather.OnResultWeatherDailyListener {
@@ -71,15 +68,21 @@ class WeatherViewModel(
 
                             override fun onSuccess(p0: WeatherDailyBean?) {
                                 if (Code.OK.code.equals(p0?.code, ignoreCase = true)) {
-                                    lastUpdateTime = nowTime
+                                    //记录接口上次数据更新时间
+                                    MainActivity.sp.edit {
+                                        putString(
+                                            Constant.LAST_API_UPDATE_TIME,
+                                            p0?.basic!!.updateTime
+                                        )
+                                    }
+                                    Log.i("city", "接口数据更新时间：${lastApiUpdateTime}, 已获取${city}数据!")
                                     RainFilterUtil.getRainInfo(p0)
                                     weatherTemp = p0!!
                                     weather.postValue(p0)
                                 } else {
                                     //在此查看返回数据失败的原因
                                     val status: String = p0?.code!!
-                                    val code = Code.toEnum(status)
-                                    Log.i("log", "failed code: $code")
+                                    WeatherUtil.toastError(status)
                                 }
                                 toUpdate = false
                                 isRefresh.postValue(false)
@@ -92,11 +95,12 @@ class WeatherViewModel(
         }
     }
 
+    //获取当前城市实时天气
     private fun getNowWeather(city: String) {
         viewModelScope.launch {
             HeWeather.getWeatherNow(
                 MyApplication.context,
-                checkCity(city),
+                WeatherUtil.checkCity(city),
                 Lang.ZH_HANS,
                 unit,
                 object : HeWeather.OnResultWeatherNowListener {
@@ -111,8 +115,7 @@ class WeatherViewModel(
                         } else {
                             //在此查看返回数据失败的原因
                             val status: String = p0?.code!!
-                            val code = Code.toEnum(status)
-                            Log.i("log", "failed code: $code")
+                            WeatherUtil.toastError(status)
                         }
                     }
                 }
@@ -126,50 +129,16 @@ class WeatherViewModel(
         getNowWeather(city)
     }
 
-    suspend fun getWidgetWeather(city: String){
+    fun getWidgetWeather(city: String) {
         getWeather(city)
     }
 
-    fun checkCity(city: String): String {
-        questions.forEachIndexed { index, it ->
-            if (city.toLowerCase() == it.toLowerCase()) {
-                Toast.makeText(MyApplication.context, answers[index], Toast.LENGTH_LONG).show()
-            }
-        }
-        if (city.length > 1) {
-            GetAllCity.getInstance().citys.forEach {
-                if (city == it.cityZh) {
-                    return "CN" + it.id
-                }
-            }
-            if (city == "杭州") {
-                //TODO 经纬
-                return "CN101010100"
-            }
-        }
-        return "0"
-    }
-
-
-    private fun isUpdate(updateTime: String): Boolean {
-        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    //接口是否更新判断
+    private fun isUpdate(apiUpdateTime: String): Boolean {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val date = simpleDateFormat.parse(apiUpdateTime)
         nowTime = System.currentTimeMillis()
-
-        return (nowTime - (format.parse(updateTime).time - 8 * 60 * 60 * 1000) > 30 * 60 * 1000
-                && nowTime - lastUpdateTime > 1 * 60 * 1000)
+        return nowTime - date.time > 60 * 60 * 60 * 1000
     }
 
-    init {
-        viewModelScope.launch {
-            val qas = WeatherNetWork.getInstance().fetchQa()
-            qas.forEach {
-                questions.add(it.question)
-                answers.add(it.answer)
-            }
-        }
-    }
-
-    //彩蛋？？？
-    private var questions = arrayListOf<String>()
-    private var answers = arrayListOf<String>()
 }

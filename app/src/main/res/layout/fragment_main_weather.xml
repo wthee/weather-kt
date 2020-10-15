@@ -23,6 +23,7 @@
                 android:id="@+id/setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="@dimen/icon"
                 android:layout_marginLeft="@dimen/margin_small"
                 android:clickable="true"
                 android:textColor="@drawable/title_text_click"

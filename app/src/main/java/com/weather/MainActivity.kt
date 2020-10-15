@@ -13,10 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.weather.data.model.AppInfo
+import com.weather.data.network.WeatherNetWork
 import com.weather.databinding.MainActivityBinding
 import com.weather.ui.main.WeatherFragment
 import com.weather.util.ActivityUtil
@@ -33,9 +35,22 @@ class MainActivity : AppCompatActivity() {
         var widgetTextColor: Int = -16777216
         lateinit var sp: SharedPreferences
         lateinit var spSetting: SharedPreferences
-        var citys = Constant.defaultCitys
-        var cityIndex = 0
+
+        //彩蛋？？？
+        var questions = arrayListOf<String>()
+        var answers = arrayListOf<String>()
     }
+
+    init {
+        MainScope().launch {
+            val qas = WeatherNetWork.getInstance().fetchQa()
+            qas.forEach {
+                questions.add(it.question)
+                answers.add(it.answer)
+            }
+        }
+    }
+
 
     private lateinit var binding: MainActivityBinding
 
@@ -77,12 +92,6 @@ class MainActivity : AppCompatActivity() {
     private fun initSharedPreferences() {
         sp = getSharedPreferences("setting", MODE_PRIVATE)
         spSetting = PreferenceManager.getDefaultSharedPreferences(this)
-        //城市集合
-        citys = Gson().fromJson(
-            sp.getString(Constant.CITYS, Constant.CITYS_DEFAULT),
-            object : TypeToken<ArrayList<String>>() {}.type
-        )
-        cityIndex = sp.getInt(Constant.CITY_INDEX, 0)
         widgetTextColor = sp.getInt(Constant.WIDGET_TEXT_COLOR, widgetTextColor)
     }
 

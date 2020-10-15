@@ -4,14 +4,15 @@ import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.components.XAxis
@@ -25,11 +26,14 @@ import com.github.mikephil.charting.utils.MPPointF
 import com.weather.R
 import com.weather.data.model.weather.Data
 import com.weather.databinding.FragmentWeatherInfoBinding
+import com.weather.util.InjectorUtil
 import com.weather.util.ShareUtil
+import com.weather.util.WeatherUtil
+import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherHourlyBean
 import java.text.DecimalFormat
 
 
-class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
+class WeatherInfoFragment(date: String) : DialogFragment() {
 
     private lateinit var binding: FragmentWeatherInfoBinding
     private lateinit var lineChart: LineChart
@@ -41,38 +45,35 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
     private var axisColor: Int = 0
     private var gridColor: Int = 0
     private var labColor: Int = 0
-    private var item = itemBundle
+    private var nowDate = date
 
-    private lateinit var dm: DisplayMetrics
-    private lateinit var params: WindowManager.LayoutParams
+    private val viewModel by activityViewModels<WeatherInfoViewModel> {
+        InjectorUtil.getWeatherInfoViewModelFactory()
+    }
 
     @Suppress("DEPRECATION")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentWeatherInfoBinding.inflate(inflater,container,false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentWeatherInfoBinding.inflate(inflater, container, false)
 
 
-        axisColor = ResourcesCompat.getColor(resources,R.color.theme, null)
-        gridColor = ResourcesCompat.getColor(resources,R.color.hr, null)
-        labColor = ResourcesCompat.getColor(resources,R.color.main_text, null)
+        axisColor = ResourcesCompat.getColor(resources, R.color.theme, null)
+        gridColor = ResourcesCompat.getColor(resources, R.color.hr, null)
+        labColor = ResourcesCompat.getColor(resources, R.color.main_text, null)
         lineChart = binding.lineChart
 
-        //初始化温度折线图
-        initLineChart()
+        //TODO 获取小时预警
+        viewModel.getHourlyWeather(WeatherUtil.getCity())
+        viewModel.hourlyInfos.observe(this, Observer {
+            //初始化温度折线图
+            initLineChart(it)
+        })
 
-        val air = binding.air
-        val alarm = binding.alarm
 
-        alarm.visibility = if ( item.alarm.alarm_type != "") {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
-
-        air.visibility = if (item.air_tips != "") {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
+        //TODO 获取预警信息
 
         //点击分享
         binding.weaDay.setOnClickListener {
@@ -82,13 +83,13 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             val bp = Bitmap.createBitmap(sView.drawingCache)
             val uri = Uri.parse(
                 MediaStore.Images.Media.insertImage(
-                    activity!!.contentResolver,
+                    requireActivity().contentResolver,
                     bp,
                     null,
                     null
                 )
             )
-            ShareUtil.shareImg(uri,this.context!!)
+            ShareUtil.shareImg(uri, requireContext())
         }
 
 
@@ -96,8 +97,7 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
     }
 
 
-
-    private fun setStyle() {
+    private fun setStyle(hourlyBean: WeatherHourlyBean) {
 
         //linechart style
         lineChart.description = null
@@ -106,8 +106,8 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         lineChart.isScaleYEnabled = false
         val m = Matrix()
         //两个参数分别是x,y轴的缩放比例。例如：将x轴的数据放大为之前的1.5倍
-        m.postScale(item.hours.size / 8f * 2f,1f)
-        lineChart.viewPortHandler.refresh(m, lineChart,false)//将图表动画显示之前进行缩放
+        m.postScale(hourlyBean.hourly.size / 8f * 2f, 1f)
+        lineChart.viewPortHandler.refresh(m, lineChart, false)//将图表动画显示之前进行缩放
         //x
         lineChart.xAxis.apply {
             setDrawAxisLine(false)
@@ -157,41 +157,42 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             highLightColor = Color.TRANSPARENT
             valueTextSize = 14f
             valueTextColor = labColor
-            val df = DecimalFormat("##0")
-            valueFormatter = object : ValueFormatter() {
-                override fun getPointLabel(entry: Entry?): String {
-                    return df.format(entry!!.y) + "℃\n" + item.hours[entry.x.toInt()].wea
-                }
-            }
+            //TODO format
+//            val df = DecimalFormat("##0")
+//            valueFormatter = object : ValueFormatter() {
+//                override fun getPointLabel(entry: Entry?): String {
+//                    return df.format(entry!!.y) + "℃\n" + item.hours[entry.x.toInt()].wea
+//                }
+//            }
         }
     }
 
-    private fun initLineChart() {
+    private fun initLineChart(data: WeatherHourlyBean) {
         //折线点上的值
         mPointValues = arrayListOf()
         mLables = arrayListOf()
 
-        item.hours.forEachIndexed { index, hour ->
-            mLables.add(hour.hours.substring(0, 2) + ":00")
-            val y: Float = hour.tem.toFloat()
+        val toShowData = data.hourly.filter {
+            it.fxTime.substring(0, 12) == nowDate
+        }
+        toShowData.forEachIndexed { index, hour ->
+            mLables.add(hour.fxTime.substring(11, 15))
+            val y: Float = hour.temp.toFloat()
             mPointValues.add(Entry(index.toFloat(), y))
         }
         dataSet = LineDataSet(mPointValues, null)
 
         lineData = LineData(dataSet)
-        setStyle()
-        setmarkView()
-
+        setStyle(data)
+        //setmarkView
+        val mv = XYMarkerView(data)
+        lineChart.marker = mv
         lineChart.data = lineData
         lineChart.invalidate()
     }
 
-    private fun setmarkView() {
-        val mv = XYMarkerView()
-        lineChart.marker = mv
-    }
 
-    inner class XYMarkerView : MarkerView(context, R.layout.chart_marker_view) {
+    inner class XYMarkerView(private val hourlyBean: WeatherHourlyBean) : MarkerView(context, R.layout.chart_marker_view) {
         private val tvContent: TextView = rootView.findViewById(R.id.test)
         private var index: Int = 0
 
@@ -202,8 +203,8 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
         override fun refreshContent(e: Entry, highlight: Highlight) {
             super.refreshContent(e, highlight)
             index = highlight.dataSetIndex//这个方法用于获得折线是哪根
-            val hour = item.hours[e.x.toInt()]
-            tvContent.text = hour.win + hour.win_speed
+            val hour = hourlyBean.hourly[e.x.toInt()]
+            tvContent.text = hour.windDir + hour.windSpeed
         }
 
         override fun getOffsetForDrawingAtPoint(posX: Float, posY: Float): MPPointF {
@@ -216,7 +217,8 @@ class WeatherInfoFragment(itemBundle: Data) : DialogFragment() {
             if (posY <= height + ARROW_SIZE) {// 如果点y坐标小于markerView的高度，如果不处理会超出上边界，处理了之后这时候箭头是向上的，我们需要把图标下移一个箭头的大小
                 offset.y = ARROW_SIZE.toFloat()
             } else {//否则属于正常情况，因为我们默认是箭头朝下，然后正常偏移就是，需要向上偏移markerView高度和arrow size，再加一个stroke的宽度，因为你需要看到对话框的上面的边框
-                offset.y = -height - ARROW_SIZE.toFloat() - STOKE_WIDTH // 40 arrow height   5 stroke width
+                offset.y =
+                    -height - ARROW_SIZE.toFloat() - STOKE_WIDTH // 40 arrow height   5 stroke width
             }
             //处理X方向，分为3种情况，1、在图表左边 2、在图表中间 3、在图表右边
             //

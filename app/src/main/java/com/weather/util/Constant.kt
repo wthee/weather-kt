@@ -8,8 +8,10 @@ object Constant {
     const val WIDGET_TIP_SHOW =  "widgetTips"
     const val CITYS =  "citys"
     const val CITY_INDEX =  "cityIndex"
+    const val LAST_API_UPDATE_TIME = "lastApiUpdateTime"
+
     val defaultCitys =  arrayListOf("杭州","北京")
-    val CITYS_DEFAULT =  defaultCitys.toJsonString()
+    val CITYS_DEFAULT =  defaultCitys.ListoJson()
 }
 
-fun ArrayList<String>.toJsonString() = Gson().toJson(this)
+fun ArrayList<String>.ListoJson() = Gson().toJson(this)
