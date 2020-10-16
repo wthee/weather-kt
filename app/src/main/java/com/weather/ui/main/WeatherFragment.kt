@@ -14,12 +14,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.weather.MainActivity
 import com.weather.MainActivity.Companion.sp
 import com.weather.MyApplication
+import com.weather.R
 import com.weather.adapters.WeatherAdapter
 import com.weather.data.model.SunMoonData
 import com.weather.databinding.FragmentMainWeatherBinding
@@ -57,6 +59,10 @@ class WeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainWeatherBinding.inflate(inflater, container, false)
+        //下拉刷新
+        binding.refresh.setColorSchemeColors(
+            ResourcesCompat.getColor(resources, R.color.theme, null)
+        )
         //键盘
         imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         initView()

@@ -6,8 +6,8 @@
 
         <Preference
             app:iconSpaceReserved="false"
-            app:title="@string/change_style"
-            app:key="change_style"/>
+            app:key="change_style"
+            app:title="@string/change_style" />
 
         <SwitchPreferenceCompat
             app:iconSpaceReserved="false"
@@ -18,5 +18,5 @@
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
-        app:title="@string/widgetset"/>
+        app:title="@string/widgetset" />
 </PreferenceScreen>

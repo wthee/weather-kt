@@ -4,9 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.weather.MyApplication
 import com.weather.util.WeatherUtil
+import interfaces.heweather.com.interfacesmodule.bean.IndicesBean
 import interfaces.heweather.com.interfacesmodule.bean.WarningBean
 import interfaces.heweather.com.interfacesmodule.bean.air.AirDailyBean
 import interfaces.heweather.com.interfacesmodule.bean.base.Code
+import interfaces.heweather.com.interfacesmodule.bean.base.IndicesType
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherHourlyBean
 import interfaces.heweather.com.interfacesmodule.view.HeWeather
@@ -17,6 +19,7 @@ class WeatherInfoViewModel() : ViewModel() {
     val hourlyInfos = MutableLiveData<WeatherHourlyBean>()
     val warningInfo = MutableLiveData<WarningBean>()
     val airDailyBean = MutableLiveData<AirDailyBean>()
+    val indicesBean = MutableLiveData<IndicesBean>()
 
     //获取当前城市7天天气
     fun getHourlyWeather(city: String) {
@@ -72,6 +75,32 @@ class WeatherInfoViewModel() : ViewModel() {
                 override fun onSuccess(p0: AirDailyBean?) {
                     if (Code.OK.code.equals(p0?.code, ignoreCase = true)) {
                         airDailyBean.postValue(p0)
+                    } else {
+                        //在此查看返回数据失败的原因
+                        val status: String = p0?.code!!
+                        WeatherUtil.toastError(status)
+                    }
+                }
+            }
+        )
+    }
+
+    //获取生活指数
+    fun getIndices(city: String) {
+        HeWeather.getIndices1D(MyApplication.context,
+            WeatherUtil.checkCity(city),
+            Lang.ZH_HANS,
+            arrayListOf(
+                IndicesType.COMF, IndicesType.DRSG, IndicesType.FLU, IndicesType.SPT,
+                IndicesType.TRAV, IndicesType.UV
+            ),
+            object : HeWeather.OnResultIndicesListener {
+                override fun onError(p0: Throwable?) {
+                }
+
+                override fun onSuccess(p0: IndicesBean?) {
+                    if (Code.OK.code.equals(p0?.code, ignoreCase = true)) {
+                        indicesBean.postValue(p0)
                     } else {
                         //在此查看返回数据失败的原因
                         val status: String = p0?.code!!

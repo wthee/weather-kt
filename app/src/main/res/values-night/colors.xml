@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--  default  -->
+    <color name="background">#2B2B2B</color>
+    <color name="main_text">#F3F3F4</color>
+    <color name="secondary_text">#DBDADA</color>
+    <color name="white_text">#000000</color>
+    <color name="white">#000000</color>
+
+</resources>

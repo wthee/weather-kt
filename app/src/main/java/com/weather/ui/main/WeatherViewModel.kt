@@ -1,6 +1,7 @@
 package com.weather.ui.main
 
 import android.util.Log
+import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +10,10 @@ import com.weather.MainActivity
 import com.weather.MyApplication
 import com.weather.ui.main.WeatherFragment.Companion.sunMoonDatas
 import com.weather.ui.main.WeatherFragment.Companion.toUpdate
-import com.weather.util.*
+import com.weather.util.Constant
+import com.weather.util.WeatherUtil
+import com.weather.util.formatDate
+import com.weather.util.getSunDate
 import interfaces.heweather.com.interfacesmodule.bean.base.Code
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherNowBean
@@ -52,6 +56,11 @@ class WeatherViewModel() : ViewModel() {
                             override fun onError(p0: Throwable?) {
                                 toUpdate = false
                                 isRefresh.postValue(false)
+                                Toast.makeText(
+                                    MyApplication.context,
+                                    "获取数据失败，请检查网络后重试~",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
 
                             override fun onSuccess(p0: WeatherDailyBean?) {
@@ -65,7 +74,7 @@ class WeatherViewModel() : ViewModel() {
                                     }
                                     Log.i("city", "接口数据更新时间：${lastApiUpdateTime}, 已获取${city}数据!")
                                     sunMoonDatas = p0?.getSunDate() ?: ArrayList()
-                                    RainFilterUtil.getRainInfo(p0)
+                                    WeatherUtil.getRainInfo(p0)
                                     weatherTemp = p0!!
                                     weather.postValue(p0)
                                 } else {
