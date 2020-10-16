@@ -1,202 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="@dimen/cardRadius">
+    android:background="@color/background"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/weaDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
+        android:textColor="@color/theme"
+        android:textSize="@dimen/setting_title_size"
+        tools:text="18日" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="@dimen/padding_small"
+        android:clipChildren="false"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/sun_chart"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginBottom="@dimen/padding_small" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_warn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="1"
+        tools:listitem="@layout/item_warn" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/layout_air"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_small">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/weaDay"
-                tools:text="18日"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/padding_small"
-                android:paddingTop="@dimen/padding_small"
-                android:textColor="@drawable/other_text_click"
-                android:textSize="@dimen/setting_title_size"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/lineChart"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginBottom="@dimen/padding_small"
-            android:clipChildren="false"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lineHeight"
-            android:layout_margin="@dimen/margin_small"
-            android:background="@color/hr" />
-
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="空气质量："
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:textColor="@color/theme"
+                tools:text="空气质量：" />
 
-                <LinearLayout
-                    android:id="@+id/alarm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/air_aqi"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                tools:text="45 优" />
+        </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/alarm_type"
-                            tools:text="大风预警："
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text='@{data.alarm.alarm_type+@string/alarm}'
-                            android:textColor="@color/theme"
-                            android:textSize="@dimen/setting_title_size" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/alarm_lv"
-                            tools:text="黄色"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@{data.alarm.alarm_level}"
-                            android:textColor="@color/theme"
-                            android:textSize="@dimen/setting_title_size" />
-
-                    </LinearLayout>
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/alarm_content"
-                        tools:text="空气质量还行"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/padding_small"
-                        android:paddingBottom="@dimen/padding_small"
-                        android:text="@{@string/tab+data.alarm.alarm_content}"
-                        android:textColor="@color/secondary_text"
-                        android:textSize="@dimen/item_text_size" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/air"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            tools:text="空气质量："
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="空气质量："
-                            android:textColor="@color/theme"
-                            android:textSize="@dimen/setting_title_size" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/air_lv"
-                            tools:text="45 优"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@{data.air+@string/space+data.air_level}"
-                            android:textSize="@dimen/setting_title_size" />
-
-                    </LinearLayout>
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/air_tips"
-                        tools:text="空气质量asfdagsas："
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/padding_small"
-                        android:paddingBottom="@dimen/padding_small"
-                        android:text="@{@string/tab+data.air_tips}"
-                        android:textColor="@color/secondary_text"
-                        android:textSize="@dimen/item_text_size" />
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/chuanyi"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small"
-                    android:paddingBottom="@dimen/padding_small">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            tools:text="穿衣指数："
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="穿衣指数："
-                            android:textColor="@color/theme"
-                            android:textSize="@dimen/setting_title_size" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/chuanyi_title"
-                            tools:text="热"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@{data.index[3].level}"
-                            android:textSize="@dimen/setting_title_size" />
-
-                    </LinearLayout>
-
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/chuanyi_tip"
-                        tools:text="穿衣："
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/padding_small"
-                        android:text="@{@string/tab+data.index[3].desc}"
-                        android:textColor="@color/secondary_text"
-                        android:textSize="@dimen/item_text_size" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 
+</LinearLayout>
 
-</androidx.cardview.widget.CardView>
+

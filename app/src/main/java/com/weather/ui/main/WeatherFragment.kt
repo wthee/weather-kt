@@ -21,6 +21,7 @@ import com.weather.MainActivity
 import com.weather.MainActivity.Companion.sp
 import com.weather.MyApplication
 import com.weather.adapters.WeatherAdapter
+import com.weather.data.model.SunMoonData
 import com.weather.databinding.FragmentMainWeatherBinding
 import com.weather.ui.info.WeatherInfoFragment
 import com.weather.ui.main.WeatherViewModel.Companion.weatherTemp
@@ -28,7 +29,6 @@ import com.weather.ui.setting.MainSettingFragment
 import com.weather.util.InjectorUtil
 import com.weather.util.WeatherUtil
 import com.weather.util.formatDate
-import kotlinx.android.synthetic.main.item_weather.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.system.exitProcess
@@ -38,15 +38,13 @@ class WeatherFragment : Fragment() {
     companion object {
 
         lateinit var imm: InputMethodManager
-        lateinit var adapter: WeatherAdapter
-
         var toUpdate = true
-
-        var title = ""
         lateinit var companionViewModel: WeatherViewModel
+        var sunMoonDatas = arrayListOf<SunMoonData>()
     }
 
     private lateinit var binding: FragmentMainWeatherBinding
+    private lateinit var adapter: WeatherAdapter
 
     //返回确认
     private var firstTime: Long = 0
@@ -118,10 +116,10 @@ class WeatherFragment : Fragment() {
         //今日实时天气
         viewModel.nowWeather.observe(viewLifecycleOwner, Observer { nowWeather ->
             if (nowWeather != null) {
-                title = WeatherUtil.getCity()
                 binding.apply {
                     nowTem.text = nowWeather.now.temp + "℃"
                     nowWea.text = nowWeather.now.text
+                    setting.text = WeatherUtil.getCity()
                 }
             }
         })
@@ -148,8 +146,6 @@ class WeatherFragment : Fragment() {
     private fun initView() {
         binding.apply {
 
-            setting.text = WeatherUtil.getCity()
-
             //左上城市名点击事件
             setting.setOnClickListener {
                 MainSettingFragment.getInstance()
@@ -158,7 +154,9 @@ class WeatherFragment : Fragment() {
 
             //今日天气
             now.setOnClickListener {
-                WeatherInfoFragment().show(
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                val date = dateFormat.format(Date(System.currentTimeMillis()))
+                WeatherInfoFragment(date).show(
                     requireActivity()
                         .supportFragmentManager
                         .beginTransaction(), "setting"

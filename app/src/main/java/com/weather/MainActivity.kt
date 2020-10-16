@@ -1,23 +1,14 @@
 package com.weather
 
-import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.weather.data.model.AppInfo
 import com.weather.data.network.WeatherNetWork
 import com.weather.databinding.MainActivityBinding
 import com.weather.ui.main.WeatherFragment
@@ -76,7 +67,6 @@ class MainActivity : AppCompatActivity() {
 
         ActivityUtil.instance.currentActivity = this
         startService()
-        getAuthority()
         MainScope().launch {
             getAppList()
             //通知桌面小部件更新
@@ -103,28 +93,6 @@ class MainActivity : AppCompatActivity() {
             //如果不支持设置深色风格 为了兼容总不能让状态栏白白的看不清, 于是设置一个状态栏颜色为半透明,
             //这样半透明+白=灰, 状态栏的文字能看得清
             StatusBarUtil.setStatusBarColor(this, 0x55000000);
-        }
-    }
-
-    //申请权限
-    private fun getAuthority() {
-        val permissions = arrayOf(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        val mPermissions = ArrayList<String>()
-        for (string in permissions) {
-            if (ContextCompat.checkSelfPermission(
-                    this@MainActivity,
-                    string
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                mPermissions.add(string)
-            }
-        }
-        if (mPermissions.size > 0) {
-            Toast.makeText(this, "分享功能需要读写权限", Toast.LENGTH_LONG).show()
-            ActivityCompat.requestPermissions(this, permissions, 1)
         }
     }
 

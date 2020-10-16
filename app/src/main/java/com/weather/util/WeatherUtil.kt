@@ -8,6 +8,7 @@ import com.weather.MainActivity
 import com.weather.MainActivity.Companion.answers
 import com.weather.MainActivity.Companion.questions
 import com.weather.MyApplication
+import com.weather.data.model.SunMoonData
 import interfaces.heweather.com.interfacesmodule.bean.base.Code
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
 import java.text.SimpleDateFormat
@@ -137,6 +138,8 @@ object WeatherUtil {
             Toast.LENGTH_SHORT
         ).show()
     }
+
+
 }
 
 //2020-10-13T21:35+08:00
@@ -146,4 +149,21 @@ fun String.formatDate(): String {
     else
         return this.replace("T", " ").substring(0, this.lastIndexOf("+")) + ":00"
 
+}
+
+fun WeatherDailyBean.getSunDate(): ArrayList<SunMoonData> {
+    val sunMoonDatas = arrayListOf<SunMoonData>()
+    this.daily.forEach {
+        sunMoonDatas.add(
+            SunMoonData(
+                it.fxDate,
+                it.sunrise,
+                it.sunset,
+                it.moonRise,
+                it.moonSet,
+                it.moonPhase
+            )
+        )
+    }
+    return sunMoonDatas
 }

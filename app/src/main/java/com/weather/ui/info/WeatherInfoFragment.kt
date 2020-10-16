@@ -1,9 +1,7 @@
 package com.weather.ui.info
 
 import android.graphics.*
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,17 +21,22 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.weather.R
+import com.weather.adapters.WarnInfoAdapter
 import com.weather.databinding.FragmentWeatherInfoBinding
+import com.weather.ui.main.WeatherFragment
 import com.weather.util.InjectorUtil
-import com.weather.util.ShareUtil
 import com.weather.util.WeatherUtil
+import com.weather.util.ZhColorUtil
 import com.weather.util.formatDate
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherHourlyBean
-import kotlinx.android.synthetic.main.fragment_weather_info.*
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-class WeatherInfoFragment() : BottomSheetDialogFragment() {
+class WeatherInfoFragment(
+    private val date: String = "0"
+) : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentWeatherInfoBinding
     private lateinit var lineChart: LineChart
@@ -57,47 +60,67 @@ class WeatherInfoFragment() : BottomSheetDialogFragment() {
     ): View? {
         binding = FragmentWeatherInfoBinding.inflate(inflater, container, false)
 
-
         axisColor = ResourcesCompat.getColor(resources, R.color.theme, null)
         gridColor = ResourcesCompat.getColor(resources, R.color.hr, null)
         labColor = ResourcesCompat.getColor(resources, R.color.main_text, null)
         lineChart = binding.lineChart
 
+        val city = WeatherUtil.getCity()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val today = dateFormat.format(Date(System.currentTimeMillis()))
+        val isToday = date == today
+        binding.weaDay.text = date.substring(8, 10) + "日 " + WeatherUtil.dateToWeek(date)
+
         //获取小时预警
-        viewModel.getHourlyWeather(WeatherUtil.getCity())
-        viewModel.hourlyInfos.observe(this, Observer {
-            weaDay.text = it.hourly[0].fxTime.formatDate().substring(0,11)
-            //初始化温度折线图
-            initLineChart(it)
-        })
-
-
-        //TODO 获取预警信息
-
-        //TODO 点击分享
-        binding.weaDay.setOnClickListener {
-            val sView = binding.root
-            sView.isDrawingCacheEnabled = true
-            sView.buildDrawingCache()
-            val bp = Bitmap.createBitmap(sView.drawingCache)
-            val uri = Uri.parse(
-                MediaStore.Images.Media.insertImage(
-                    requireActivity().contentResolver,
-                    bp,
-                    null,
-                    null
-                )
-            )
-            ShareUtil.shareImg(uri, requireContext())
+        if (isToday) {
+            //小时预警
+            viewModel.getHourlyWeather(city)
+            viewModel.hourlyInfos.observe(viewLifecycleOwner, Observer {
+                //初始化温度折线图
+                initLineChart(it)
+                lineChart.visibility = View.VISIBLE
+            })
+            //获取预警信息
+            val adapter = WarnInfoAdapter()
+            binding.listWarn.adapter = adapter
+            viewModel.getWarning(city)
+            viewModel.warningInfo.observe(viewLifecycleOwner, Observer {
+                if (it != null && it.beanBaseList.size > 0) {
+                    adapter.submitList(it.beanBaseList)
+                }
+            })
         }
 
+        //获取空气质量
+        viewModel.getAirInfo(city)
+        viewModel.airDailyBean.observe(viewLifecycleOwner, Observer {
+            if (it != null && it.airDaily.size > 0) {
+                binding.apply {
+                    val air = it.airDaily.find { daily ->
+                        daily.fxDate == date
+                    }
+                    if (air == null) {
+                        layoutAir.visibility = View.GONE
+                    } else {
+                        airAqi.text = air.aqi + " " + air.category
+                        airAqi.setTextColor(ZhColorUtil.formColor(air.category ?: "良"))
+                    }
+                }
+            }
+        })
 
+        //显示日月信息
+        val sunMoonData = WeatherFragment.sunMoonDatas.find {
+            it.date == date
+        }
+        if (sunMoonData != null) {
+            //TODO 显示图形
+        }
         return binding.root
     }
 
 
     private fun setStyle(hourlyBean: WeatherHourlyBean) {
-
         //linechart style
         lineChart.description = null
         lineChart.setDrawBorders(false)
@@ -189,7 +212,8 @@ class WeatherInfoFragment() : BottomSheetDialogFragment() {
     }
 
 
-    inner class XYMarkerView(private val hourlyBean: WeatherHourlyBean) : MarkerView(context, R.layout.chart_marker_view) {
+    inner class XYMarkerView(private val hourlyBean: WeatherHourlyBean) :
+        MarkerView(context, R.layout.chart_marker_view) {
         private val tvContent: TextView = rootView.findViewById(R.id.test)
         private var index: Int = 0
 

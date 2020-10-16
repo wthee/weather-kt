@@ -1,34 +1,22 @@
 package com.weather.ui.info
 
-import android.util.Log
-import android.widget.Toast
-import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.weather.MainActivity
 import com.weather.MyApplication
-import com.weather.data.WeatherRepository
-import com.weather.data.model.weather.Data
-import com.weather.data.network.WeatherNetWork
-import com.weather.ui.main.WeatherFragment.Companion.toUpdate
-import com.weather.util.*
-import interfaces.heweather.com.interfacesmodule.bean.WeatherGridBean
+import com.weather.util.WeatherUtil
+import interfaces.heweather.com.interfacesmodule.bean.WarningBean
+import interfaces.heweather.com.interfacesmodule.bean.air.AirDailyBean
 import interfaces.heweather.com.interfacesmodule.bean.base.Code
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang
-import interfaces.heweather.com.interfacesmodule.bean.base.Unit
-import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherHourlyBean
-import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherNowBean
 import interfaces.heweather.com.interfacesmodule.view.HeWeather
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class WeatherInfoViewModel() : ViewModel() {
 
     val hourlyInfos = MutableLiveData<WeatherHourlyBean>()
+    val warningInfo = MutableLiveData<WarningBean>()
+    val airDailyBean = MutableLiveData<AirDailyBean>()
 
     //获取当前城市7天天气
     fun getHourlyWeather(city: String) {
@@ -40,7 +28,6 @@ class WeatherInfoViewModel() : ViewModel() {
 
                 override fun onSuccess(p0: WeatherHourlyBean?) {
                     if (Code.OK.code.equals(p0?.code, ignoreCase = true)) {
-                        //记录接口上次数据更新时间
                         hourlyInfos.postValue(p0)
                     } else {
                         //在此查看返回数据失败的原因
@@ -52,4 +39,46 @@ class WeatherInfoViewModel() : ViewModel() {
         )
     }
 
+    //获取预警消息
+    fun getWarning(city: String) {
+        HeWeather.getWarning(MyApplication.context,
+            WeatherUtil.checkCity(city),
+            object : HeWeather.OnResultWarningListener {
+                override fun onError(p0: Throwable?) {
+                }
+
+                override fun onSuccess(p0: WarningBean?) {
+                    if (Code.OK.code.equals(p0?.code, ignoreCase = true)) {
+                        warningInfo.postValue(p0)
+                    } else {
+                        //在此查看返回数据失败的原因
+                        val status: String = p0?.code!!
+                        WeatherUtil.toastError(status)
+                    }
+                }
+            }
+        )
+    }
+
+    //获取空气质量
+    fun getAirInfo(city: String) {
+        HeWeather.getAir5D(MyApplication.context,
+            WeatherUtil.checkCity(city),
+            Lang.ZH_HANS,
+            object : HeWeather.OnResultAirDailyListener {
+                override fun onError(p0: Throwable?) {
+                }
+
+                override fun onSuccess(p0: AirDailyBean?) {
+                    if (Code.OK.code.equals(p0?.code, ignoreCase = true)) {
+                        airDailyBean.postValue(p0)
+                    } else {
+                        //在此查看返回数据失败的原因
+                        val status: String = p0?.code!!
+                        WeatherUtil.toastError(status)
+                    }
+                }
+            }
+        )
+    }
 }

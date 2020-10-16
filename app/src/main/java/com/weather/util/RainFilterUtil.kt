@@ -1,6 +1,5 @@
 package com.weather.util
 
-import com.weather.data.model.weather.Weather
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean
 import java.text.SimpleDateFormat
 import java.util.*

@@ -23,9 +23,9 @@
                 android:id="@+id/setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="@dimen/icon"
                 android:layout_marginLeft="@dimen/margin_small"
                 android:clickable="true"
+                android:minWidth="@dimen/icon"
                 android:textColor="@drawable/title_text_click"
                 android:textSize="@dimen/title_text_size"
                 tools:text="杭州" />
@@ -40,8 +40,8 @@
                     android:id="@+id/now_wea"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
                     android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/margin_small"
                     android:textColor="@color/secondary_text"
                     tools:text="小雨" />
 
@@ -49,20 +49,29 @@
                     android:id="@+id/now_tem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
                     android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/margin_small"
                     android:textColor="@color/secondary_text"
                     tools:text="15℃" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/weaDay"
+                    tools:text="18日"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/margin_small" />
+
             </LinearLayout>
 
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:focusable="true"
             android:focusableInTouchMode="true">
 
@@ -70,9 +79,9 @@
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="0dp"
                 android:background="@color/background"
                 android:inputType="text"
+                android:padding="0dp"
                 android:singleLine="true"
                 android:textColor="@color/main_text"
                 android:textColorHint="@color/placeholder_text"
@@ -91,6 +100,10 @@
             android:visibility="gone"
             tools:visibility="gone" />
 
+        <FrameLayout
+            android:id="@+id/layout_hourly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh"
