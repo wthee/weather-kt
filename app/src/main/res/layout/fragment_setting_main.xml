@@ -27,8 +27,7 @@
             android:layout_width="@dimen/icon"
             android:layout_height="@dimen/icon"
             android:layout_marginStart="@dimen/margin_small"
-            android:background="@drawable/ic_edit"
-            android:foreground="?selectableItemBackground" />
+            android:background="@drawable/ic_edit"/>
     </LinearLayout>
 
     <com.google.android.material.chip.ChipGroup
