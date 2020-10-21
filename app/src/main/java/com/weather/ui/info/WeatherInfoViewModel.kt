@@ -21,7 +21,7 @@ class WeatherInfoViewModel() : ViewModel() {
     val airDailyBean = MutableLiveData<AirDailyBean>()
     val indicesBean = MutableLiveData<IndicesBean>()
 
-    //获取当前城市7天天气
+    //获取当前城市天气
     fun getHourlyWeather(city: String) {
         HeWeather.getWeather24Hourly(MyApplication.context,
             WeatherUtil.checkCity(city),

@@ -38,7 +38,7 @@ class WeatherViewModel() : ViewModel() {
 
     }
 
-    //获取当前城市7天天气
+    //获取当前城市15天天气
     private fun getWeather(city: String) {
         viewModelScope.launch {
             val lastApiUpdateTime = (MainActivity.sp

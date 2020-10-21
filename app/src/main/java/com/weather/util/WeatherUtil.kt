@@ -67,26 +67,19 @@ object WeatherUtil {
 
     //TODO 优化 https://dev.heweather.com/docs/start/icons
     fun formatTip(dailyBean: WeatherDailyBean.DailyBean) =
-        when (dailyBean.textDay.length) {
-            1 -> "下雨天，记得带伞"
-            2 -> when (dailyBean.textDay) {
-                "小雨" -> "雨虽小，注意别感冒"
-                "中雨" -> "记得随身携带雨伞"
-                "大雨" -> "出门最好穿雨衣"
-                "阵雨" -> "阵雨来袭，记得带伞"
-                "暴雨" -> "尽量避免户外活动"
-                else -> "没有你的天气"
-            }
-            3 -> {
-                if (dailyBean.textDay.contains("转"))
-                    "天气多变，照顾好自己"
-                else
-                    when (dailyBean.textDay) {
-                        "雷阵雨" -> "尽量减少户外活动"
-                        "大暴雨" -> "尽量避免户外活动"
-                        "雨夹雪" -> "道路湿滑，出行要谨慎"
-                        else -> "没有你的天气"
-                    }
+        when {
+            dailyBean.textDay.contains("雨") -> {
+                when {
+                    dailyBean.textDay.contains("小雨") -> "雨虽小，注意别感冒"
+                    dailyBean.textDay.contains("中雨") -> "记得随身携带雨伞"
+                    dailyBean.textDay.contains("大雨") -> "出门最好穿雨衣"
+                    dailyBean.textDay.contains("阵雨") -> "阵雨来袭，记得带伞"
+                    dailyBean.textDay.contains("暴雨") -> "尽量避免户外活动"
+                    dailyBean.textDay.contains("雷阵雨") -> "尽量减少户外活动"
+                    dailyBean.textDay.contains("大暴雨") -> "尽量避免户外活动"
+                    dailyBean.textDay.contains("雨夹雪") -> "道路湿滑，出行要谨慎"
+                    else -> "下雨天，记得带伞"
+                }
             }
             else -> "天气多变，照顾好自己"
         }

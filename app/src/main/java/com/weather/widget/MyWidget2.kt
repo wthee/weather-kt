@@ -74,24 +74,32 @@ class MyWidget2 : AppWidgetProvider() {
                     views.setTextViewText(R.id.appwidget2_date, wea[0].fxDate.substring(5, 7) + wea[0].fxDate.substring(8, 10))
                     views.setTextViewText(R.id.appwidget2_wea, wea[0].textDay)
                     val tips = WeatherUtil.formatTip(wea[0]).split("，")
-                    if(tips.size>1){
+                    if (tips.size > 1) {
                         views.setTextViewText(R.id.appwidget2_tip, tips[0])
                         views.setTextViewText(R.id.appwidget2_tip2, tips[1])
-                    }
-                    else{
+                    } else {
                         views.setTextViewText(R.id.appwidget2_tip, WeatherUtil.formatTip(wea[0]))
                     }
                 }
 
 
-                views.setViewVisibility(R.id.appwidget2_city,if(wea.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget2_date, if(wea.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.center2, if(wea.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget2_wea, if(wea.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(
+                    R.id.appwidget2_city,
+                    if (wea.size > 0) View.VISIBLE else View.GONE
+                )
+                views.setViewVisibility(
+                    R.id.appwidget2_date,
+                    if (wea.size > 0) View.VISIBLE else View.GONE
+                )
+                views.setViewVisibility(R.id.center2, if (wea.size > 0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(
+                    R.id.appwidget2_wea,
+                    if (wea.size > 0) View.VISIBLE else View.GONE
+                )
 
                 views.setTextColor(R.id.appwidget2_now_time, widgetTextColor)
                 views.setTextColor(R.id.appwidget2_now_date, widgetTextColor)
-                views.setTextColor(R.id.center2, widgetTextColor)
+                views.setInt(R.id.center2, "setBackgroundColor", widgetTextColor);
                 views.setTextColor(R.id.appwidget2_city, widgetTextColor)
                 views.setTextColor(R.id.appwidget2_date, widgetTextColor)
                 views.setTextColor(R.id.appwidget2_wea, widgetTextColor)

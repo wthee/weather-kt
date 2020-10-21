@@ -29,7 +29,7 @@
             tools:text="黄色" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/warn_title"
+            android:id="@+id/warn_sender"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -42,10 +42,17 @@
     </LinearLayout>
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/warn_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding_small"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+        tools:text="空气质量还行" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/warn_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_small"
         android:paddingTop="@dimen/padding_small"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         tools:text="空气质量还行" />

@@ -70,26 +70,39 @@ class MyWidget : AppWidgetProvider() {
                 views.setOnClickPendingIntent(R.id.appwidget_now_date,
                     getPI(context, appInfo2)
                 )
-                views.setOnClickPendingIntent(R.id.rightView1,
+                views.setOnClickPendingIntent(
+                    R.id.rightView1,
                     getPI(context, appInfo3)
                 )
 
-                if(wea.size>0){
+                if (wea.size > 0) {
                     views.setTextViewText(R.id.appwidget_city, WeatherUtil.getCity())
-                    views.setTextViewText(R.id.appwidget_date, wea[0].fxDate.substring(5, 7) + "/" + wea[0].fxDate.substring(8, 10))
+                    views.setTextViewText(
+                        R.id.appwidget_date,
+                        wea[0].fxDate.substring(5, 7) + "/" + wea[0].fxDate.substring(8, 10)
+                    )
                     views.setViewVisibility(R.id.center, View.VISIBLE)
                     views.setTextViewText(R.id.appwidget_wea, wea[0].textDay)
                     views.setTextViewText(R.id.appwidget_tip, WeatherUtil.formatTip(wea[0]))
                 }
 
-                views.setViewVisibility(R.id.appwidget_city,if(wea.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget_date, if(wea.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.center, if(wea.size>0) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.appwidget_wea, if(wea.size>0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(
+                    R.id.appwidget_city,
+                    if (wea.size > 0) View.VISIBLE else View.GONE
+                )
+                views.setViewVisibility(
+                    R.id.appwidget_date,
+                    if (wea.size > 0) View.VISIBLE else View.GONE
+                )
+                views.setViewVisibility(R.id.center, if (wea.size > 0) View.VISIBLE else View.GONE)
+                views.setViewVisibility(
+                    R.id.appwidget_wea,
+                    if (wea.size > 0) View.VISIBLE else View.GONE
+                )
 
                 views.setTextColor(R.id.appwidget_now_time, widgetTextColor)
                 views.setTextColor(R.id.appwidget_now_date, widgetTextColor)
-                views.setTextColor(R.id.center, widgetTextColor)
+                views.setInt(R.id.center, "setBackgroundColor", widgetTextColor);
                 views.setTextColor(R.id.appwidget_city, widgetTextColor)
                 views.setTextColor(R.id.appwidget_date, widgetTextColor)
                 views.setTextColor(R.id.appwidget_wea, widgetTextColor)

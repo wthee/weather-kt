@@ -29,7 +29,6 @@
             android:id="@+id/appwidget_now_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/appwidget_now_time"
             android:format12Hour="yyyy年MM月dd日"
             android:format24Hour="yyyy年MM月dd日"
             android:textColor="@color/widget_main_text"
@@ -41,7 +40,7 @@
 
     <TextView
         android:id="@+id/center"
-        android:layout_width="1dp"
+        android:layout_width="@dimen/widget_hr_width"
         android:layout_height="32dp"
         android:layout_centerInParent="true"
         android:layout_margin="@dimen/margin_small"

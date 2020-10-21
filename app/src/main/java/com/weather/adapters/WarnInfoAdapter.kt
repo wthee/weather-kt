@@ -35,7 +35,8 @@ class WarnInfoAdapter() :
                 warnLv.text = item.level
                 warnLv.setTextColor(ZhColorUtil.formColor(item.level))
                 warnText.text = item.text
-                warnTitle.text = item.sender
+                warnSender.text = item.sender
+                warnTitle.text = item.title
             }
         }
 

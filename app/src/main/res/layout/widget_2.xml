@@ -42,13 +42,10 @@
 
     <TextView
         android:id="@+id/center2"
-        android:layout_width="10dp"
+        android:layout_width="@dimen/widget_hr_width"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:ems="1"
         android:gravity="center"
-        android:lineSpacingMultiplier="0.72"
-        android:text="┃┃┃┃┃┃┃┃┃" />
+        android:background="@color/main_text" />
 
     <RelativeLayout
         android:id="@+id/rightView2"
