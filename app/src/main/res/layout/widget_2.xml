@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/margin_small"
-        android:gravity="right|top"
+        android:gravity="center"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
         <TextClock
@@ -44,8 +45,10 @@
         android:id="@+id/center2"
         android:layout_width="@dimen/widget_hr_width"
         android:layout_height="match_parent"
+        android:background="@color/main_text"
         android:gravity="center"
-        android:background="@color/main_text" />
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <RelativeLayout
         android:id="@+id/rightView2"

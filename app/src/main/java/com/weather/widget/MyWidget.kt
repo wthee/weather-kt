@@ -99,6 +99,10 @@ class MyWidget : AppWidgetProvider() {
                     R.id.appwidget_wea,
                     if (wea.size > 0) View.VISIBLE else View.GONE
                 )
+                views.setViewVisibility(
+                    R.id.appwidget_tip,
+                    if (wea.size > 0) View.VISIBLE else View.GONE
+                )
 
                 views.setTextColor(R.id.appwidget_now_time, widgetTextColor)
                 views.setTextColor(R.id.appwidget_now_date, widgetTextColor)

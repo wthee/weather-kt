@@ -91,6 +91,11 @@ class MyWidget2 : AppWidgetProvider() {
                     R.id.appwidget2_date,
                     if (wea.size > 0) View.VISIBLE else View.GONE
                 )
+                views.setViewVisibility(
+                    R.id.appwidget2_tip,
+                    if (wea.size > 0) View.VISIBLE else View.GONE
+                )
+
                 views.setViewVisibility(R.id.center2, if (wea.size > 0) View.VISIBLE else View.GONE)
                 views.setViewVisibility(
                     R.id.appwidget2_wea,
