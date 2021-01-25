@@ -25,13 +25,6 @@ class MyApplication : Application() {
         HeConfig.switchToDevService()
     }
 
-    fun isForeground(): Boolean {
-        val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val cn = am.getRunningTasks(1)[0].topActivity
-        val currentPackageName = cn?.packageName
-        return !TextUtils.isEmpty(currentPackageName) && currentPackageName == context.packageName
-    }
-
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context

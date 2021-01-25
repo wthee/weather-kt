@@ -21,6 +21,7 @@ import com.weather.R
 import com.weather.adapters.IndicesInfoAdapter
 import com.weather.adapters.WarnInfoAdapter
 import com.weather.databinding.FragmentWeatherInfoBinding
+import com.weather.ui.CommonBottomSheetDialogFragment
 import com.weather.ui.main.WeatherFragment
 import com.weather.util.InjectorUtil
 import com.weather.util.WeatherUtil
@@ -34,7 +35,7 @@ import java.util.*
 
 class WeatherInfoFragment(
     private val date: String
-) : BottomSheetDialogFragment() {
+) : CommonBottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentWeatherInfoBinding
     private lateinit var lineChart: LineChart

@@ -6,6 +6,26 @@
         <item name="colorPrimary">@color/theme</item>
         <item name="colorPrimaryDark">@color/theme_dark</item>
         <item name="colorAccent">@color/theme</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
+    <!-- 自定义弹出/关闭动画   -->
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+
+    <!-- 主题设置   -->
+    <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+        <item name="colorAccent">@color/theme</item>
+        <item name="colorPrimary">@color/theme</item>
+        <item name="colorPrimaryDark">@color/theme_dark</item>
+    </style>
+
+
+    <!-- 背景设置  -->
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_bottom_dialog</item>
+    </style>
 </resources>

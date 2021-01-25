@@ -18,6 +18,7 @@ import com.weather.util.StatusBarUtil
 import com.weather.widget.WidgetUpdateService
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -68,7 +69,11 @@ class MainActivity : AppCompatActivity() {
         ActivityUtil.instance.currentActivity = this
         startService()
         MainScope().launch {
-            getAppList()
+            try {
+                getAppList()
+            }catch (e: Exception){
+                
+            }
             //通知桌面小部件更新
             val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
             MyApplication.context.sendBroadcast(intent)
@@ -117,13 +122,13 @@ class MainActivity : AppCompatActivity() {
             val packageName = packageInfo.packageName
             if (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 1) {
                 //时钟
-                if(appName.contains("时") && packageName.toLowerCase().contains("clock")){
+                if(appName.contains("时") && packageName.toLowerCase(Locale.ROOT).contains("clock")){
                     MainActivity.sp.edit {
                         putString("appInfo1", packageName)
                     }
                 }
                 //日历
-                if(appName.contains("日")  && packageName.toLowerCase().contains("calendar")){
+                if(appName.contains("日") && packageName.toLowerCase(Locale.ROOT).contains("calendar")){
                     MainActivity.sp.edit {
                         putString("appInfo2", packageName)
                     }

@@ -47,9 +47,7 @@ class WeatherFragment : Fragment() {
 
     private lateinit var binding: FragmentMainWeatherBinding
     private lateinit var adapter: WeatherAdapter
-
-    //返回确认
-    private var firstTime: Long = 0
+    
     private val viewModel by activityViewModels<WeatherViewModel> {
         InjectorUtil.getWeatherViewModelFactory()
     }
@@ -71,28 +69,6 @@ class WeatherFragment : Fragment() {
         viewModel.changeCity(WeatherUtil.getCity())
         companionViewModel = viewModel
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        //返回两次退出应用
-        requireView().isFocusableInTouchMode = true
-        requireView().requestFocus()
-        requireView().setOnKeyListener(object : View.OnKeyListener {
-            override fun onKey(view: View, i: Int, keyEvent: KeyEvent): Boolean {
-                val secondTime = System.currentTimeMillis()
-                if (keyEvent.action == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK) {
-                    if (secondTime - firstTime < 2000) {
-                        exitProcess(0)
-                    } else {
-                        Toast.makeText(activity, "再按一次退出", Toast.LENGTH_SHORT).show()
-                        firstTime = System.currentTimeMillis()
-                    }
-                    return true
-                }
-                return false
-            }
-        })
     }
 
     private fun setObserve() {
@@ -155,7 +131,7 @@ class WeatherFragment : Fragment() {
             //左上城市名点击事件
             setting.setOnClickListener {
                 MainSettingFragment.getInstance()
-                    .show(requireActivity().supportFragmentManager.beginTransaction(), "setting")
+                    .show(parentFragmentManager, "setting")
             }
 
             //今日天气
@@ -163,9 +139,7 @@ class WeatherFragment : Fragment() {
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd")
                 val date = dateFormat.format(Date(System.currentTimeMillis()))
                 WeatherInfoFragment(date).show(
-                    requireActivity()
-                        .supportFragmentManager
-                        .beginTransaction(), "setting"
+                    parentFragmentManager, "setting"
                 )
             }
 

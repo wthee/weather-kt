@@ -23,6 +23,7 @@ import com.weather.R
 import com.weather.databinding.FragmentSettingMainBinding
 import com.weather.databinding.LayoutChipBinding
 import com.weather.databinding.LayoutChipEditableBinding
+import com.weather.ui.CommonBottomSheetDialogFragment
 import com.weather.ui.main.WeatherFragment
 import com.weather.ui.main.WeatherFragment.Companion.toUpdate
 import com.weather.ui.main.WeatherViewModel
@@ -32,7 +33,7 @@ import com.weather.util.InjectorUtil
 import com.weather.util.WeatherUtil
 
 
-class MainSettingFragment : BottomSheetDialogFragment() {
+class MainSettingFragment : CommonBottomSheetDialogFragment() {
 
     companion object {
         fun getInstance(): MainSettingFragment {
@@ -51,7 +52,7 @@ class MainSettingFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSettingMainBinding.inflate(inflater, container, false)
 
         //显示设置页面
