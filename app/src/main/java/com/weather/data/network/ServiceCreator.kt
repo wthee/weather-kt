@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceCreator {
 
-    private const val QA_URL = "http://47.98.60.104:8080/api/"
+    private const val QA_URL = "http://wthee.xyz:8080/api/"
 
 
     fun <T> create(serviceClass: Class<T>): T {

@@ -11,13 +11,7 @@ class WeatherNetWork {
         return qaService.getAllQa()
     }
 
-
-    private fun addAppKey(map: MutableMap<String, String>, version: String){
-        map["version"] = version
-        map["appid"] = "23238842"
-        map["appsecret"] = "QgdXYe3r"
-    }
-
+    
     companion object {
 
         @Volatile
