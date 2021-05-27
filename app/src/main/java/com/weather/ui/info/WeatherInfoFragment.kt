@@ -100,6 +100,8 @@ class WeatherInfoFragment(
                     adapter2.submitList(it.dailyList)
                 }
             })
+        }else{
+            binding.nodata.visibility = View.VISIBLE
         }
 
         //获取空气质量
@@ -124,10 +126,10 @@ class WeatherInfoFragment(
         val sunMoonData = WeatherFragment.sunMoonDatas.find {
             it.date == date
         }
+        //日出、日落信息
         if (sunMoonData != null) {
             binding.apply {
-                sunRise.text = sunMoonData.sunRise
-                sunSet.text = sunMoonData.sunSet
+                sunRiseSet.text = "${sunMoonData.sunRise} / ${sunMoonData.sunSet}"
             }
         }
         return binding.root

@@ -68,16 +68,6 @@ class MainActivity : AppCompatActivity() {
 
         ActivityUtil.instance.currentActivity = this
         startService()
-        MainScope().launch {
-            try {
-                getAppList()
-            }catch (e: Exception){
-                
-            }
-            //通知桌面小部件更新
-            val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-            MyApplication.context.sendBroadcast(intent)
-        }
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.mainLayout, WeatherFragment())
@@ -111,30 +101,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //获取应用列表
-    private fun getAppList() {
-        val pm = this.packageManager
-        // Return a List of all packages that are installed on the device.
-        val packages = pm.getInstalledPackages(0)
-
-        for (packageInfo in packages) {
-            val appName = packageInfo.applicationInfo.loadLabel(pm).toString()
-            val packageName = packageInfo.packageName
-            if (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 1) {
-                //时钟
-                if(appName.contains("时") && packageName.toLowerCase(Locale.ROOT).contains("clock")){
-                    MainActivity.sp.edit {
-                        putString("appInfo1", packageName)
-                    }
-                }
-                //日历
-                if(appName.contains("日") && packageName.toLowerCase(Locale.ROOT).contains("calendar")){
-                    MainActivity.sp.edit {
-                        putString("appInfo2", packageName)
-                    }
-                }
-            }
-
-        }
-    }
 }

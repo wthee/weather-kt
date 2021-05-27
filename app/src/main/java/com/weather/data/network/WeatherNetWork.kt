@@ -8,7 +8,11 @@ class WeatherNetWork {
 
 
     suspend fun fetchQa():List<QA>{
-        return qaService.getAllQa()
+        try {
+            return qaService.getAllQa()
+        }catch (e: Exception){
+            return emptyList()
+        }
     }
 
     

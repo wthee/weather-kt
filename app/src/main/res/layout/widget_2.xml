@@ -17,7 +17,7 @@
 
         <TextClock
             android:id="@+id/appwidget2_now_time"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="1"
             android:format12Hour="HHmm  "
@@ -29,7 +29,7 @@
 
         <TextClock
             android:id="@+id/appwidget2_now_date"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/appwidget2_now_time"
             android:format12Hour="MMdd"
@@ -68,6 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="1"
+                android:gravity="top"
                 android:textColor="@color/widget_main_text"
                 android:textSize="@dimen/widget_text_size"
                 tools:text="杭州"

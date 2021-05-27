@@ -52,21 +52,11 @@ class MyWidget2 : AppWidgetProvider() {
 
                 val wea = WeatherViewModel.weatherTemp.daily
 
-                val views: RemoteViews = RemoteViews(context.packageName, R.layout.widget_2)
+                val views = RemoteViews(context.packageName, R.layout.widget_2)
 
-                val appInfo1 = MainActivity.sp.getString("appInfo1", "com.weather")!!
-                val appInfo2 = MainActivity.sp.getString("appInfo2", "com.weather")!!
-                val appInfo3 = "com.weather"
+                val appInfo1 = "com.weather"
 
-                views.setOnClickPendingIntent(R.id.appwidget2_now_time,
-                    MyWidget.getPI(context, appInfo1)
-                )
-                views.setOnClickPendingIntent(R.id.appwidget2_now_date,
-                    MyWidget.getPI(context, appInfo2)
-                )
-                views.setOnClickPendingIntent(R.id.rightView2,
-                    MyWidget.getPI(context, appInfo3)
-                )
+                views.setOnClickPendingIntent(R.id.appwidget2, MyWidget.getPI(context, appInfo1))
 
 
                 if(wea.size>0){

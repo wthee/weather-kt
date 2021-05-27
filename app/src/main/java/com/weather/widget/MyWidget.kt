@@ -17,7 +17,11 @@ import com.weather.util.WeatherUtil
 
 class MyWidget : AppWidgetProvider() {
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
+    ) {
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(
                 context,
@@ -45,35 +49,23 @@ class MyWidget : AppWidgetProvider() {
 
     companion object {
 
-        fun getPI(context: Context,appInfo: String): PendingIntent{
+        fun getPI(context: Context, appInfo: String): PendingIntent {
             val packageManager = context.packageManager
             val intent = Intent(packageManager.getLaunchIntentForPackage(appInfo))
-            return PendingIntent.getActivity(context, 0,intent,0)
+            return PendingIntent.getActivity(context, 0, intent, 0)
         }
 
         internal fun updateAppWidget(
-                context: Context, appWidgetManager: AppWidgetManager,
-                appWidgetId: Int
+            context: Context, appWidgetManager: AppWidgetManager,
+            appWidgetId: Int
         ) {
             try {
 
                 val wea = WeatherViewModel.weatherTemp.daily
                 val views = RemoteViews(context.packageName, R.layout.widget_1)
 
-                val appInfo1 = MainActivity.sp.getString("appInfo1", "com.weather")!!
-                val appInfo2 = MainActivity.sp.getString("appInfo2", "com.weather")!!
-                val appInfo3 = "com.weather"
-
-                views.setOnClickPendingIntent(R.id.appwidget_now_time,
-                    getPI(context, appInfo1)
-                )
-                views.setOnClickPendingIntent(R.id.appwidget_now_date,
-                    getPI(context, appInfo2)
-                )
-                views.setOnClickPendingIntent(
-                    R.id.rightView1,
-                    getPI(context, appInfo3)
-                )
+                val appInfo1 = "com.weather"
+                views.setOnClickPendingIntent(R.id.appwidget, getPI(context, appInfo1))
 
                 if (wea.size > 0) {
                     views.setTextViewText(R.id.appwidget_city, WeatherUtil.getCity())
@@ -81,7 +73,6 @@ class MyWidget : AppWidgetProvider() {
                         R.id.appwidget_date,
                         wea[0].fxDate.substring(5, 7) + "/" + wea[0].fxDate.substring(8, 10)
                     )
-                    views.setViewVisibility(R.id.center, View.VISIBLE)
                     views.setTextViewText(R.id.appwidget_wea, wea[0].textDay)
                     views.setTextViewText(R.id.appwidget_tip, WeatherUtil.formatTip(wea[0]))
                 }
@@ -113,8 +104,8 @@ class MyWidget : AppWidgetProvider() {
                 views.setTextColor(R.id.appwidget_tip, widgetTextColor)
 
                 appWidgetManager.updateAppWidget(appWidgetId, views)
-            }catch (e: Exception){
-                Log.e("exception","")
+            } catch (e: Exception) {
+                Log.e("exception", e.message ?: "")
             }
         }
     }
