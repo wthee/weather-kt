@@ -100,7 +100,7 @@ class WeatherInfoFragment(
                     adapter2.submitList(it.dailyList)
                 }
             })
-        }else{
+        } else {
             binding.nodata.visibility = View.VISIBLE
         }
 
@@ -127,7 +127,7 @@ class WeatherInfoFragment(
             it.date == date
         }
         //日出、日落信息
-        if (sunMoonData != null) {
+        if (sunMoonData != null && sunMoonData.sunRise != null && sunMoonData.sunSet != null) {
             binding.apply {
                 sunRiseSet.text = "${sunMoonData.sunRise} / ${sunMoonData.sunSet}"
             }
